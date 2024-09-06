@@ -22,6 +22,8 @@ const BreakdownChart = ({ isDashboard = false }) => {
       value: sales,
       color: colors[i],
     })
+
+
   );
 
   return (

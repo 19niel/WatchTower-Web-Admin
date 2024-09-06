@@ -29,8 +29,8 @@ const Transactions = () => {
       flex: 1,
     },
     {
-      field: "userId",
-      headerName: "User ID",
+      field: "reporterID",
+      headerName: "Reporter ID",
       flex: 1,
     },
     {

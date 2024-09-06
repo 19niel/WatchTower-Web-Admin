@@ -57,6 +57,10 @@ const navItems = [
     icon: <ReceiptLongOutlined />,
   },
   {
+    text: "Reports",
+    icon: <ReceiptLongOutlined />,
+  },
+  {
     text: "Geography",
     icon: <PublicOutlined />,
   },
@@ -88,10 +92,7 @@ const navItems = [
     text: "Admin",
     icon: <AdminPanelSettingsOutlined />,
   },
-  {
-    text: "Performance",
-    icon: <TrendingUpOutlined />,
-  },
+
 ];
 
 const Sidebar = ({

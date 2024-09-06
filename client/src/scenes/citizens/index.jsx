@@ -58,7 +58,7 @@ const Citizens = () => {
 
   return (
     <Box m="1.5rem 2.5rem">
-      <Header title="Edited now" subtitle="List of Citizens" />
+      <Header title="Citizens   " subtitle="List of Citizens" />
       <Box
         mt="40px"
         height="75vh"

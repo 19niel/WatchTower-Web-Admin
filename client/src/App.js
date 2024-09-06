@@ -6,7 +6,6 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { themeSettings } from "theme";
 import Layout from "scenes/layout";
 import Dashboard from "scenes/dashboard";
-import Customers from "scenes/customers";
 import Transactions from "scenes/transactions";
 import Geography from "scenes/geography";
 import Overview from "scenes/overview";
@@ -20,6 +19,7 @@ import Performance from "scenes/performance";
 // watchTower FIle
 import Citizens from "scenes/citizens";
 import Rescuers from "scenes/rescuers";
+import Reports from "scenes/reports";
 
 
 
@@ -35,7 +35,6 @@ function App() {
             <Route element={<Layout />}>
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/customers" element={<Customers />} />
 
               {/* Watch Tower */}
               <Route path="/citizens" element={<Citizens />} />
@@ -43,6 +42,7 @@ function App() {
 
 
               <Route path="/transactions" element={<Transactions />} />
+              <Route path="/reports" element={<Reports />} />
               <Route path="/geography" element={<Geography />} />
               <Route path="/overview" element={<Overview />} />
               <Route path="/daily" element={<Daily />} />
