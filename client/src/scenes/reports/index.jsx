@@ -21,37 +21,51 @@ const Transactions = () => {
     sort: JSON.stringify(sort),
     search,
   });
-
   const columns = [
     {
-      field: "_id",
-      headerName: "ID",
-      flex: 1,
+        field: "_id",
+        headerName: "ID",
+        flex: 1,
     },
     {
-      field: "reporterID",
-      headerName: "Reporter ID",
-      flex: 1,
+        field: "location",
+        headerName: "Location",
+        flex: 0.8,
     },
     {
-      field: "createdAt",
-      headerName: "CreatedAt",
-      flex: 1,
+        field: "disasterCategory",
+        headerName: "Disaster Category",
+        flex: 0.6,
     },
     {
-      field: "products",
-      headerName: "# of Products",
-      flex: 0.5,
-      sortable: false,
-      renderCell: (params) => params.value.length,
+        field: "disasterImage",
+        headerName: "Images",
+        flex: 0.6
     },
     {
-      field: "cost",
-      headerName: "Cost",
-      flex: 1,
-      renderCell: (params) => `$${Number(params.value).toFixed(2)}`,
+        field: "disasterInfi",
+        headerName: "Description",
+        flex: 1,
     },
-  ];
+    {
+        field: "createdAt",
+        headerName: "Date",
+        flex: 0.5,
+        renderCell: (params) => params.value.length // Grabbing the number of products
+    },
+    {
+        field: "reporterId",
+        headerName: "Reported By",
+        flex: 1,
+        renderCell: (params) => `$${Number(params.value).toFixed(2)}`,
+    },
+    {
+        field: "disasterStatus",
+        headerName: "Status",
+        flex: 0.5,
+        renderCell: (params) => `$${Number(params.value).toFixed(2)}`,
+    },
+];
 
   return (
     <Box m="1.5rem 2.5rem">
