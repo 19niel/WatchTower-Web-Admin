@@ -6,7 +6,6 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { themeSettings } from "theme";
 import Layout from "scenes/layout";
 import Dashboard from "scenes/dashboard";
-import Transactions from "scenes/transactions";
 import Geography from "scenes/geography";
 import Overview from "scenes/overview";
 import Daily from "scenes/daily";
@@ -41,7 +40,6 @@ function App() {
               <Route path="/rescuers" element={<Rescuers />} />
 
 
-              <Route path="/transactions" element={<Transactions />} />
               <Route path="/reports" element={<Reports />} />
               <Route path="/geography" element={<Geography />} />
               <Route path="/overview" element={<Overview />} />

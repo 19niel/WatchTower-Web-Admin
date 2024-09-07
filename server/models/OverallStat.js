@@ -2,25 +2,25 @@ import mongoose from "mongoose";
 
 const OverallStatSchema = new mongoose.Schema(
   {
-    totalCustomers: Number,
-    yearlySalesTotal: Number,
-    yearlyTotalSoldUnits: Number,
+    totalCitizens: Number,
+    yearlyReportsTotal: Number,
+    yearlyReportsSolvedTotal: Number,
     year: Number,
     monthlyData: [
       {
         month: String,
-        totalSales: Number,
-        totalUnits: Number,
+        totalReports: Number,
+        totalReportsSolved: Number,
       },
     ],
     dailyData: [
       {
         date: String,
-        totalSales: Number,
-        totalUnits: Number,
+        totalReports: Number,
+        totalReportsSolved: Number,
       },
     ],
-    salesByCategory: {
+    reportsByCategory: {
       type: Map,
       of: Number,
     },

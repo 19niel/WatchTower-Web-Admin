@@ -17,13 +17,11 @@ import User from "./models/User.js";
 
 import ProductStat from "./models/ProductStat.js";
 import Transaction from "./models/Transaction.js";
-import OverallStat from "./models/OverallStat.js";
 import AffiliateStat from "./models/AffiliateStat.js";
 import {
   dataProduct,
   dataProductStat,
   dataTransaction,
-  dataOverallStat,
   dataAffiliateStat,
 } from "./data/index.js";
 
@@ -31,10 +29,13 @@ import {
 import Admin from "./models/Admin.js"
 import Citizen from "./models/Citizen.js";
 import Rescuer from "./models/Rescuer.js";
+import OverallStat from "./models/OverallStat.js";
+
 import{
   dataAdmin,
   dataCitizen,
   dataRescuer,
+  dataOverallReportStat
 } from "./data/watchtowerdata.js"
 
 /* CONFIGURATION */
@@ -66,16 +67,17 @@ mongoose
 
     /* ONLY ADD DATA ONE TIME */
     // AffiliateStat.insertMany(dataAffiliateStat);
-    // OverallStat.insertMany(dataOverallStat);
     // Product.insertMany(dataProduct);
     // ProductStat.insertMany(dataProductStat);
     // Transaction.insertMany(dataTransaction);
     
     // WatchTower Files
-    //User.insertMany(dataUser);
-    //Citizen.insertMany(dataCitizen);
-    //Rescuer.insertMany(dataRescuer);
-    //Admin.insertMany(dataAdmin);
+    // User.insertMany(dataUser);
+    // Citizen.insertMany(dataCitizen);
+    // Rescuer.insertMany(dataRescuer);
+    // Admin.insertMany(dataAdmin);
+    // OverallStat.insertMany(dataOverallReportStat);
+
 
   })
   .catch((error) => console.log(`${error} did not connect`));

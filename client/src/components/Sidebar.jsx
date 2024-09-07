@@ -41,20 +41,8 @@ const navItems = [
     icon: <HomeOutlined />,
   },
   {
-    text: "Client Facing",
+    text: "Overall Reports",
     icon: null,
-  },
-  {
-    text: "Citizens",
-    icon: <Groups2Outlined />,
-  },
-  {
-    text: "Rescuers",
-    icon: <EngineeringOutlinedIcon />,
-  },
-  {
-    text: "Transactions",
-    icon: <ReceiptLongOutlined />,
   },
   {
     text: "Reports",
@@ -65,7 +53,7 @@ const navItems = [
     icon: <PublicOutlined />,
   },
   {
-    text: "Reports",
+    text: "Statistics of Reports",
     icon: null,
   },
   {
@@ -84,6 +72,19 @@ const navItems = [
     text: "Breakdown",
     icon: <PieChartOutlined />,
   },
+  {
+    text: "Accounts",
+    icon: null,
+  },
+  {
+    text: "Citizens",
+    icon: <Groups2Outlined />,
+  },
+  {
+    text: "Rescuers",
+    icon: <EngineeringOutlinedIcon />,
+  },
+
   {
     text: "Management",
     icon: null,
