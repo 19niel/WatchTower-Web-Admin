@@ -7,4 +7,3 @@ Video: https://www.youtube.com/watch?v=0cPCMIuDk2I
 For all related questions and discussions about this project, check out the discord: https://discord.gg/2FfPeEk2mX
 
 
-di pa tapos

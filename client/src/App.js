@@ -7,7 +7,6 @@ import { themeSettings } from "theme";
 import Layout from "scenes/layout";
 import Dashboard from "scenes/dashboard";
 import Geography from "scenes/geography";
-import Overview from "scenes/overview";
 import Daily from "scenes/daily";
 import Monthly from "scenes/monthly";
 import Breakdown from "scenes/breakdown";
@@ -19,6 +18,7 @@ import Performance from "scenes/performance";
 import Citizens from "scenes/citizens";
 import Rescuers from "scenes/rescuers";
 import Reports from "scenes/reports";
+import Overview from "scenes/overview";
 
 
 

@@ -20,8 +20,8 @@ const Overview = () => {
             label="View"
             onChange={(e) => setView(e.target.value)}
           >
-            <MenuItem value="sales">All Reports</MenuItem>
-            <MenuItem value="units">Solved Reports</MenuItem>
+            <MenuItem value="allReports">All Reports</MenuItem>
+            <MenuItem value="solvedReports">Solved Reports</MenuItem>
           </Select>
         </FormControl>
         <OverviewChart view={view} />

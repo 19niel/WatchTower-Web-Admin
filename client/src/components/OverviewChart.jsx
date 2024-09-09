@@ -1,54 +1,54 @@
 import React, { useMemo } from "react";
 import { ResponsiveLine } from "@nivo/line";
 import { useTheme } from "@mui/material";
-import { useGetSalesQuery } from "state/api";
+import { useGetReportsQuery } from "state/api";
 
 const OverviewChart = ({ isDashboard = false, view }) => {
   const theme = useTheme();
-  const { data, isLoading } = useGetSalesQuery();
+  const { data, isLoading } = useGetReportsQuery();
 
-  const [totalSalesLine, totalUnitsLine] = useMemo(() => {
+  const [totalReportsLine, totalReportsSolvedLine] = useMemo(() => {
     if (!data) return [];
 
     const { monthlyData } = data;
-    const totalSalesLine = {
-      id: "totalSales",
+    const totalReportsLine = {
+      id: "totalReports",
       color: theme.palette.secondary.main,
       data: [],
     };
-    const totalUnitsLine = {
-      id: "totalUnits",
+    const totalReportsSolvedLine = {
+      id: "totalReportsSolved",
       color: theme.palette.secondary[600],
       data: [],
     };
 
     Object.values(monthlyData).reduce(
-      (acc, { month, totalSales, totalUnits }) => {
-        const curSales = acc.sales + totalSales;
-        const curUnits = acc.units + totalUnits;
+      (acc, { month, totalReports, totalReportsSolved }) => {
+        const curReports = acc.reports + totalReports;
+        const curReportsSolved = acc.reportssolved + totalReportsSolved;
 
-        totalSalesLine.data = [
-          ...totalSalesLine.data,
-          { x: month, y: curSales },
+        totalReportsLine.data = [
+          ...totalReportsLine.data,
+          { x: month, y: curReports },
         ];
-        totalUnitsLine.data = [
-          ...totalUnitsLine.data,
-          { x: month, y: curUnits },
+        totalReportsSolvedLine.data = [
+          ...totalReportsSolvedLine.data,
+          { x: month, y: curReportsSolved },
         ];
 
-        return { sales: curSales, units: curUnits };
+        return { reports: curReports, reportssolved: curReportsSolved };
       },
-      { sales: 0, units: 0 }
+      { reports: 0, reportssolved: 0 }
     );
 
-    return [[totalSalesLine], [totalUnitsLine]];
+    return [[totalReportsLine], [totalReportsSolvedLine]];
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!data || isLoading) return "Loading...";
 
   return (
     <ResponsiveLine
-      data={view === "sales" ? totalSalesLine : totalUnitsLine}
+      data={view === "reports" ? totalReportsLine : totalReportsSolvedLine}
       theme={{
         axis: {
           domain: {
@@ -117,7 +117,7 @@ const OverviewChart = ({ isDashboard = false, view }) => {
         tickRotation: 0,
         legend: isDashboard
           ? ""
-          : `Total ${view === "sales" ? "Revenue" : "Units"} for Year`,
+          : `Total ${view === "reports" ? "Revenue" : "Units"} for Year`,
         legendOffset: -60,
         legendPosition: "middle",
       }}

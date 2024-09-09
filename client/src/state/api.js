@@ -66,6 +66,10 @@ export const api = createApi({
       query: () => "client/rescuers",
       providesTags: ["Rescuers"],
     }),
+    getReports: build.query({
+      query: () => "reports/reports",
+      providesTags: ["Reports"],
+    }),
   }),
 });
 
@@ -83,4 +87,5 @@ export const {
   // WatchTower File
   useGetCitizensQuery,
   useGetRescuersQuery,
+  useGetReportsQuery,
 } = api;
