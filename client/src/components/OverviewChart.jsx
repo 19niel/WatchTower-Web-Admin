@@ -48,7 +48,7 @@ const OverviewChart = ({ isDashboard = false, view }) => {
 
   return (
     <ResponsiveLine
-      data={view === "reports" ? totalReportsLine : totalReportsSolvedLine}
+      data={view === "totalReports" ? totalReportsLine : totalReportsSolvedLine}
       theme={{
         axis: {
           domain: {
@@ -93,7 +93,7 @@ const OverviewChart = ({ isDashboard = false, view }) => {
       }}
       yFormat=" >-.2f"
       curve="catmullRom"
-      enableArea={isDashboard}
+      enableArea={isDashboard} // make this true to have an area
       axisTop={null}
       axisRight={null}
       axisBottom={{
@@ -105,7 +105,7 @@ const OverviewChart = ({ isDashboard = false, view }) => {
         tickSize: 5,
         tickPadding: 5,
         tickRotation: 0,
-        legend: isDashboard ? "" : "Month",
+        legend: isDashboard ? "" : "Month", // if on the dashboard there is no legend
         legendOffset: 36,
         legendPosition: "middle",
       }}
@@ -117,12 +117,12 @@ const OverviewChart = ({ isDashboard = false, view }) => {
         tickRotation: 0,
         legend: isDashboard
           ? ""
-          : `Total ${view === "reports" ? "Revenue" : "Units"} for Year`,
+          : `Total ${view === "reports" ? "Revenue" : "solvedReports"} for Year`,
         legendOffset: -60,
         legendPosition: "middle",
       }}
-      enableGridX={false}
-      enableGridY={false}
+      enableGridX={true} // make this false to unable the grid
+      enableGridY={true}
       pointSize={10}
       pointColor={{ theme: "background" }}
       pointBorderWidth={2}

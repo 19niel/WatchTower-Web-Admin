@@ -40,7 +40,6 @@ function App() {
               <Route path="/rescuers" element={<Rescuers />} />
 
 
-              <Route path="/reports" element={<Reports />} />
               <Route path="/geography" element={<Geography />} />
               <Route path="/overview" element={<Overview />} />
               <Route path="/daily" element={<Daily />} />

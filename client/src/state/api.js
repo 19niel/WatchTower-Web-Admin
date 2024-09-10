@@ -17,7 +17,8 @@ export const api = createApi({
     // WatchTOwer
     "User",
     "Citizens",
-    "Rescuers"
+    "Rescuers",
+    "Reports"
   ],
   endpoints: (build) => ({
     getUser: build.query({

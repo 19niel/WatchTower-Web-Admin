@@ -35,6 +35,8 @@ export const getDashboardStats = async (req, res) => {
       salesByCategory,
     } = overallStat[0];
 
+    
+
     const thisMonthStats = overallStat[0].monthlyData.find(({ month }) => {
       return month === currentMonth;
     });

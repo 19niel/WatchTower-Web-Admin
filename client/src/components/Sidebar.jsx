@@ -36,13 +36,14 @@ import profileImage from "assets/profilepic.png";
 import logo from 'assets/logo.png';
 
 const navItems = [
-  {
-    text: "Dashboard",
-    icon: <HomeOutlined />,
-  },
+
   {
     text: "Overall Reports",
     icon: null,
+  },
+  {
+    text: "Dashboard",
+    icon: <HomeOutlined />,
   },
   {
     text: "Reports",
