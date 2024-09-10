@@ -38,9 +38,6 @@ function App() {
               {/* Watch Tower */}
               <Route path="/citizens" element={<Citizens />} />
               <Route path="/rescuers" element={<Rescuers />} />
-
-
-              <Route path="/geography" element={<Geography />} />
               <Route path="/overview" element={<Overview />} />
               <Route path="/daily" element={<Daily />} />
               <Route path="/monthly" element={<Monthly />} />
