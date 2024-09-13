@@ -12,29 +12,29 @@ const Monthly = () => {
     if (!data) return [];
 
     const { monthlyData } = data;
-    const totalSalesLine = {
-      id: "totalSales",
+    const totalReportsLine = {
+      id: "totalReports",
       color: theme.palette.secondary.main,
       data: [],
     };
-    const totalUnitsLine = {
-      id: "totalUnits",
+    const totalReportsSolvedLine = {
+      id: "totalReportsSolved",
       color: theme.palette.secondary[600],
       data: [],
     };
 
-    Object.values(monthlyData).forEach(({ month, totalSales, totalUnits }) => {
-      totalSalesLine.data = [
-        ...totalSalesLine.data,
-        { x: month, y: totalSales },
+    Object.values(monthlyData).forEach(({ month, totalReports, totalReportsSolved }) => {
+      totalReportsLine.data = [
+        ...totalReportsLine.data,
+        { x: month, y: totalReports },
       ];
-      totalUnitsLine.data = [
-        ...totalUnitsLine.data,
-        { x: month, y: totalUnits },
+      totalReportsSolvedLine.data = [
+        ...totalReportsSolvedLine.data,
+        { x: month, y: totalReportsSolved },
       ];
     });
 
-    const formattedData = [totalSalesLine, totalUnitsLine];
+    const formattedData = [totalReportsLine, totalReportsSolvedLine];
     return [formattedData];
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
