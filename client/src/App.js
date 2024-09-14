@@ -9,7 +9,6 @@ import Dashboard from "scenes/dashboard";
 import Geography from "scenes/geography";
 import Daily from "scenes/daily";
 import Monthly from "scenes/monthly";
-import Breakdown from "scenes/breakdown";
 import Admin from "scenes/admin";
 import Performance from "scenes/performance";
 
@@ -19,6 +18,7 @@ import Citizens from "scenes/citizens";
 import Rescuers from "scenes/rescuers";
 import Reports from "scenes/reports";
 import Overview from "scenes/overview";
+import Breakdown from "scenes/breakdown";
 
 
 

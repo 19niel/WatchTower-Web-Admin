@@ -15,11 +15,11 @@ const BreakdownChart = ({ isDashboard = false }) => {
     theme.palette.secondary[300],
     theme.palette.secondary[500],
   ];
-  const formattedData = Object.entries(data.salesByCategory).map(
-    ([category, sales], i) => ({
+  const formattedData = Object.entries(data.reportsByCategory).map(
+    ([category, reports], i) => ({
       id: category,
       label: category,
-      value: sales,
+      value: reports,
       color: colors[i],
     })
 
@@ -132,7 +132,7 @@ const BreakdownChart = ({ isDashboard = false }) => {
         }}
       >
         <Typography variant="h6">
-          {!isDashboard && "Total:"} ${data.yearlySalesTotal}
+          {!isDashboard && "Total:"} ${data.yearlyReportsTotal}
         </Typography>
       </Box>
     </Box>
