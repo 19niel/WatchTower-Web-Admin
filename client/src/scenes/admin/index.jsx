@@ -13,41 +13,47 @@ const Admin = () => {
     {
       field: "_id",
       headerName: "ID",
-      flex: 1,
-    },
-    {
-      field: "name",
-      headerName: "Name",
       flex: 0.5,
     },
     {
-      field: "email",
-      headerName: "Email",
-      flex: 1,
+      field: "profileImage",
+      headerName: "Image",
+      flex: 0.5,
     },
     {
-      field: "phoneNumber",
+      field: "firstName",
+      headerName: "First Name",
+      flex: 0.5,
+    },
+    {
+      field: "lastName",
+      headerName: "Last Name",
+      flex: 0.5,
+    },
+    {
+      field: "mobileNumber",
       headerName: "Phone Number",
       flex: 0.5,
       renderCell: (params) => {
-        return params.value.replace(/^(\d{3})(\d{3})(\d{4})/, "($1)$2-$3");
+        return params.value.replace(/^(\d{4})(\d{3})(\d{3})/, "$1-$2-$3"); // Grabbing the value and replacing with REGEX
       },
     },
     {
-      field: "country",
-      headerName: "Country",
-      flex: 0.4,
+      field: "address",
+      headerName: "Address",
+      flex: 0.8,
+      renderCell: (params) => {
+        const address = params.value || {};  // the `address` object
+        const { houseNumber = "", street = "", barangay = "" } = address;
+        return `${houseNumber}, ${street}, ${barangay}`;
+      },
     },
     {
-      field: "occupation",
-      headerName: "Occupation",
-      flex: 1,
-    },
-    {
-      field: "role",
-      headerName: "Role",
+      field: "status",
+      headerName: "Status",
       flex: 0.5,
     },
+
   ];
 
   return (

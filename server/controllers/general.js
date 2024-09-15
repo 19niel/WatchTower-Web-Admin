@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import OverallStat from "../models/OverallStat.js";
 import Transaction from "../models/Transaction.js";
+import Report from "../models/Transaction.js";
 
 export const getUser = async (req, res) => {
   try {
@@ -15,12 +16,12 @@ export const getUser = async (req, res) => {
 export const getDashboardStats = async (req, res) => {
   try {
     // hardcoded values
-    const currentMonth = "November";
-    const currentYear = 2021;
-    const currentDay = "2021-11-15";
+    const currentMonth = "January";
+    const currentYear = 2023;
+    const currentDay = "2023-01-01";
 
     /* Recent Transactions */
-    const transactions = await Transaction.find()
+    const transactions = await Report.find()
       .limit(50)
       .sort({ createdOn: -1 });
 
@@ -28,11 +29,11 @@ export const getDashboardStats = async (req, res) => {
     const overallStat = await OverallStat.find({ year: currentYear });
 
     const {
-      totalCustomers,
-      yearlyTotalSoldUnits,
-      yearlySalesTotal,
+      totalCitizens,
+      yearlyReportsSolvedTotal,
+      yearlyReportsTotal,
       monthlyData,
-      salesByCategory,
+      reportsByCategory,
     } = overallStat[0];
 
     
@@ -46,14 +47,14 @@ export const getDashboardStats = async (req, res) => {
     });
 
     res.status(200).json({
-      totalCustomers,
-      yearlyTotalSoldUnits,
-      yearlySalesTotal,
+      totalCitizens,
+      yearlyReportsSolvedTotal,
+      yearlyReportsTotal,
       monthlyData,
-      salesByCategory,
+      reportsByCategory,
       thisMonthStats,
       todayStats,
-      transactions,
+      reports,
     });
   } catch (error) {
     res.status(404).json({ message: error.message });

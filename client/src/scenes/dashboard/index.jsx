@@ -26,6 +26,7 @@ const Dashboard = () => {
   const isNonMediumScreens = useMediaQuery("(min-width: 1200px)");
   const { data, isLoading } = useGetDashboardQuery();
 
+  // change this for repor
   const columns = [
     {
       field: "_id",
@@ -90,7 +91,7 @@ const Dashboard = () => {
       >
         {/* ROW 1 */}
         <StatBox
-          title="Total Customers"
+          title="Total Citizens"
           value={data && data.totalCustomers}
           increase="+14%"
           description="Since last month"
@@ -101,8 +102,8 @@ const Dashboard = () => {
           }
         />
         <StatBox
-          title="Sales Today"
-          value={data && data.todayStats.totalSales}
+          title="Reports Today"
+          value={data && data.todayStats.totalReports}
           increase="+21%"
           description="Since last month"
           icon={
@@ -121,8 +122,8 @@ const Dashboard = () => {
           <OverviewChart view="sales" isDashboard={true} />
         </Box>
         <StatBox
-          title="Monthly Sales"
-          value={data && data.thisMonthStats.totalSales}
+          title="Monthly Reports"
+          value={data && data.thisMonthStats.totalReports}
           increase="+5%"
           description="Since last month"
           icon={
@@ -132,8 +133,8 @@ const Dashboard = () => {
           }
         />
         <StatBox
-          title="Yearly Sales"
-          value={data && data.yearlySalesTotal}
+          title="Yearly Reports"
+          value={data && data.yearlyReportsTotal}
           increase="+43%"
           description="Since last month"
           icon={
@@ -188,7 +189,7 @@ const Dashboard = () => {
           borderRadius="0.55rem"
         >
           <Typography variant="h6" sx={{ color: theme.palette.secondary[100] }}>
-            Sales By Category
+            Reports By Category
           </Typography>
           <BreakdownChart isDashboard={true} />
           <Typography
@@ -196,8 +197,7 @@ const Dashboard = () => {
             fontSize="0.8rem"
             sx={{ color: theme.palette.secondary[200] }}
           >
-            Breakdown of real states and information via category for revenue
-            made for this year and total sales.
+            Breakdown of reports based on their category.
           </Typography>
         </Box>
       </Box>
