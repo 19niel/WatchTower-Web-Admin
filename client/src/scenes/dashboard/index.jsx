@@ -25,7 +25,6 @@ const Dashboard = () => {
   const theme = useTheme();
   const isNonMediumScreens = useMediaQuery("(min-width: 1200px)");
   const { data, isLoading } = useGetDashboardQuery();
-  console.log("🚀 ~ Dashboard ~ data:", data)
 
   // change this for report
   const columns = [
@@ -102,6 +101,7 @@ const Dashboard = () => {
             />
           }
         />
+        
         <StatBox
           title="Reports Today"
           value={data && data.todayStats.totalReports}
