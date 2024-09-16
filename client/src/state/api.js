@@ -11,7 +11,6 @@ export const api = createApi({
     "Geography",
     "Sales",
     "Performance",
-    "Dashboard",
 
     // WatchTOwer
     "User",
@@ -19,6 +18,8 @@ export const api = createApi({
     "Rescuers",
     "Reports",
     "Admins",
+    "Dashboard",
+
 
   ],
   endpoints: (build) => ({

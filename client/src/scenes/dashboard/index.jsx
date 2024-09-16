@@ -25,8 +25,9 @@ const Dashboard = () => {
   const theme = useTheme();
   const isNonMediumScreens = useMediaQuery("(min-width: 1200px)");
   const { data, isLoading } = useGetDashboardQuery();
+  console.log("🚀 ~ Dashboard ~ data:", data)
 
-  // change this for repor
+  // change this for report
   const columns = [
     {
       field: "_id",
@@ -92,7 +93,7 @@ const Dashboard = () => {
         {/* ROW 1 */}
         <StatBox
           title="Total Citizens"
-          value={data && data.totalCustomers}
+          value={data && data.totalCitizens}  // Correct field
           increase="+14%"
           description="Since last month"
           icon={
