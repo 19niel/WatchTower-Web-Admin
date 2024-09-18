@@ -21,16 +21,17 @@ export const getDashboardStats = async (req, res) => {
 
       // /* Recent reports this is not finished */
       // const reports = await Report.find()
-      //   .limit(50)
+      //   .limit(50) 
       //   .sort({ createdOn: -1 });
 
     /* Overall Stats */
     const overallStat = await OverallStat.find({ year: currentYear });
 
+    
     const {
       totalCitizens,
-      yearlyReportsSolvedTotal,
       yearlyReportsTotal,
+      yearlyReportsSolvedTotal,
       monthlyData,
       reportsByCategory,
     } = overallStat[0];
@@ -53,7 +54,7 @@ export const getDashboardStats = async (req, res) => {
       reportsByCategory,
       thisMonthStats,
       todayStats,
-      reports,
+      // reports,
     });
   } catch (error) {
     res.status(404).json({ message: error.message });
