@@ -17,12 +17,10 @@ import Product from "./models/Product.js";
 import User from "./models/User.js";
 
 import ProductStat from "./models/ProductStat.js";
-import Transaction from "./models/Transaction.js";
 import AffiliateStat from "./models/AffiliateStat.js";
 import {
   dataProduct,
   dataProductStat,
-  dataTransaction,
   dataAffiliateStat,
 } from "./data/index.js";
 

@@ -7,7 +7,6 @@ import { DataGrid } from '@mui/x-data-grid';
 const Rescuers = () => {
     const theme = useTheme();
     const { data, isLoading, error } = useGetRescuersQuery();
-    console.log("🚀 ~ Rescuers ~ data:", data);
 
     if (error) return <div>Error: {error.message}</div>; // Handle error state
 

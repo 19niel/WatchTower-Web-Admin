@@ -1,26 +1,79 @@
 import React, { useState } from 'react';
 import { Box, useTheme, Button, Dialog, DialogTitle, DialogContent, TextField, Grid, IconButton, Typography } from "@mui/material";
-import { PhotoCamera } from '@mui/icons-material';
+import { PhotoCamera, Close as CloseIcon } from '@mui/icons-material';
 import { useGetCitizensQuery } from 'state/api'; 
 import Header from "components/Header";
 import { DataGrid } from '@mui/x-data-grid';
-import CloseIcon from '@mui/icons-material/Close';
 
 const Citizens = () => {
   const theme = useTheme();
   const { data, isLoading } = useGetCitizensQuery();
 
-  // State to manage dialog visibility
   const [open, setOpen] = useState(false);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [mobileNumber, setMobileNumber] = useState('');
+  const [address, setAddress] = useState('');
+  const [profileImage, setProfileImage] = useState('');
+  const [imagePreview, setImagePreview] = useState('');
 
-  // Function to open the dialog
   const handleClickOpen = () => {
     setOpen(true);
   };
 
-  // Function to close the dialog
   const handleClose = () => {
     setOpen(false);
+    setImagePreview('');
+  };
+
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setProfileImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const clearImage = () => {
+    setProfileImage('');
+    setImagePreview('');
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const formData = new FormData();
+    formData.append('firstName', firstName);
+    formData.append('lastName', lastName);
+    formData.append('username', username);
+    formData.append('password', password);
+    formData.append('email', email);
+    formData.append('mobileNumber', mobileNumber);
+    formData.append('address', address);
+    if (profileImage) {
+      formData.append('profileImage', profileImage);
+    }
+
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/citizens`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        await response.json();
+        handleClose();
+      }
+    } catch (error) {
+      console.error('Error creating citizen:', error);
+    }
   };
 
   const columns = [
@@ -44,39 +97,31 @@ const Citizens = () => {
       headerName: "Phone Number",
       flex: 0.5,
       renderCell: (params) => {
-        return params.value.replace(/^(\d{4})(\d{3})(\d{3})/, "$1-$2-$3"); // Format the number with REGEX
+        return params.value.replace(/^(\d{4})(\d{3})(\d{3})/, "$1-$2-$3");
       },
     },
     {
       field: "address",
       headerName: "Address",
       flex: 0.8,
-      renderCell: (params) => {
-        const address = params.value || {}; // the `address` object
-        const { houseNumber = "", street = "", barangay = "" } = address;
-        return `${houseNumber}, ${street}, ${barangay}`;
-      },
     },
   ];
 
   return (
     <Box m="1.5rem 2.5rem">
-      {/* Header */}
       <Header title="Citizens" subtitle="List of Citizens" />
       
-      {/* Add Citizen Button */}
       <Box display="flex" justifyContent="flex-end" mt="20px">
         <Button
           variant="contained"
           color="primary"
           sx={{ backgroundColor: theme.palette.primary.main }}
-          onClick={handleClickOpen} // Opens the dialog on click
+          onClick={handleClickOpen}
         >
           Add Citizen
         </Button>
       </Box>
 
-      {/* Dialog for Adding Citizen */}
       <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
         <DialogTitle>
           Add New Citizen
@@ -92,7 +137,6 @@ const Citizens = () => {
         </DialogTitle>
         <DialogContent sx={{ padding: '16px' }}>
           <Grid container spacing={2}>
-            {/* First Column */}
             <Grid item xs={12} sm={6}>
               <Typography variant="body1" mb={1}>
                 Profile Image
@@ -101,36 +145,100 @@ const Citizens = () => {
                 display="flex"
                 alignItems="center"
                 justifyContent="center"
-                height="150px"
+                height="250px"
                 border={`2px dashed ${theme.palette.grey[400]}`}
                 borderRadius="8px"
+                position="relative"
                 mb={2}
               >
+                {imagePreview && (
+                  <IconButton
+                    color="inherit"
+                    onClick={clearImage}
+                    sx={{ position: 'absolute', right: 8, top: 8 }}
+                  >
+                    <CloseIcon />
+                  </IconButton>
+                )}
                 <IconButton
                   color="primary"
                   aria-label="upload picture"
                   component="label"
+                  sx={{ zIndex: 1 }} // Ensure the camera icon is above other elements
                 >
-                  <input hidden accept="image/*" type="file" />
+                  <input hidden accept="image/*" type="file" onChange={handleImageChange} />
                   <PhotoCamera fontSize="large" />
                 </IconButton>
+                {imagePreview ? (
+                  <img 
+                    src={imagePreview} 
+                    alt="Preview" 
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }} 
+                  />
+                ) : (
+                  <Typography variant="body2" color={theme.palette.grey[600]}>
+                    Upload a photo
+                  </Typography>
+                )}
               </Box>
-              <TextField margin="dense" label="First Name" type="text" fullWidth />
-              <TextField margin="dense" label="Last Name" type="text" fullWidth />
-              <TextField margin="dense" label="Mobile Number" type="text" fullWidth />
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <TextField 
+                    margin="dense" 
+                    label="First Name" 
+                    type="text" 
+                    fullWidth 
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)} 
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField 
+                    margin="dense" 
+                    label="Last Name" 
+                    type="text" 
+                    fullWidth 
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)} 
+                  />
+                </Grid>
+              </Grid>
+              <TextField 
+                margin="dense" 
+                label="Username" 
+                type="text" 
+                fullWidth 
+                value={username}
+                onChange={(e) => setUsername(e.target.value)} 
+              />
+              <TextField 
+                margin="dense" 
+                label="Password" 
+                type="password" 
+                fullWidth 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)} 
+              />
+              <TextField 
+                margin="dense" 
+                label="Email" 
+                type="email" 
+                fullWidth 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)} 
+              />
             </Grid>
 
-            {/* Second Column */}
             <Grid item xs={12} sm={6}>
               <Typography variant="body1" mb={1}>
                 Address
               </Typography>
               <Box
-                height="200px"
                 border={`1px solid ${theme.palette.grey[400]}`}
                 display="flex"
                 alignItems="center"
                 justifyContent="center"
+                height="250px"
                 mb={2}
               >
                 Google Maps Placeholder
@@ -142,17 +250,24 @@ const Citizens = () => {
                 InputProps={{ readOnly: true }}
                 value="Pinned location description will appear here."
               />
+              <TextField 
+                margin="dense" 
+                label="Mobile Number" 
+                type="text" 
+                fullWidth 
+                value={mobileNumber}
+                onChange={(e) => setMobileNumber(e.target.value)} 
+              />
             </Grid>
           </Grid>
         </DialogContent>
         <Box sx={{ padding: '8px', display: 'flex', justifyContent: 'flex-end' }}>
-          <Button onClick={handleClose} color="primary">Submit</Button>
+          <Button onClick={handleSubmit} color="primary">Submit</Button>
         </Box>
       </Dialog>
 
-      {/* DataGrid Table */}
       <Box
-        mt="40px"
+        mt="30px"
         height="75vh"
         sx={{
           "& .MuiDataGrid-root": {
@@ -161,7 +276,7 @@ const Citizens = () => {
           "& .MuiDataGrid-cell": {
             borderBottom: "none",
           },
-          "& .MuiDataGrid": {
+          "& .MuiDataGrid-columnHeaders": {
             backgroundColor: theme.palette.background.alt,
             color: theme.palette.secondary[100],
             borderBottom: "none",

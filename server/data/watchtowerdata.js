@@ -14,7 +14,8 @@ export const dataAdmin = [
                 street: "New York",
                 houseNumber: "143",
             }
-        ],
+        ]
+        ,
         profileImage: "to be added",
         reports: [],
         role: "admin",
@@ -32,15 +33,11 @@ export const dataCitizen = [
         password: "pass123",
         email: "jink@gmail.com",
         mobileNumber: "09123456789",
-        address: {
-            barangay: "TIP",
-            street: "Arlegui",
-            houseNumber: "4th",
-        },
+        address: "4th Arlegui, TIP", // Merged address
         profileImage: "to be added",
         reports: [],
         role: "citizen",
-        status: "active",  // Example status
+        status: "active",
     },
     {
         _id: "63701cc1f03239c72c000180",
@@ -50,15 +47,11 @@ export const dataCitizen = [
         password: "pass123",
         email: "grum@gmail.com",
         mobileNumber: "09234567890",
-        address: {
-            barangay: "TIP",
-            street: "Arlegui",
-            houseNumber: "4th",
-        },
+        address: "4th Arlegui, TIP", // Merged address
         profileImage: "to be added",
         reports: [],
         role: "citizen",
-        status: "offline",  // Example status
+        status: "offline",
     },
     {
         _id: "63701cc1f03239c72c000181",
@@ -68,15 +61,11 @@ export const dataCitizen = [
         password: "pass123",
         email: "adolfh@gmail.com",
         mobileNumber: "09345678901",
-        address: {
-            barangay: "TIP",
-            street: "Arlegui",
-            houseNumber: "4th",
-        },
+        address: "4th Arlegui, TIP", // Merged address
         profileImage: "to be added",
         reports: [],
         role: "citizen",
-        status: "active",  // Example status
+        status: "active",
     },
     {
         _id: "63701cc1f03239c72c000182",
@@ -86,15 +75,11 @@ export const dataCitizen = [
         password: "pass123",
         email: "gokuk@gmail.com",
         mobileNumber: "09456789012",
-        address: {
-            barangay: "TIP",
-            street: "Arlegui",
-            houseNumber: "4th",
-        },
+        address: "4th Arlegui, TIP", // Merged address
         profileImage: "to be added",
         reports: [],
         role: "citizen",
-        status: "offline",  // Example status
+        status: "offline",
     },
 ];
 

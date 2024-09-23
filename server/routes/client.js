@@ -1,27 +1,26 @@
 import express from "express";
 import {
-  getProducts,
-  getCustomers,
-  getTransactions,
-  getGeography,
 
+  getCustomers,
+  getGeography,
 
   // WatchTower
   getCitizens,
-  getRescuers
-  //getUser,
+  getRescuers,
+  createCitizen,
 } from "../controllers/client.js";
 
 const router = express.Router();
 
-router.get("/products", getProducts);
+
 router.get("/customers", getCustomers);
-router.get("/transactions", getTransactions);
 router.get("/geography", getGeography);
 
-// router.get("/users", getUsers);
 
 router.get("/citizens", getCitizens);
+router.post("/citizens", createCitizen); // Adjust the route as needed
+
+
 router.get("/rescuers", getRescuers);
 
 export default router;
