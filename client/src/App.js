@@ -8,7 +8,6 @@ import Layout from "scenes/layout";
 import Dashboard from "scenes/dashboard";
 import Geography from "scenes/geography";
 
-import Performance from "scenes/performance";
 
 
 // watchTower FIle
@@ -47,7 +46,6 @@ function App() {
               <Route path="/monthly" element={<Monthly />} />
               <Route path="/breakdown" element={<Breakdown />} />
               <Route path="/admin" element={<Admin />} />
-              <Route path="/performance" element={<Performance />} />
             </Route>
           </Routes>
         </ThemeProvider>

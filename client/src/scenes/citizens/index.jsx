@@ -80,7 +80,7 @@ const Citizens = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this citizen?")) {
       try {
-        const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/citizens/${id}`, {
+        const response = await fetch(`${process.env.REACT_APP_BASE_URL}/client/citizens/${id}`, {
           method: 'DELETE',
         });
         if (response.ok) {
@@ -94,7 +94,7 @@ const Citizens = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+  
     const formData = new FormData();
     formData.append('firstName', firstName);
     formData.append('lastName', lastName);
@@ -104,27 +104,25 @@ const Citizens = () => {
     formData.append('mobileNumber', mobileNumber);
     formData.append('address', address);
     if (profileImage) {
-      formData.append('profileImage', profileImage);
+      formData.append('profileImage', profileImage); // Attach image file
     }
-
-    const url = editMode
-      ? `${process.env.REACT_APP_BASE_URL}/api/citizens/${currentCitizenId}`
-      : `${process.env.REACT_APP_BASE_URL}/api/citizens`;
-    const method = editMode ? 'PUT' : 'POST';
-
+  
     try {
-      const response = await fetch(url, {
-        method: method,
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/client/citizens`, { // Updated URL
+        method: 'POST',
         body: formData,
       });
-
+  
       if (response.ok) {
-        await response.json();
-        handleClose();
-        refetch();
+        const data = await response.json();
+        console.log("Citizen added:", data);
+        refetch(); // Refresh the citizen list after adding
+        handleClose(); // Close the dialog
+      } else {
+        console.error("Failed to add citizen");
       }
     } catch (error) {
-      console.error('Error submitting form:', error);
+      console.error("Error submitting form:", error);
     }
   };
 
@@ -177,7 +175,7 @@ const Citizens = () => {
         <Box>
           <IconButton
             aria-label="edit"
-            color="primary"
+            color="theme.palette.secondary[300]"
             onClick={() => handleEdit(params.row)}
           >
             <EditIcon />
@@ -336,8 +334,6 @@ const Citizens = () => {
                 label="Location Description"
                 fullWidth
                 margin="dense"
-                InputProps={{ readOnly: true }}
-                value="Pinned location description will appear here."
               />
               <TextField
                 margin="dense"

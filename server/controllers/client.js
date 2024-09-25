@@ -6,7 +6,7 @@ import Rescuer from "../models/Rescuer.js";
 
 
 
-  // Citizens ////////////////////////////////////////
+// Citizens ////////////////////////////////////////
   export const getCitizens = async (req, res) => {
     try {
       const citizens = await Citizen.find().select("-password");
@@ -43,7 +43,7 @@ import Rescuer from "../models/Rescuer.js";
   
 
 
-  // Rescuers /////////////////////////////////////////////////////
+// Rescuers /////////////////////////////////////////////////////
   export const getRescuers = async (req, res) => {
     try {
       const rescuers = await Rescuer.find().select("-password");
