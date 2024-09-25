@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import { Box, useTheme, Button, Dialog, DialogTitle, DialogContent, TextField, Grid, IconButton, Typography } from "@mui/material";
-import { PhotoCamera, Close as CloseIcon } from '@mui/icons-material';
-import { useGetCitizensQuery } from 'state/api'; 
+import { PhotoCamera, Close as CloseIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import { useGetCitizensQuery } from 'state/api';
 import Header from "components/Header";
 import { DataGrid } from '@mui/x-data-grid';
 
 const Citizens = () => {
   const theme = useTheme();
-  const { data, isLoading } = useGetCitizensQuery();
+  const { data, isLoading, refetch } = useGetCitizensQuery();
 
   const [open, setOpen] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [currentCitizenId, setCurrentCitizenId] = useState(null);
+
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [username, setUsername] = useState('');
@@ -21,12 +24,27 @@ const Citizens = () => {
   const [imagePreview, setImagePreview] = useState('');
 
   const handleClickOpen = () => {
+    setEditMode(false);
     setOpen(true);
+    resetForm();
   };
 
   const handleClose = () => {
     setOpen(false);
+    resetForm();
+  };
+
+  const resetForm = () => {
+    setFirstName('');
+    setLastName('');
+    setUsername('');
+    setPassword('');
+    setEmail('');
+    setMobileNumber('');
+    setAddress('');
+    setProfileImage('');
     setImagePreview('');
+    setCurrentCitizenId(null);
   };
 
   const handleImageChange = (event) => {
@@ -46,6 +64,34 @@ const Citizens = () => {
     setImagePreview('');
   };
 
+  const handleEdit = (row) => {
+    setEditMode(true);
+    setCurrentCitizenId(row._id);
+    setFirstName(row.firstName);
+    setLastName(row.lastName);
+    setUsername(row.username);
+    setEmail(row.email);
+    setMobileNumber(row.mobileNumber);
+    setAddress(row.address);
+    setImagePreview(row.profileImage);
+    setOpen(true);
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this citizen?")) {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/citizens/${id}`, {
+          method: 'DELETE',
+        });
+        if (response.ok) {
+          refetch();
+        }
+      } catch (error) {
+        console.error("Error deleting citizen:", error);
+      }
+    }
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -61,18 +107,24 @@ const Citizens = () => {
       formData.append('profileImage', profileImage);
     }
 
+    const url = editMode
+      ? `${process.env.REACT_APP_BASE_URL}/api/citizens/${currentCitizenId}`
+      : `${process.env.REACT_APP_BASE_URL}/api/citizens`;
+    const method = editMode ? 'PUT' : 'POST';
+
     try {
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/citizens`, {
-        method: 'POST',
+      const response = await fetch(url, {
+        method: method,
         body: formData,
       });
 
       if (response.ok) {
         await response.json();
         handleClose();
+        refetch();
       }
     } catch (error) {
-      console.error('Error creating citizen:', error);
+      console.error('Error submitting form:', error);
     }
   };
 
@@ -81,6 +133,17 @@ const Citizens = () => {
       field: "profileImage",
       headerName: "Image",
       flex: 0.5,
+      renderCell: (params) => (
+        params.value ? (
+          <img
+            src={params.value}
+            alt="Profile"
+            style={{ width: '40px', height: '40px', borderRadius: '50%' }}
+          />
+        ) : (
+          <Typography>No Image</Typography>  // Display "No Image" when no profileImage is present
+        )
+      ),
     },
     {
       field: "firstName",
@@ -105,13 +168,39 @@ const Citizens = () => {
       headerName: "Address",
       flex: 0.8,
     },
+    {
+      field: "actions",
+      headerName: "Actions",
+      flex: 0.5,
+      sortable: false,
+      renderCell: (params) => (
+        <Box>
+          <IconButton
+            aria-label="edit"
+            color="primary"
+            onClick={() => handleEdit(params.row)}
+          >
+            <EditIcon />
+          </IconButton>
+          <IconButton
+            aria-label="delete"
+            color="error"
+            onClick={() => handleDelete(params.row._id)}
+          >
+            <DeleteIcon />
+          </IconButton>
+        </Box>
+      ),
+    },
   ];
-
+  
   return (
     <Box m="1.5rem 2.5rem">
       <Header title="Citizens" subtitle="List of Citizens" />
+
+      <Box display="flex" justifyContent="flex-end" mt="20px"
       
-      <Box display="flex" justifyContent="flex-end" mt="20px">
+      >
         <Button
           variant="contained"
           color="primary"
@@ -124,7 +213,7 @@ const Citizens = () => {
 
       <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
         <DialogTitle>
-          Add New Citizen
+          {editMode ? 'Edit Citizen' : 'Add New Citizen'}
           <IconButton
             edge="end"
             color="inherit"
@@ -164,16 +253,16 @@ const Citizens = () => {
                   color="primary"
                   aria-label="upload picture"
                   component="label"
-                  sx={{ zIndex: 1 }} // Ensure the camera icon is above other elements
+                  sx={{ zIndex: 1 }}
                 >
                   <input hidden accept="image/*" type="file" onChange={handleImageChange} />
                   <PhotoCamera fontSize="large" />
                 </IconButton>
                 {imagePreview ? (
-                  <img 
-                    src={imagePreview} 
-                    alt="Preview" 
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }} 
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }}
                   />
                 ) : (
                   <Typography variant="body2" color={theme.palette.grey[600]}>
@@ -183,49 +272,49 @@ const Citizens = () => {
               </Box>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
-                  <TextField 
-                    margin="dense" 
-                    label="First Name" 
-                    type="text" 
-                    fullWidth 
+                  <TextField
+                    margin="dense"
+                    label="First Name"
+                    type="text"
+                    fullWidth
                     value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)} 
+                    onChange={(e) => setFirstName(e.target.value)}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <TextField 
-                    margin="dense" 
-                    label="Last Name" 
-                    type="text" 
-                    fullWidth 
+                  <TextField
+                    margin="dense"
+                    label="Last Name"
+                    type="text"
+                    fullWidth
                     value={lastName}
-                    onChange={(e) => setLastName(e.target.value)} 
+                    onChange={(e) => setLastName(e.target.value)}
                   />
                 </Grid>
               </Grid>
-              <TextField 
-                margin="dense" 
-                label="Username" 
-                type="text" 
-                fullWidth 
+              <TextField
+                margin="dense"
+                label="Username"
+                type="text"
+                fullWidth
                 value={username}
-                onChange={(e) => setUsername(e.target.value)} 
+                onChange={(e) => setUsername(e.target.value)}
               />
-              <TextField 
-                margin="dense" 
-                label="Password" 
-                type="password" 
-                fullWidth 
+              <TextField
+                margin="dense"
+                label="Password"
+                type="password"
+                fullWidth
                 value={password}
-                onChange={(e) => setPassword(e.target.value)} 
+                onChange={(e) => setPassword(e.target.value)}
               />
-              <TextField 
-                margin="dense" 
-                label="Email" 
-                type="email" 
-                fullWidth 
+              <TextField
+                margin="dense"
+                label="Email"
+                type="email"
+                fullWidth
                 value={email}
-                onChange={(e) => setEmail(e.target.value)} 
+                onChange={(e) => setEmail(e.target.value)}
               />
             </Grid>
 
@@ -250,59 +339,59 @@ const Citizens = () => {
                 InputProps={{ readOnly: true }}
                 value="Pinned location description will appear here."
               />
-              <TextField 
-                margin="dense" 
-                label="Mobile Number" 
-                type="text" 
-                fullWidth 
+              <TextField
+                margin="dense"
+                label="Mobile Number"
+                type="text"
+                fullWidth
                 value={mobileNumber}
-                onChange={(e) => setMobileNumber(e.target.value)} 
+                onChange={(e) => setMobileNumber(e.target.value)}
               />
             </Grid>
           </Grid>
         </DialogContent>
         <Box sx={{ padding: '8px', display: 'flex', justifyContent: 'flex-end' }}>
-          <Button onClick={handleSubmit} color="primary">Submit</Button>
+          <Button onClick={handleSubmit} color="primary">
+            {editMode ? 'Update Citizen' : 'Add Citizen'}
+          </Button>
         </Box>
       </Dialog>
 
-      <Box
-        mt="30px"
-        height="75vh"
-        sx={{
-          "& .MuiDataGrid-root": {
-            border: "none",
-          },
-          "& .MuiDataGrid-cell": {
-            borderBottom: "none",
-          },
-          "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: theme.palette.background.alt,
-            color: theme.palette.secondary[100],
-            borderBottom: "none",
-          },
-          "& .MuiDataGrid-virtualScroller": {
-            backgroundColor: theme.palette.primary.light,
-          },
-          "& .MuiDataGrid-footerContainer": {
-            backgroundColor: theme.palette.background.alt,
-            color: theme.palette.secondary[100],
-            borderTop: "none",
-          },
-          "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
-            color: `${theme.palette.secondary[200]} !important`,
-          },
-        }}
-      >
+      <Box mt="20px" height="75vh">
         <DataGrid
           loading={isLoading || !data}
           getRowId={(row) => row._id}
           rows={data || []}
           columns={columns}
+
+          sx={{
+            "& .MuiDataGrid-root": {
+              border: "1px",
+            },
+            "& .MuiDataGrid-cell": {
+              borderBottom: "none",
+            },
+            "& .MuiDataGrid": {
+              backgroundColor: theme.palette.background.alt,
+              color: theme.palette.secondary[100],
+              borderBottom: "none",
+            },
+            "& .MuiDataGrid-virtualScroller": {
+              backgroundColor: theme.palette.primary.light,
+            },
+            "& .MuiDataGrid-footerContainer": {
+              backgroundColor: theme.palette.background.alt,
+              color: theme.palette.secondary[100],
+              borderTop: "none",
+            },
+            "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
+              color: `${theme.palette.secondary[200]} !important`,
+            },
+          }}
         />
       </Box>
     </Box>
   );
-}
+};
 
 export default Citizens;

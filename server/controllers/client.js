@@ -1,50 +1,12 @@
 
-import User from "../models/User.js";
-import getCountryIso3 from "country-iso-2-to-3";
-
 import Citizen from "../models/Citizen.js";
 import Rescuer from "../models/Rescuer.js";
 // import Report from "../models/Report.js"
 
 
-export const getCustomers = async (req, res) => {
-  try {
-    const customers = await User.find({ role: "user" }).select("-password");
-    res.status(200).json(customers);
-  } catch (error) {
-    res.status(404).json({ message: error.message });
-  }
-};
 
 
-export const getGeography = async (req, res) => {
-  try {
-    const users = await User.find();
-
-    const mappedLocations = users.reduce((acc, { country }) => {
-      const countryISO3 = getCountryIso3(country);
-      if (!acc[countryISO3]) {
-        acc[countryISO3] = 0;
-      }
-      acc[countryISO3]++;
-      return acc;
-    }, {});
-
-    const formattedLocations = Object.entries(mappedLocations).map(
-      ([country, count]) => {
-        return { id: country, value: count };
-      }
-    );
-
-    res.status(200).json(formattedLocations);
-  } catch (error) {
-    res.status(404).json({ message: error.message });
-  }
-
-
-};
-
-  // WatchTower ////////////////////////////////////////////////////////
+  // Citizens ////////////////////////////////////////
   export const getCitizens = async (req, res) => {
     try {
       const citizens = await Citizen.find().select("-password");
@@ -55,15 +17,16 @@ export const getGeography = async (req, res) => {
   };
 
 
-  export const createCitizen = async (req, res) => {
-    const { firstName, lastName, username, password, email, mobileNumber, address, profileImage } = req.body;
-  
+  export const addCitizen = async (req, res) => {
     try {
+      const { firstName, lastName, username, password, email, mobileNumber, address } = req.body;
+      const profileImage = req.file ? req.file.filename : null; // Handle image upload
+  
       const newCitizen = new Citizen({
         firstName,
         lastName,
         username,
-        password, // Ensure this is hashed before saving
+        password,
         email,
         mobileNumber,
         address,
@@ -73,14 +36,14 @@ export const getGeography = async (req, res) => {
       await newCitizen.save();
       res.status(201).json(newCitizen);
     } catch (error) {
-      res.status(400).json({ message: error.message });
+      console.error(error);
+      res.status(500).json({ message: 'Error creating citizen' });
     }
   };
   
 
 
-
-
+  // Rescuers /////////////////////////////////////////////////////
   export const getRescuers = async (req, res) => {
     try {
       const rescuers = await Rescuer.find().select("-password");

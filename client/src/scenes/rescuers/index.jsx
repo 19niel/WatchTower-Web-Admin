@@ -62,7 +62,7 @@ const Rescuers = () => {
             <Box mt="40px" height="75vh"
                 sx={{
                     "& .MuiDataGrid-root": {
-                        border: "none"
+                        border: "1px"
                     },
                     "& .MuiDataGrid-cell": {
                         borderBottom: "none"
