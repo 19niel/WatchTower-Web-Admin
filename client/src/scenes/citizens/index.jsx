@@ -84,14 +84,15 @@ const Citizens = () => {
           method: 'DELETE',
         });
         if (response.ok) {
-          refetch();
+          refetch(); // Refresh the citizen list
+        } else {
+          console.error("Failed to delete citizen");
         }
       } catch (error) {
         console.error("Error deleting citizen:", error);
       }
     }
   };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
   

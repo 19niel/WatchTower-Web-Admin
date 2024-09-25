@@ -41,6 +41,22 @@ import Rescuer from "../models/Rescuer.js";
     }
   };
   
+  // DELETE a citizen by ID
+export const deleteCitizen = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedCitizen = await Citizen.findByIdAndDelete(id);
+
+    if (!deletedCitizen) {
+      return res.status(404).json({ message: 'Citizen not found' });
+    }
+    
+    res.status(200).json({ message: 'Citizen deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+  
 
 
 // Rescuers /////////////////////////////////////////////////////

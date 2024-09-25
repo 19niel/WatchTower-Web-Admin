@@ -4,6 +4,7 @@ import {
   getCitizens,
   getRescuers,
   addCitizen,
+  deleteCitizen
 } from "../controllers/client.js";
 
 // Configure Multer for file uploads
@@ -23,5 +24,9 @@ const router = express.Router();
 router.get("/citizens", getCitizens);
 router.post("/citizens", upload.single("profileImage"), addCitizen); // <-- Include upload middleware here
 router.get("/rescuers", getRescuers);
+
+
+// New DELETE route for citizens
+router.delete("/citizens/:id", deleteCitizen); // <-- Add this line
 
 export default router;
