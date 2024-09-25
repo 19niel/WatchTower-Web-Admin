@@ -63,6 +63,7 @@ const upload = multer({
 app.use("/client", clientRoutes); // Include the client routes here
 app.use("/general", generalRoutes);
 app.use("/management", managementRoutes);
+app.use("/sales", salesRoutes);
 app.use("/reports", reportsRoutes);
 
 /* MONGOOSE SETUP */
