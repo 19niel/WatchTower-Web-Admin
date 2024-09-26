@@ -47,17 +47,23 @@ const Citizens = () => {
     setCurrentCitizenId(null);
   };
 
-  const handleImageChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setProfileImage(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+
+
+const handleImageChange = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    setProfileImage(file); // Keep the original file for preview if needed
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result); // For image preview
+      // Convert file to Base64
+      const base64String = reader.result;
+      setProfileImage(base64String); // Set profileImage as Base64 string
+    };
+    reader.readAsDataURL(file); // Read file as data URL
+  }
+};
+
 
   const clearImage = () => {
     setProfileImage('');
@@ -93,39 +99,43 @@ const Citizens = () => {
       }
     }
   };
+
   const handleSubmit = async (event) => {
-    event.preventDefault();
-  
-    const formData = new FormData();
-    formData.append('firstName', firstName);
-    formData.append('lastName', lastName);
-    formData.append('username', username);
-    formData.append('password', password);
-    formData.append('email', email);
-    formData.append('mobileNumber', mobileNumber);
-    formData.append('address', address);
-    if (profileImage) {
-      formData.append('profileImage', profileImage); // Attach image file
-    }
-  
-    try {
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/client/citizens`, { // Updated URL
-        method: 'POST',
-        body: formData,
-      });
-  
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Citizen added:", data);
-        refetch(); // Refresh the citizen list after adding
-        handleClose(); // Close the dialog
-      } else {
-        console.error("Failed to add citizen");
+      event.preventDefault();
+
+      const formData = {
+          firstName,
+          lastName,
+          username,
+          password,
+          email,
+          mobileNumber,
+          address,
+          profileImage, // Send Base64 string directly
+      };
+
+      try {
+          const response = await fetch(`${process.env.REACT_APP_BASE_URL}/client/citizens`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json', // Specify the content type
+              },
+              body: JSON.stringify(formData), // Send as JSON
+          });
+
+          if (response.ok) {
+              const data = await response.json();
+              console.log("Citizen added:", data);
+              refetch(); // Refresh the citizen list after adding
+              handleClose(); // Close the dialog
+          } else {
+              console.error("Failed to add citizen");
+          }
+      } catch (error) {
+          console.error("Error submitting form:", error);
       }
-    } catch (error) {
-      console.error("Error submitting form:", error);
-    }
   };
+
 
   const columns = [
     {
@@ -334,7 +344,7 @@ const Citizens = () => {
               <TextField
                 label="Location Description"
                 fullWidth
-                value={mobileNumber}
+                value={address}
                 onChange={(e) => setAddress(e.target.value)}
               />
               <TextField
