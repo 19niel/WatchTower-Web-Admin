@@ -3,7 +3,8 @@ import {
   getCitizens,
   getRescuers,
   addCitizen,
-  deleteCitizen
+  deleteCitizen,
+  updateCitizen
 } from "../controllers/client.js";
 
 const router = express.Router();
@@ -25,7 +26,8 @@ router.get("/citizens", getCitizens);
 router.post("/citizens", addCitizen); // <-- Removed upload middleware here
 router.get("/rescuers", getRescuers);
 
-// New DELETE route for citizens
+// Delete Update route for citizens
 router.delete("/citizens/:id", deleteCitizen); // <-- Add this line
+router.put("/citizens/:id", updateCitizen); 
 
 export default router;

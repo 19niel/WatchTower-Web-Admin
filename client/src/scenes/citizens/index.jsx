@@ -99,43 +99,81 @@ const handleImageChange = (event) => {
       }
     }
   };
-
-  const handleSubmit = async (event) => {
-      event.preventDefault();
-
-      const formData = {
-          firstName,
-          lastName,
-          username,
-          password,
-          email,
-          mobileNumber,
-          address,
-          profileImage, // Send Base64 string directly
-      };
-
-      try {
-          const response = await fetch(`${process.env.REACT_APP_BASE_URL}/client/citizens`, {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json', // Specify the content type
-              },
-              body: JSON.stringify(formData), // Send as JSON
-          });
-
-          if (response.ok) {
-              const data = await response.json();
-              console.log("Citizen added:", data);
-              refetch(); // Refresh the citizen list after adding
-              handleClose(); // Close the dialog
-          } else {
-              console.error("Failed to add citizen");
-          }
-      } catch (error) {
-          console.error("Error submitting form:", error);
+  const handleUpdate = async (event) => {
+    event.preventDefault();
+  
+    const updatedData = {
+      firstName,
+      lastName,
+      username,
+      password,
+      email,
+      mobileNumber,
+      address,
+      profileImage: profileImage || imagePreview, // Use the existing image if profileImage is empty
+    };
+  
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/client/citizens/${currentCitizenId}`, {
+        method: 'PUT', // Use PUT method for updates
+        headers: {
+          'Content-Type': 'application/json', // Specify the content type
+        },
+        body: JSON.stringify(updatedData), // Send as JSON
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Citizen updated:", data);
+        refetch(); // Refresh the citizen list after updating
+        handleClose(); // Close the dialog
+      } else {
+        console.error("Failed to update citizen");
       }
+    } catch (error) {
+      console.error("Error updating citizen:", error);
+    }
   };
-
+  
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+  
+    if (editMode) {
+      await handleUpdate(event); // Call handleUpdate if in edit mode
+    } else {
+      const formData = {
+        firstName,
+        lastName,
+        username,
+        password,
+        email,
+        mobileNumber,
+        address,
+        profileImage, // Send Base64 string directly
+      };
+  
+      try {
+        const response = await fetch(`${process.env.REACT_APP_BASE_URL}/client/citizens`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json', // Specify the content type
+          },
+          body: JSON.stringify(formData), // Send as JSON
+        });
+  
+        if (response.ok) {
+          const data = await response.json();
+          console.log("Citizen added:", data);
+          refetch(); // Refresh the citizen list after adding
+          handleClose(); // Close the dialog
+        } else {
+          console.error("Failed to add citizen");
+        }
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
+    }
+  };
 
   const columns = [
     {

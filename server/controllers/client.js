@@ -50,6 +50,22 @@ export const deleteCitizen = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+// UPDATE a citizen by ID
+export const updateCitizen = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedData = req.body;
+
+    const updatedCitizen = await Citizen.findByIdAndUpdate(id, updatedData, { new: true });
+    if (!updatedCitizen) {
+      return res.status(404).json({ message: 'Citizen not found' });
+    }
+    
+    res.status(200).json(updatedCitizen);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 // Rescuers /////////////////////////////////////////////////////
 export const getRescuers = async (req, res) => {
