@@ -334,7 +334,8 @@ const Citizens = () => {
               <TextField
                 label="Location Description"
                 fullWidth
-                margin="dense"
+                value={mobileNumber}
+                onChange={(e) => setAddress(e.target.value)}
               />
               <TextField
                 margin="dense"
