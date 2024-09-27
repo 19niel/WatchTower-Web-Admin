@@ -17,6 +17,9 @@ const Rescuers = () => {
     // Form fields state
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('');
     const [mobileNumber, setMobileNumber] = useState('');
     const [address, setAddress] = useState('');
     const [profileImage, setProfileImage] = useState('');
@@ -132,9 +135,12 @@ const Rescuers = () => {
             const formData = {
                 firstName,
                 lastName,
+                username,
+                password,
+                email,
                 mobileNumber,
                 address,
-                profileImage,
+                profileImage, // Send Base64 string directly
             };
   
             try {
@@ -256,88 +262,130 @@ const Rescuers = () => {
                     </IconButton>
                 </DialogTitle>
                 <DialogContent sx={{ padding: '16px' }}>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12} sm={6}>
-                            <Typography variant="body1" mb={1}>
-                                Profile Image
-                            </Typography>
-                            <Box
-                                display="flex"
-                                alignItems="center"
-                                justifyContent="center"
-                                height="250px"
-                                border={`2px dashed ${theme.palette.grey[400]}`}
-                                borderRadius="8px"
-                                position="relative"
-                                mb={2}
-                            >
-                                {imagePreview && (
-                                    <IconButton
-                                        color="inherit"
-                                        onClick={clearImage}
-                                        sx={{ position: 'absolute', right: 8, top: 8 }}
-                                    >
-                                        <CloseIcon />
-                                    </IconButton>
-                                )}
-                                <IconButton
-                                    color="primary"
-                                    aria-label="upload picture"
-                                    component="label"
-                                    sx={{ zIndex: 1 }}
-                                >
-                                    <input hidden accept="image/*" type="file" onChange={handleImageChange} />
-                                    <PhotoCamera fontSize="large" />
-                                </IconButton>
-                                {imagePreview ? (
-                                    <img
-                                        src={imagePreview}
-                                        alt="Preview"
-                                        style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }}
-                                    />
-                                ) : (
-                                    <Typography variant="body2" color={theme.palette.grey[600]}>
-                                        Upload a photo
-                                    </Typography>
-                                )}
-                            </Box>
-                            <TextField
-                                margin="dense"
-                                label="First Name"
-                                type="text"
-                                fullWidth
-                                value={firstName}
-                                onChange={(e) => setFirstName(e.target.value)}
-                            />
-                            <TextField
-                                margin="dense"
-                                label="Last Name"
-                                type="text"
-                                fullWidth
-                                value={lastName}
-                                onChange={(e) => setLastName(e.target.value)}
-                            />
-                            <TextField
-                                margin="dense"
-                                label="Mobile Number"
-                                type="text"
-                                fullWidth
-                                value={mobileNumber}
-                                onChange={(e) => setMobileNumber(e.target.value)}
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                margin="dense"
-                                label="Address"
-                                type="text"
-                                fullWidth
-                                value={address}
-                                onChange={(e) => setAddress(e.target.value)}
-                            />
-                        </Grid>
-                    </Grid>
-                </DialogContent>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body1" mb={1}>
+                Profile Image
+              </Typography>
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                height="250px"
+                border={`2px dashed ${theme.palette.grey[400]}`}
+                borderRadius="8px"
+                position="relative"
+                mb={2}
+              >
+                {imagePreview && (
+                  <IconButton
+                    color="inherit"
+                    onClick={clearImage}
+                    sx={{ position: 'absolute', right: 8, top: 8 }}
+                  >
+                    <CloseIcon />
+                  </IconButton>
+                )}
+                <IconButton
+                  color="primary"
+                  aria-label="upload picture"
+                  component="label"
+                  sx={{ zIndex: 1 }}
+                >
+                  <input hidden accept="image/*" type="file" onChange={handleImageChange} />
+                  <PhotoCamera fontSize="large" />
+                </IconButton>
+                {imagePreview ? (
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }}
+                  />
+                ) : (
+                  <Typography variant="body2" color={theme.palette.grey[600]}>
+                    Upload a photo
+                  </Typography>
+                )}
+              </Box>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    margin="dense"
+                    label="First Name"
+                    type="text"
+                    fullWidth
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    margin="dense"
+                    label="Last Name"
+                    type="text"
+                    fullWidth
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                  />
+                </Grid>
+              </Grid>
+              <TextField
+                margin="dense"
+                label="Username"
+                type="text"
+                fullWidth
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+              <TextField
+                margin="dense"
+                label="Password"
+                type="password"
+                fullWidth
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <TextField
+                margin="dense"
+                label="Email"
+                type="email"
+                fullWidth
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body1" mb={1}>
+                Address
+              </Typography>
+              <Box
+                border={`1px solid ${theme.palette.grey[400]}`}
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                height="250px"
+                mb={2}
+              >
+                Google Maps Placeholder
+              </Box>
+              <TextField
+                label="Location Description"
+                fullWidth
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+              />
+              <TextField
+                margin="dense"
+                label="Mobile Number"
+                type="text"
+                fullWidth
+                value={mobileNumber}
+                onChange={(e) => setMobileNumber(e.target.value)}
+              />
+            </Grid>
+          </Grid>
+        </DialogContent>
                 <Box display="flex" justifyContent="flex-end" p={2}>
                     <Button onClick={handleClose} color="inherit" variant="outlined">
                         Cancel

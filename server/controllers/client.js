@@ -76,3 +76,58 @@ export const getRescuers = async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 };
+
+export const addRescuers = async (req, res) => {
+  try {
+    const { firstName, lastName, username, password, email, mobileNumber, address, profileImage } = req.body; // Access profileImage directly from req.body
+
+    const newRescuer = new Rescuer({
+      firstName,
+      lastName,
+      username,
+      password,
+      email,
+      mobileNumber,
+      address,
+      profileImage, // Use the Base64 image string directly
+    });
+
+    await newRescuer.save();
+    res.status(201).json(newRescuer);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error creating Rescuer' });
+  }
+};
+// Delete Citizen
+export const deleteRescuers = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedRescuer = await Rescuer.findByIdAndDelete(id);
+
+    if (!deletedRescuer) {
+      return res.status(404).json({ message: 'Rescuer not found' });
+    }
+    
+    res.status(200).json({ message: 'Rescuer deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// UPDATE a citizen by ID
+export const updateRescuers = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedData = req.body;
+
+    const updatedRescuer = await Rescuer.findByIdAndUpdate(id, updatedData, { new: true });
+    if (!updatedRescuer) {
+      return res.status(404).json({ message: 'Rescuer not found' });
+    }
+    
+    res.status(200).json(updatedRescuer);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

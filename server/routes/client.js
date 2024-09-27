@@ -1,24 +1,35 @@
 import express from "express";
 import {
+  // Citizens
   getCitizens,
-  getRescuers,
   addCitizen,
   deleteCitizen,
-  updateCitizen
+  updateCitizen,
+
+  // Rescuers
+  getRescuers,
+  addRescuers,
+  deleteRescuers,
+  updateRescuers,
+
 } from "../controllers/client.js";
 
 const router = express.Router();
 
 
 
+
+// Citizen CRUD
 router.get("/citizens", getCitizens);
-
-// Updated POST route to remove multer middleware and expect JSON directly
 router.post("/citizens", addCitizen); 
-router.get("/rescuers", getRescuers);
-
-// Delete Update route for citizens
-router.delete("/citizens/:id", deleteCitizen); // <-- Add this line
+router.delete("/citizens/:id", deleteCitizen); 
 router.put("/citizens/:id", updateCitizen); 
+
+
+// Rescuer CRUD
+router.get("/rescuers", getRescuers);
+router.post("/rescuers", addRescuers); 
+router.delete("/rescuers/:id", deleteRescuers); 
+router.put("/rescuers/:id", updateRescuers); 
 
 export default router;
