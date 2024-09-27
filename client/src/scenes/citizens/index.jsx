@@ -216,6 +216,14 @@ const handleImageChange = (event) => {
       flex: 0.8,
     },
     {
+      field: "reports",
+      headerName: "Reports Made",
+      flex: 0.3,
+      renderCell: (params) => {
+        return params.value.length > 0 ? params.value.length : 0;  // Check the length of the reports array
+      },
+    },
+    {
       field: "actions",
       headerName: "Actions",
       flex: 0.5,
@@ -397,9 +405,12 @@ const handleImageChange = (event) => {
           </Grid>
         </DialogContent>
         <Box sx={{ padding: '8px', display: 'flex', justifyContent: 'flex-end' }}>
-          <Button onClick={handleSubmit} color="primary">
-            {editMode ? 'Update Citizen' : 'Add Citizen'}
-          </Button>
+        <Button onClick={handleClose} color="inherit" variant="outlined">
+                        Cancel
+                    </Button>
+                    <Button onClick={handleSubmit} color="primary" variant="contained" sx={{ ml: 1 }}>
+                        {editMode ? 'Update Citizen' : 'Add Citizen'}
+                    </Button>
         </Box>
       </Dialog>
 

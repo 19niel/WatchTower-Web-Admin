@@ -8,6 +8,13 @@ import path from "path";
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
+// data imports
+
+import Rescuer from "./models/Rescuer.js";
+import {
+  dataRescuer,
+} from "./data/watchtowerdata.js";
+
 // Import your routes
 import clientRoutes from "./routes/client.js";
 import generalRoutes from "./routes/general.js";

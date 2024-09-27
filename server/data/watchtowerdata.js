@@ -8,14 +8,7 @@ export const dataAdmin = [
         password: "pass123",
         email: "admin@gmail.com",
         mobileNumber: "09060792207",
-        address: [
-            {
-                barangay: "New Delhi",
-                street: "New York",
-                houseNumber: "143",
-            }
-        ]
-        ,
+        address:"New Delhi New York 143" ,
         profileImage: "to be added",
         reports: [],
         role: "admin",
@@ -93,11 +86,7 @@ export const dataRescuer = [
         password: "pass123",
         email: "timothyb@gmail.com",
         mobileNumber: "09567890123",
-        address: {
-            barangay: "TIP",
-            street: "Arlegui",
-            houseNumber: "4th",
-        },
+        address: "4th Arlegui, TIP", 
         profileImage: "to be added",
         reportsTaken: [],
         role: "rescuer",
@@ -111,11 +100,7 @@ export const dataRescuer = [
         password: "pass123",
         email: "ianu@gmail.com",
         mobileNumber: "09678901234",
-        address: {
-            barangay: "TIP",
-            street: "Arlegui",
-            houseNumber: "4th",
-        },
+        address: "4th Arlegui, TIP", 
         profileImage: "to be added",
         reportsTaken: [],
         role: "rescuer",
@@ -129,11 +114,7 @@ export const dataRescuer = [
         password: "pass123",
         email: "alfior@gmail.com",
         mobileNumber: "09789012345",
-        address: {
-            barangay: "TIP",
-            street: "Arlegui",
-            houseNumber: "4th",
-        },
+        address: "4th Arlegui, TIP", 
         profileImage: "to be added",
         reportsTaken: [],
         role: "rescuer",
@@ -147,11 +128,7 @@ export const dataRescuer = [
         password: "pass123",
         email: "captainp@gmail.com",
         mobileNumber: "09890123456",
-        address: {
-            barangay: "TIP",
-            street: "Arlegui",
-            houseNumber: "4th",
-        },
+        address: "4th Arlegui, TIP", 
         profileImage: "to be added",
         reportsTaken: [],
         role: "rescuer",

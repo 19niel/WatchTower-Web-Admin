@@ -37,9 +37,8 @@ const RescuerSchema = new mongoose.Schema(
             min: 11,
         },
         address: {
-            barangay: { type: String },
-            street: { type: String },
-            houseNumber: { type: String },
+            type: String,
+            required: false,
         },
         profileImage: {
             type: String,
