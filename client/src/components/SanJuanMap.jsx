@@ -158,7 +158,8 @@ const SanJuanMap = () => {
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
         zoom={13} // Adjust the zoom as necessary
-        center={{ lat: 14.6107, lng: 121.0342 }} // Center on the polygon
+        center={{ lat: 14.601972841610728, lng: 121.03527772039602 }} // Center on the polygon
+        
       >
       
 
@@ -166,9 +167,9 @@ const SanJuanMap = () => {
         <Polygon
         paths={sanJuanCity}
         options={{
-            fillColor: "#00FF00", // Bright green
-            fillOpacity: 1,
-            strokeColor: "#0000FF", // Bright blue
+            fillColor: "#FF0000", // Bright green
+            fillOpacity: 0.5,
+            strokeColor: "#FF0000", // Bright blue
             strokeOpacity: 1,
             strokeWeight: 2,
         }}
