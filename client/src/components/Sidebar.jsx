@@ -24,7 +24,6 @@ import {
   TodayOutlined,
   CalendarMonthOutlined,
   AdminPanelSettingsOutlined,
-  TrendingUpOutlined,
   PieChartOutlined,
   
 } from "@mui/icons-material";

@@ -4,6 +4,8 @@ import { PhotoCamera, Close as CloseIcon, Edit as EditIcon, Delete as DeleteIcon
 import { useGetCitizensQuery } from 'state/api';
 import Header from "components/Header";
 import { DataGrid } from '@mui/x-data-grid';
+import SanJuanMap from "components/SanJuanMap"; 
+
 
 const Citizens = () => {
   const theme = useTheme();
@@ -385,7 +387,7 @@ const handleImageChange = (event) => {
                 height="250px"
                 mb={2}
               >
-                Google Maps Placeholder
+                <SanJuanMap /> {/* Pass function to map */}
               </Box>
               <TextField
                 label="Location Description"

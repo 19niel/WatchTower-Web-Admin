@@ -1,179 +1,43 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Box } from "@mui/material";
-import { GoogleMap, useLoadScript, Polygon } from "@react-google-maps/api";
+import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
 
 const mapContainerStyle = {
   width: "100%",
   height: "100%",
 };
 
-const SanJuanMap = () => {
+const SanJuanMap = ({ onLocationSelect }) => {
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
   });
 
+  const [selectedLocation, setSelectedLocation] = useState(null); // State to store selected location
+
+  useEffect(() => {
+    console.log("Map component rendered");
+  }, []); // Empty dependency array means this runs only once when mounted.
+
+  const handleMapClick = (event) => {
+    const { lat, lng } = event.latLng.toJSON();
+    setSelectedLocation({ lat, lng });
+    onLocationSelect({ lat, lng }); // Pass the selected location back to the parent component
+  };
+
   if (loadError) return <div>Error loading maps</div>;
   if (!isLoaded) return <div>Loading Maps...</div>;
-
-  // Static polygon coordinates for testing
-  const sanJuanCity = [
-    { lat: 14.594834, lng: 121.026099 },
-    { lat: 14.595662, lng: 121.026662 },
-    { lat: 14.595857, lng: 121.026893 },
-    { lat: 14.595881, lng: 121.026945 },
-    { lat: 14.595896, lng: 121.027019 },
-    { lat: 14.595888, lng: 121.027082 },
-    { lat: 14.595858, lng: 121.027165 },
-    { lat: 14.595847, lng: 121.027193 },
-    { lat: 14.595070, lng: 121.028490 },
-    { lat: 14.595020, lng: 121.028601 },
-    { lat: 14.595020, lng: 121.028670 },
-    { lat: 14.595208, lng: 121.028994 },
-    { lat: 14.595220, lng: 121.029060 },
-    { lat: 14.595210, lng: 121.029138 },
-    { lat: 14.595081, lng: 121.029272 },
-    { lat: 14.594929, lng: 121.029383 },
-    { lat: 14.594833, lng: 121.029421 },
-    { lat: 14.592307, lng: 121.031697 },
-    { lat: 14.592350, lng: 121.031874 },
-    { lat: 14.591663, lng: 121.033298 },
-    { lat: 14.591645, lng: 121.033641 },
-    { lat: 14.591715, lng: 121.033794 },
-    { lat: 14.591671, lng: 121.033961 },
-    { lat: 14.591505, lng: 121.034083 },
-    { lat: 14.591322, lng: 121.034168 },
-    { lat: 14.591144, lng: 121.034343 },
-    { lat: 14.591025, lng: 121.034525 },
-    { lat: 14.590726, lng: 121.034688 },
-    { lat: 14.590705, lng: 121.034695 },
-    { lat: 14.591853, lng: 121.037076 },
-    { lat: 14.592165, lng: 121.038125 },
-    { lat: 14.592127, lng: 121.039369 },
-    { lat: 14.592127, lng: 121.041617 },
-    { lat: 14.593000, lng: 121.041318 },
-    { lat: 14.593428, lng: 121.042530 },
-    { lat: 14.593641, lng: 121.043457 },
-    { lat: 14.593849, lng: 121.043292 },
-    { lat: 14.593893, lng: 121.043283 },
-    { lat: 14.601324, lng: 121.051764 },
-    { lat: 14.601328, lng: 121.051822 },
-    { lat: 14.600783, lng: 121.055421 },
-    { lat: 14.600758, lng: 121.055766 },
-    { lat: 14.600779, lng: 121.056525 },
-    { lat: 14.600810, lng: 121.056731 },
-    { lat: 14.601631, lng: 121.059238 },
-    { lat: 14.602218, lng: 121.059016 },
-    { lat: 14.603084, lng: 121.058614 },
-    { lat: 14.604653, lng: 121.057888 },
-    { lat: 14.606638, lng: 121.056971 },
-    { lat: 14.604471, lng: 121.052113 },
-    { lat: 14.609146, lng: 121.050252 },
-    { lat: 14.609636, lng: 121.050066 },
-    { lat: 14.608626, lng: 121.045744 },
-    { lat: 14.608632, lng: 121.045647 },
-    { lat: 14.608890, lng: 121.044069 },
-    { lat: 14.609566, lng: 121.043193 },
-    { lat: 14.609601, lng: 121.043108 },
-    { lat: 14.609614, lng: 121.043032 },
-    { lat: 14.608783, lng: 121.040943 },
-    { lat: 14.607413, lng: 121.039063 },
-    { lat: 14.606254, lng: 121.037723 },
-    { lat: 14.606472, lng: 121.037552 },
-    { lat: 14.606616, lng: 121.037288 },
-    { lat: 14.606723, lng: 121.037230 },
-    { lat: 14.607428, lng: 121.037146 },
-    { lat: 14.607542, lng: 121.037110 },
-    { lat: 14.607915, lng: 121.036900 },
-    { lat: 14.608336, lng: 121.036875 },
-    { lat: 14.608400, lng: 121.036835 },
-    { lat: 14.608502, lng: 121.036598 },
-    { lat: 14.608640, lng: 121.036386 },
-    { lat: 14.608570, lng: 121.035872 },
-    { lat: 14.608594, lng: 121.035576 },
-    { lat: 14.608814, lng: 121.035254 },
-    { lat: 14.609388, lng: 121.034827 },
-    { lat: 14.609436, lng: 121.034681 },
-    { lat: 14.609399, lng: 121.034214 },
-    { lat: 14.609487, lng: 121.033880 },
-    { lat: 14.609679, lng: 121.033616 },
-    { lat: 14.610626, lng: 121.032931 },
-    { lat: 14.610787, lng: 121.032705 },
-    { lat: 14.610894, lng: 121.032646 },
-    { lat: 14.610586, lng: 121.032978 },
-    { lat: 14.611011, lng: 121.032460 },
-    { lat: 14.611587, lng: 121.031744 },
-    { lat: 14.611720, lng: 121.031639 },
-    { lat: 14.611959, lng: 121.031355 },
-    { lat: 14.612127, lng: 121.031237 },
-    { lat: 14.612877, lng: 121.030936 },
-    { lat: 14.612924, lng: 121.030778 },
-    { lat: 14.612937, lng: 121.030421 },
-    { lat: 14.613106, lng: 121.030132 },
-    { lat: 14.613145, lng: 121.029831 },
-    { lat: 14.613062, lng: 121.029440 },
-    { lat: 14.612973, lng: 121.029316 },
-    { lat: 14.612849, lng: 121.029225 },
-    { lat: 14.612636, lng: 121.029220 },
-    { lat: 14.612389, lng: 121.029201 },
-    { lat: 14.612182, lng: 121.029104 },
-    { lat: 14.612104, lng: 121.028970 },
-    { lat: 14.612023, lng: 121.028804 },
-    { lat: 14.612005, lng: 121.028678 },
-    { lat: 14.612257, lng: 121.028093 },
-    { lat: 14.612309, lng: 121.027709 },
-    { lat: 14.612332, lng: 121.027511 },
-    { lat: 14.612280, lng: 121.027001 },
-    { lat: 14.612254, lng: 121.026146 },
-    { lat: 14.612400, lng: 121.025352 },
-    { lat: 14.612672, lng: 121.025167 },
-    { lat: 14.613285, lng: 121.025049 },
-    { lat: 14.613495, lng: 121.024740 },
-    { lat: 14.613825, lng: 121.023898 },
-    { lat: 14.613835, lng: 121.023756 },
-    { lat: 14.613809, lng: 121.023595 },
-    { lat: 14.613685, lng: 121.023421 },
-    { lat: 14.613422, lng: 121.023260 },
-    { lat: 14.612042, lng: 121.023112 },
-    { lat: 14.609318, lng: 121.021353 },
-    { lat: 14.608530, lng: 121.022170 },
-    { lat: 14.607980, lng: 121.022487 },
-    { lat: 14.607565, lng: 121.022374 },
-    { lat: 14.606280, lng: 121.021289 },
-    { lat: 14.604306, lng: 121.020045 },
-    { lat: 14.603068, lng: 121.019635 },
-    { lat: 14.602811, lng: 121.019544 },
-    { lat: 14.602292, lng: 121.019584 },
-    { lat: 14.601760, lng: 121.020005 },
-    { lat: 14.599821, lng: 121.023245 },
-    { lat: 14.599447, lng: 121.023612 },
-    { lat: 14.597869, lng: 121.024596 },
-    { lat: 14.596218, lng: 121.025516 },
-    { lat: 14.594842, lng: 121.026101 },
-    { lat: 14.594834, lng: 121.026099 },
-  
-  ];
 
   return (
     <Box sx={{ width: "100%", height: "100%", backgroundColor: "lightgray" }}>
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
-        zoom={13} // Adjust the zoom as necessary
-        center={{ lat: 14.601972841610728, lng: 121.03527772039602 }} // Center on the polygon
-        
+        zoom={13}
+        center={{ lat: 14.601972841610728, lng: 121.03527772039602 }}
+        onClick={handleMapClick} // Handle map clicks
       >
-      
-
-        {/* Render the polygon for San Juan City */}
-        <Polygon
-        paths={sanJuanCity}
-        options={{
-            fillColor: "#FF0000", // Bright green
-            fillOpacity: 0.5,
-            strokeColor: "#FF0000", // Bright blue
-            strokeOpacity: 1,
-            strokeWeight: 2,
-        }}
-        />
+        {selectedLocation && ( // Show marker if a location is selected
+          <Marker position={selectedLocation} />
+        )}
       </GoogleMap>
     </Box>
   );
