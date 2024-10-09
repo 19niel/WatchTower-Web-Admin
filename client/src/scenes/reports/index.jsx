@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { Box, useTheme } from "@mui/material";
+import { Box, useTheme, Button } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { useGetTransactionsQuery } from "state/api";
 import Header from "components/Header";
 import DataGridCustomToolbar from "components/DataGridCustomToolbar";
 
-const Transactions = () => {
+const Reports = () => {
   const theme = useTheme();
 
   // values to be sent to the backend
@@ -97,6 +97,7 @@ const Transactions = () => {
           },
         }}
       >
+        
         <DataGrid
           loading={isLoading || !data}
           getRowId={(row) => row._id}
@@ -117,9 +118,10 @@ const Transactions = () => {
             toolbar: { searchInput, setSearchInput, setSearch },
           }}
         />
+
       </Box>
     </Box>
   );
 };
 
-export default Transactions;
+export default Reports;
