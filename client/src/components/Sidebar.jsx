@@ -25,9 +25,9 @@ import {
   CalendarMonthOutlined,
   AdminPanelSettingsOutlined,
   PieChartOutlined,
-  
+  CrisisAlertOutlined,
+  EngineeringOutlined
 } from "@mui/icons-material";
-import EngineeringOutlinedIcon from '@mui/icons-material/EngineeringOutlined';
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import FlexBetween from "./FlexBetween";
@@ -47,6 +47,10 @@ const navItems = [
   {
     text: "Reports",
     icon: <ReceiptLongOutlined />,
+  },  
+  {
+    text: "Live-Reports ",
+    icon: <CrisisAlertOutlined />,
   },
   {
     text: "Geography",
@@ -82,7 +86,7 @@ const navItems = [
   },
   {
     text: "Rescuers",
-    icon: <EngineeringOutlinedIcon />,
+    icon: <EngineeringOutlined />,
   },
 
   {
