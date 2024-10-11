@@ -12,6 +12,7 @@ import {
   useTheme
 } from '@mui/material';
 import { Close as CloseIcon, PhotoCamera } from '@mui/icons-material';
+import SanJuanMap from '../components/SanJuanMap'; // Import the SanJuanMap component
 
 const DialogRescuerForm = ({ open, onClose, onSubmit, editMode, initialData }) => {
   const theme = useTheme();
@@ -62,6 +63,10 @@ const DialogRescuerForm = ({ open, onClose, onSubmit, editMode, initialData }) =
 
   const clearImage = () => {
     setImagePreview(null);
+  };
+
+  const handleLocationSelect = ({ lat, lng }) => {
+    setAddress(`Latitude: ${lat}, Longitude: ${lng}`); // Set the address state with the coordinates
   };
 
   const handleSubmit = (event) => {
@@ -208,7 +213,7 @@ const DialogRescuerForm = ({ open, onClose, onSubmit, editMode, initialData }) =
                 height="250px"
                 mb={2}
               >
-                Google Maps Placeholder
+                <SanJuanMap onLocationSelect={handleLocationSelect} /> {/* Pass the function to SanJuanMap */}
               </Box>
 
               <TextField
@@ -227,12 +232,13 @@ const DialogRescuerForm = ({ open, onClose, onSubmit, editMode, initialData }) =
               />
             </Grid>
           </Grid>
+
           <Box display="flex" justifyContent="flex-end" p={2}>
             <Button onClick={onClose} color="inherit" variant="outlined">
               Cancel
             </Button>
-            <Button type="submit" color="primary" variant="contained" sx={{ ml: 1 }}>
-              {editMode ? 'Update' : 'Add'}
+            <Button type="submit" variant="contained" color="primary" sx={{ ml: 1 }}>
+              {editMode ? 'Update Rescuer' : 'Add Rescuer'}
             </Button>
           </Box>
         </form>

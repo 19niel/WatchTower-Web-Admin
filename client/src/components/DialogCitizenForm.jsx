@@ -12,8 +12,9 @@ import {
   useTheme
 } from '@mui/material';
 import { Close as CloseIcon, PhotoCamera } from '@mui/icons-material';
+import SanJuanMap from '../components/SanJuanMap';
 
-const DialogRescuerForm = ({ open, onClose, onSubmit, editMode, initialData }) => {
+const DialogCitizenForm = ({ open, onClose, onSubmit, editMode, initialData }) => {
   const theme = useTheme();
 
   // State initialization
@@ -37,7 +38,7 @@ const DialogRescuerForm = ({ open, onClose, onSubmit, editMode, initialData }) =
       setAddress(initialData.address || '');
       setImagePreview(initialData.profileImage || null);
     } else {
-      // Reset form fields for adding a new rescuer
+      // Reset form fields for adding a new citizen
       setFirstName('');
       setLastName('');
       setUsername('');
@@ -64,6 +65,10 @@ const DialogRescuerForm = ({ open, onClose, onSubmit, editMode, initialData }) =
     setImagePreview(null);
   };
 
+  const handleLocationSelect = ({ lat, lng }) => {
+    setAddress(`Latitude: ${lat}, Longitude: ${lng}`); // Set the address state with the coordinates
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault(); // Prevent default form submission
     const formData = {
@@ -82,7 +87,7 @@ const DialogRescuerForm = ({ open, onClose, onSubmit, editMode, initialData }) =
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>
-        {editMode ? 'Edit Rescuer' : 'Add New Rescuer'}
+        {editMode ? 'Edit Citizen' : 'Add New Citizen'}
         <IconButton
           edge="end"
           color="inherit"
@@ -208,7 +213,7 @@ const DialogRescuerForm = ({ open, onClose, onSubmit, editMode, initialData }) =
                 height="250px"
                 mb={2}
               >
-                Google Maps Placeholder
+                <SanJuanMap onLocationSelect={handleLocationSelect} /> {/* Pass the function to SanJuanMap */}
               </Box>
 
               <TextField
@@ -227,6 +232,7 @@ const DialogRescuerForm = ({ open, onClose, onSubmit, editMode, initialData }) =
               />
             </Grid>
           </Grid>
+
           <Box display="flex" justifyContent="flex-end" p={2}>
             <Button onClick={onClose} color="inherit" variant="outlined">
               Cancel
@@ -241,4 +247,4 @@ const DialogRescuerForm = ({ open, onClose, onSubmit, editMode, initialData }) =
   );
 };
 
-export default DialogRescuerForm;
+export default DialogCitizenForm;
