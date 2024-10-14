@@ -26,7 +26,8 @@ import {
   AdminPanelSettingsOutlined,
   PieChartOutlined,
   CrisisAlertOutlined,
-  EngineeringOutlined
+  EngineeringOutlined,
+  ReportProblemOutlined
 } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -50,7 +51,7 @@ const navItems = [
   },  
   {
     text: "Pending-Reports ",
-    icon: <CrisisAlertOutlined />,
+    icon: <ReportProblemOutlined/>,
   },
   {
     text: "Live-Reports ",
