@@ -25,12 +25,12 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
   const [reporterId, setReporterId] = useState('');
   const [location, setLocation] = useState('');
   const [disasterType, setDisasterType] = useState('');
-  const [disasterImage, setDisasterImage] = useState(null);
+  const [disasterImages, setDisasterImages] = useState([]); // Array to hold multiple images
   const [disasterInfo, setDisasterInfo] = useState('');
   const [disasterCategory, setDisasterCategory] = useState('Pending');
   const [rescuerId, setRescuerId] = useState('');
   const [isVerified, setIsVerified] = useState(false);
-  const [imagePreview, setImagePreview] = useState(null);
+  const [imagePreviews, setImagePreviews] = useState([]); // Previews for multiple images
 
   // Populate form fields if in edit mode
   useEffect(() => {
@@ -42,7 +42,7 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
       setDisasterCategory(initialData.disasterCategory || 'Pending');
       setRescuerId(initialData.rescuerId || '');
       setIsVerified(initialData.isVerified || false);
-      setImagePreview(initialData.disasterImage || null);
+      setImagePreviews(initialData.disasterImages || []); // Load initial images if in edit mode
     } else {
       // Reset form fields for adding a new report
       setReporterId('');
@@ -52,25 +52,36 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
       setDisasterCategory('Pending');
       setRescuerId('');
       setIsVerified(false);
-      setImagePreview(null);
+      setImagePreviews([]);
     }
   }, [editMode, initialData]);
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
+    const files = Array.from(e.target.files);
+    const updatedImages = [...disasterImages, ...files];
+
+    // Generate image previews
+    const updatedPreviews = files.map((file) => {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
       reader.readAsDataURL(file);
-      setDisasterImage(file);
-    }
+      return new Promise((resolve) => {
+        reader.onloadend = () => resolve(reader.result);
+      });
+    });
+
+    Promise.all(updatedPreviews).then((previews) => {
+      setImagePreviews([...imagePreviews, ...previews]);
+    });
+
+    setDisasterImages(updatedImages);
   };
 
-  const clearImage = () => {
-    setImagePreview(null);
-    setDisasterImage(null);
+  const clearImage = (index) => {
+    const updatedPreviews = imagePreviews.filter((_, i) => i !== index);
+    const updatedImages = disasterImages.filter((_, i) => i !== index);
+
+    setImagePreviews(updatedPreviews);
+    setDisasterImages(updatedImages);
   };
 
   const handleLocationSelect = ({ lat, lng }) => {
@@ -83,7 +94,7 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
       reporterId,
       location,
       disasterType,
-      disasterImage: imagePreview, // Send image preview URL or file
+      disasterImages, // Send the array of images
       disasterInfo,
       disasterCategory,
       rescuerId,
@@ -111,39 +122,78 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
+              <Typography variant="body1" mb={1}>
+                Upload Disaster Images
+              </Typography>
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                border={`2px dashed ${theme.palette.grey[400]}`}
+                borderRadius="8px"
+                position="relative"
+                p={2}
+                mb={2}
+                flexWrap="wrap"
+              >
+                {imagePreviews.map((preview, index) => (
+                  <Box key={index} position="relative" m={1}>
+                    <IconButton
+                      color="inherit"
+                      onClick={() => clearImage(index)}
+                      sx={{ position: 'absolute', right: 8, top: 8 }}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                    <img
+                      src={preview}
+                      alt={`Preview ${index}`}
+                      style={{
+                        width: '150px',
+                        height: '150px',
+                        objectFit: 'cover',
+                        borderRadius: '8px',
+                      }}
+                    />
+                  </Box>
+                ))}
+                <IconButton
+                  color="primary"
+                  aria-label="upload pictures"
+                  component="label"
+                  sx={{ zIndex: 1 }}
+                >
+                  <input hidden accept="image/*" type="file" multiple onChange={handleImageChange} />
+                  <PhotoCamera fontSize="large" />
+                </IconButton>
+              </Box>
+
               <TextField
                 margin="dense"
-                label="Reporter ID"
+                label="Reported by"
                 type="text"
                 fullWidth
                 value={reporterId}
                 onChange={(e) => setReporterId(e.target.value)}
                 required
               />
+
               <FormControl fullWidth margin="dense">
-                <InputLabel>Disaster Category</InputLabel>
+                <InputLabel>Disaster Type</InputLabel>
                 <Select
-                  value={disasterCategory}
-                  onChange={(e) => setDisasterCategory(e.target.value)}
+                  value={disasterType}
+                  onChange={(e) => setDisasterType(e.target.value)}
                   required
                 >
-                  <MenuItem value="Pending">Pending</MenuItem>
-                  <MenuItem value="In Progress">In Progress</MenuItem>
-                  <MenuItem value="Solved">Solved</MenuItem>
-                  <MenuItem value="Failed">Failed</MenuItem>
-                  <MenuItem value="Under Review">Under Review</MenuItem>
+                  <MenuItem value="Flood">Flood</MenuItem>
+                  <MenuItem value="Typhoon">Typhoon</MenuItem>
+                  <MenuItem value="Fire">Fire</MenuItem>
+                  <MenuItem value="Animals">Animals</MenuItem>
+                  <MenuItem value="Casualties">Casualties</MenuItem>
+                  <MenuItem value="Structural_Damage">Structural Damage</MenuItem>
+                  <MenuItem value="Others">Others</MenuItem>
                 </Select>
               </FormControl>
-
-              <TextField
-                margin="dense"
-                label="Disaster Type"
-                type="text"
-                fullWidth
-                value={disasterType}
-                onChange={(e) => setDisasterType(e.target.value)}
-                required
-              />
 
               <TextField
                 margin="dense"
@@ -156,55 +206,6 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
                 multiline
                 minRows={3}
               />
-
-              <Typography variant="body1" mb={1}>
-                Upload Disaster Image
-              </Typography>
-              <Box
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                height="250px"
-                border={`2px dashed ${theme.palette.grey[400]}`}
-                borderRadius="8px"
-                position="relative"
-                mb={2}
-              >
-                {imagePreview && (
-                  <IconButton
-                    color="inherit"
-                    onClick={clearImage}
-                    sx={{ position: 'absolute', right: 8, top: 8 }}
-                  >
-                    <CloseIcon />
-                  </IconButton>
-                )}
-                <IconButton
-                  color="primary"
-                  aria-label="upload picture"
-                  component="label"
-                  sx={{ zIndex: 1 }}
-                >
-                  <input hidden accept="image/*" type="file" onChange={handleImageChange} />
-                  <PhotoCamera fontSize="large" />
-                </IconButton>
-                {imagePreview ? (
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                      borderRadius: '8px',
-                    }}
-                  />
-                ) : (
-                  <Typography variant="body2" color={theme.palette.grey[600]}>
-                    Upload a photo
-                  </Typography>
-                )}
-              </Box>
             </Grid>
 
             <Grid item xs={12} sm={6}>
