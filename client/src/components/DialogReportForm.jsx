@@ -134,6 +134,8 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
                 position="relative"
                 p={2}
                 mb={2}
+                height="250px" // Set same height as Google Maps holder
+                width="100%" // Full width
                 flexWrap="wrap"
               >
                 {imagePreviews.map((preview, index) => (
@@ -179,10 +181,10 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
               />
 
               <FormControl fullWidth margin="dense">
-                <InputLabel>Disaster Type</InputLabel>
+                <InputLabel>Disaster Category</InputLabel>
                 <Select
                   value={disasterType}
-                  onChange={(e) => setDisasterType(e.target.value)}
+                  onChange={(e) => setDisasterCategory(e.target.value)}
                   required
                 >
                   <MenuItem value="Flood">Flood</MenuItem>
@@ -217,7 +219,7 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
                 display="flex"
                 alignItems="center"
                 justifyContent="center"
-                height="250px"
+                height="250px" // Set same height as the photo upload box
                 mb={2}
               >
                 <SanJuanMap onLocationSelect={handleLocationSelect} /> {/* Pass the function to SanJuanMap */}
