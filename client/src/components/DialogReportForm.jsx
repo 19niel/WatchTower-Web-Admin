@@ -23,6 +23,7 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
 
   // State initialization
   const [reporterId, setReporterId] = useState('');
+  const [reporterBy, setReporterBy] = useState('');
   const [location, setLocation] = useState('');
   const [disasterImages, setDisasterImages] = useState([]); // Array to hold multiple images
   const [disasterInfo, setDisasterInfo] = useState('');
@@ -168,7 +169,7 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
                 label="Reported by"
                 type="text"
                 fullWidth
-                value={reporterId}
+                value={reporterBy}
                 onChange={(e) => setReporterId(e.target.value)}
                 required
               />
