@@ -24,12 +24,10 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
   // State initialization
   const [reporterId, setReporterId] = useState('');
   const [location, setLocation] = useState('');
-  const [disasterType, setDisasterType] = useState('');
   const [disasterImages, setDisasterImages] = useState([]); // Array to hold multiple images
   const [disasterInfo, setDisasterInfo] = useState('');
   const [disasterCategory, setDisasterCategory] = useState('Pending');
   const [rescuerId, setRescuerId] = useState('');
-  const [isVerified, setIsVerified] = useState(false);
   const [imagePreviews, setImagePreviews] = useState([]); // Previews for multiple images
 
   // Populate form fields if in edit mode
@@ -37,21 +35,17 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
     if (editMode && initialData) {
       setReporterId(initialData.reporterId || '');
       setLocation(initialData.location || '');
-      setDisasterType(initialData.disasterType || '');
       setDisasterInfo(initialData.disasterInfo || '');
       setDisasterCategory(initialData.disasterCategory || 'Pending');
       setRescuerId(initialData.rescuerId || '');
-      setIsVerified(initialData.isVerified || false);
       setImagePreviews(initialData.disasterImages || []); // Load initial images if in edit mode
     } else {
       // Reset form fields for adding a new report
       setReporterId('');
       setLocation('');
-      setDisasterType('');
       setDisasterInfo('');
       setDisasterCategory('Pending');
       setRescuerId('');
-      setIsVerified(false);
       setImagePreviews([]);
     }
   }, [editMode, initialData]);
@@ -93,12 +87,11 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
     const formData = {
       reporterId,
       location,
-      disasterType,
       disasterImages, // Send the array of images
       disasterInfo,
       disasterCategory,
       rescuerId,
-      isVerified,
+      disasterStatus: 'active', // Set the disasterStatus to active
     };
     onSubmit(formData); // Call the onSubmit prop to notify parent
   };
@@ -183,7 +176,7 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
               <FormControl fullWidth margin="dense">
                 <InputLabel>Disaster Category</InputLabel>
                 <Select
-                  value={disasterType}
+                  value={disasterCategory}
                   onChange={(e) => setDisasterCategory(e.target.value)}
                   required
                 >
@@ -240,17 +233,6 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
                 value={rescuerId}
                 onChange={(e) => setRescuerId(e.target.value)}
               />
-
-              <FormControl fullWidth margin="dense">
-                <InputLabel>Verified</InputLabel>
-                <Select
-                  value={isVerified}
-                  onChange={(e) => setIsVerified(e.target.value)}
-                >
-                  <MenuItem value={true}>Yes</MenuItem>
-                  <MenuItem value={false}>No</MenuItem>
-                </Select>
-              </FormControl>
             </Grid>
           </Grid>
 

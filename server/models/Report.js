@@ -7,11 +7,13 @@ const ReportSchema = new mongoose.Schema(
             ref: 'Citizen', // Reference to Citizen collection
             required: true
         },
+        reportedBy:{
+            type: String,
+            required: true,
+        },
         location: {
             type: String,
             required: true,
-            min: 2,
-            max: 100,
         },
         disasterCategory: {
             type: String,
