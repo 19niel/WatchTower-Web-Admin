@@ -93,7 +93,7 @@ const Dashboard = () => {
         <StatBox
           title="Total Citizens"
           value={data && data.totalCitizens}  // Correct field
-          increase="+14%"
+          increase="n/a" // put the percentage increase here
           description="Since last month"
           icon={
             <Email
