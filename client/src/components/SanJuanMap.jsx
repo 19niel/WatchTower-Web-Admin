@@ -28,7 +28,9 @@ const SanJuanMap = ({ onLocationSelect }) => {
   if (!isLoaded) return <div>Loading Maps...</div>;
 
   return (
-    <Box sx={{ width: "100%", height: "100%", backgroundColor: "lightgray" }}>
+    <Box 
+    sx={{ 
+      width: "100%", height: "100%", backgroundColor: "lightgray" }}>
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
         zoom={13}

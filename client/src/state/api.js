@@ -14,6 +14,7 @@ export const api = createApi({
 
     // WatchTOwer
     "User",
+    "Admins",
     "Citizens",
     "Rescuers",
     "Reports",
@@ -27,10 +28,7 @@ export const api = createApi({
       query: (id) => `general/user/${id}`,
       providesTags: ["User"],
     }),
-    getAdmin: build.query({
-      query: (id) => `general/admin/${id}`, // Change to the new endpoint
-      providesTags: ["Admins"],
-    }),
+
     getProducts: build.query({
       query: () => "client/products",
       providesTags: ["Products"],
@@ -90,6 +88,7 @@ export const {
   useGetUserPerformanceQuery,
 
   // WatchTower File
+  useGetAdminQuery,
   useGetCitizensQuery,
   useGetRescuersQuery,
   useGetReportsQuery,
