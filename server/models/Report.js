@@ -7,28 +7,33 @@ const ReportSchema = new mongoose.Schema(
             ref: 'Citizen', // Reference to Citizen collection
             required: true
         },
+        reportedBy:{
+            type: String,
+            required: true,
+        },
         location: {
             type: String,
             required: true,
-            min: 2,
-            max: 100,
         },
-        disasterType: {
+        disasterCategory: {
             type: String,
+            enum: ["Flood", "Typhoon",  "Fire", "Animals", "Casualties","Others","Structural_Damage" ],
+            default: "Others",
             required: true
         },
         disasterImage: {
-            type: String,
+            type: [String], // Array of strings (URLs or file paths)
+            default: [], // Default to an empty array if no images are uploaded
         },
         disasterInfo: {
             type: String,
             required: true,
             min: 5,
         },
-        disasterCategory: {
+        disasterStatus: {
                 type: String,
-                enum: ["Pending", "In Progress", "Solved", "Failed", "Under Review"],
-                default: "Pending"
+                enum: ["Active", "In Progress", "Solved", "Failed", "Under Review", "Completed", ],
+                default: "Under Review"
         },
         rescuerId: {
             type: Schema.Types.ObjectId,
