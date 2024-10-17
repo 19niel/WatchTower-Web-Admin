@@ -11,6 +11,7 @@ import { dirname } from 'path';
 // data imports
 
 import Rescuer from "./models/Rescuer.js";
+import OverallStat from "./models/OverallStat.js";
 import {
   dataRescuer,
 } from "./data/watchtowerdata.js";
