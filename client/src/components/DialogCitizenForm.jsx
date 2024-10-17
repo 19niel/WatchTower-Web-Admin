@@ -18,35 +18,41 @@ const DialogCitizenForm = ({ open, onClose, onSubmit, editMode, initialData }) =
   const theme = useTheme();
 
   // State initialization
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [email, setEmail] = useState('');
-  const [mobileNumber, setMobileNumber] = useState('');
-  const [address, setAddress] = useState('');
-  const [imagePreview, setImagePreview] = useState(null);
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    username: '',
+    password: '',
+    email: '',
+    mobileNumber: '',
+    address: '',
+    profileImage: null,
+  });
 
   // Populate form fields if in edit mode
   useEffect(() => {
     if (editMode && initialData) {
-      setFirstName(initialData.firstName || '');
-      setLastName(initialData.lastName || '');
-      setUsername(initialData.username || '');
-      setEmail(initialData.email || '');
-      setMobileNumber(initialData.mobileNumber || '');
-      setAddress(initialData.address || '');
-      setImagePreview(initialData.profileImage || null);
+      setFormData({
+        firstName: initialData.firstName || '',
+        lastName: initialData.lastName || '',
+        username: initialData.username || '',
+        email: initialData.email || '',
+        mobileNumber: initialData.mobileNumber || '',
+        address: initialData.address || '',
+        profileImage: initialData.profileImage || null,
+      });
     } else {
       // Reset form fields for adding a new citizen
-      setFirstName('');
-      setLastName('');
-      setUsername('');
-      setPassword('');
-      setEmail('');
-      setMobileNumber('');
-      setAddress('');
-      setImagePreview(null);
+      setFormData({
+        firstName: '',
+        lastName: '',
+        username: '',
+        password: '',
+        email: '',
+        mobileNumber: '',
+        address: '',
+        profileImage: null,
+      });
     }
   }, [editMode, initialData]);
 
@@ -55,32 +61,25 @@ const DialogCitizenForm = ({ open, onClose, onSubmit, editMode, initialData }) =
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result);
+        setFormData((prevData) => ({ ...prevData, profileImage: reader.result }));
       };
       reader.readAsDataURL(file);
     }
   };
 
   const clearImage = () => {
-    setImagePreview(null);
+    setFormData((prevData) => ({ ...prevData, profileImage: null }));
   };
 
   const handleLocationSelect = ({ lat, lng }) => {
-    setAddress(`Latitude: ${lat}, Longitude: ${lng}`); // Set the address state with the coordinates
+    setFormData((prevData) => ({
+      ...prevData,
+      address: `Latitude: ${lat}, Longitude: ${lng}`, // Set the address state with the coordinates
+    }));
   };
 
   const handleSubmit = (event) => {
     event.preventDefault(); // Prevent default form submission
-    const formData = {
-      firstName,
-      lastName,
-      username,
-      password,
-      email,
-      mobileNumber,
-      address,
-      profileImage: imagePreview,
-    };
     onSubmit(formData); // Call the onSubmit prop to notify parent
   };
 
@@ -116,7 +115,7 @@ const DialogCitizenForm = ({ open, onClose, onSubmit, editMode, initialData }) =
                 position="relative"
                 mb={2}
               >
-                {imagePreview && (
+                {formData.profileImage && (
                   <IconButton
                     color="inherit"
                     onClick={clearImage}
@@ -134,9 +133,9 @@ const DialogCitizenForm = ({ open, onClose, onSubmit, editMode, initialData }) =
                   <input hidden accept="image/*" type="file" onChange={handleImageChange} />
                   <PhotoCamera fontSize="large" />
                 </IconButton>
-                {imagePreview ? (
+                {formData.profileImage ? (
                   <img
-                    src={imagePreview}
+                    src={formData.profileImage}
                     alt="Preview"
                     style={{
                       width: '100%',
@@ -159,8 +158,8 @@ const DialogCitizenForm = ({ open, onClose, onSubmit, editMode, initialData }) =
                     label="First Name"
                     type="text"
                     fullWidth
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
+                    value={formData.firstName}
+                    onChange={(e) => setFormData((prevData) => ({ ...prevData, firstName: e.target.value }))}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -169,8 +168,8 @@ const DialogCitizenForm = ({ open, onClose, onSubmit, editMode, initialData }) =
                     label="Last Name"
                     type="text"
                     fullWidth
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
+                    value={formData.lastName}
+                    onChange={(e) => setFormData((prevData) => ({ ...prevData, lastName: e.target.value }))}
                   />
                 </Grid>
               </Grid>
@@ -180,24 +179,24 @@ const DialogCitizenForm = ({ open, onClose, onSubmit, editMode, initialData }) =
                 label="Username"
                 type="text"
                 fullWidth
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={formData.username}
+                onChange={(e) => setFormData((prevData) => ({ ...prevData, username: e.target.value }))}
               />
               <TextField
                 margin="dense"
                 label="Password"
                 type="password"
                 fullWidth
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={formData.password}
+                onChange={(e) => setFormData((prevData) => ({ ...prevData, password: e.target.value }))}
               />
               <TextField
                 margin="dense"
                 label="Email"
                 type="email"
                 fullWidth
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={formData.email}
+                onChange={(e) => setFormData((prevData) => ({ ...prevData, email: e.target.value }))}
               />
             </Grid>
 
@@ -219,16 +218,16 @@ const DialogCitizenForm = ({ open, onClose, onSubmit, editMode, initialData }) =
               <TextField
                 label="Location Description"
                 fullWidth
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
+                value={formData.address}
+                onChange={(e) => setFormData((prevData) => ({ ...prevData, address: e.target.value }))}
               />
               <TextField
                 margin="dense"
                 label="Mobile Number"
                 type="text"
                 fullWidth
-                value={mobileNumber}
-                onChange={(e) => setMobileNumber(e.target.value)}
+                value={formData.mobileNumber}
+                onChange={(e) => setFormData((prevData) => ({ ...prevData, mobileNumber: e.target.value }))}
               />
             </Grid>
           </Grid>

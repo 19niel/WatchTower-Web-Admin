@@ -1,12 +1,27 @@
-import User from "../models/User.js";
 import OverallStat from "../models/OverallStat.js";
-import Report from "../models/Report.js";
+import Admin from "../models/Admin.js"; // Import the Admin model
 
 export const getUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await User.findById(id);
-    res.status(200).json(user);
+    const admin = await Admin.findById(id); // Fetch admin instead of user
+    if (!admin) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+    res.status(200).json(admin);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+
+
+
+export const getAdmin = async (req, res) => {
+  try {
+    const { id } = req.params; // Assuming you will fetch by admin ID
+    const admin = await Admin.findById(id); // Fetch admin by ID
+    if (!admin) return res.status(404).json({ message: "Admin not found" });
+    res.status(200).json(admin); // Return the fetched admin
   } catch (error) {
     res.status(404).json({ message: error.message });
   }

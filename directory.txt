@@ -1,0 +1,31 @@
+this is my directory for my MERN stack Project for Disaster Management Admin Dashboard 
+MongoDB, Express JS, React JS, Node JS
+
+WatchTower/
+├── client/ 
+│   ├── node_modules/ 
+│   ├── public/ 
+│   ├── src/ 
+│   │   ├── assets/ 
+│   │   ├── components/       
+│   │   ├── scenes/ 
+│   │   ├── state/ 
+│   │   ├── App.js 
+│   │   ├── index.css
+│   │   └── theme.js
+│   ├── .env.local
+│   ├── .gitignore
+│   ├── jsconfig.json
+│   ├── package-lock.json
+│   └── package.json
+├── server/ 
+│   ├── controllers/ 
+│   ├── data/ 
+│   ├── models/ 
+│   ├── node_modules/ 
+│   ├── routes/
+│   ├── uploads/
+│   ├── .env
+│   ├── index.js
+│   ├── package-lock.json
+│   └── package.json

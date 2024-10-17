@@ -14,6 +14,7 @@ import Geography from "scenes/geography";
 import Citizens from "scenes/citizens";
 import Rescuers from "scenes/rescuers";
 import Reports from "scenes/reports";
+import PendingReports from "scenes/pendingreports";
 import LiveReports from "scenes/livereports"
 import Overview from "scenes/overview";
 import Breakdown from "scenes/breakdown";
@@ -37,6 +38,7 @@ function App() {
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/reports" element={<Reports />} />
+              <Route path="/pending-reports" element={<PendingReports />} />
               <Route path="/live-reports" element={<LiveReports />} />
               <Route path="/geography" element={<Geography />} />
 

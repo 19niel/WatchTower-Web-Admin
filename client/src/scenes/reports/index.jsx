@@ -54,11 +54,17 @@ const Reports = () => {
         renderCell: (params) => params.value.length // Grabbing the number of products
     },
     {
-        field: "reporterId",
-        headerName: "Reported By",
+        field: "rescuerName", // Should get the ID first 
+        headerName: "Rescued By",
         flex: 1,
         renderCell: (params) => `$${Number(params.value).toFixed(2)}`,
     },
+    {
+      field: "reporterName",
+      headerName: "Reported By",
+      flex: 1,
+      renderCell: (params) => `$${Number(params.value).toFixed(2)}`,
+  },
     {
         field: "disasterStatus",
         headerName: "Status",

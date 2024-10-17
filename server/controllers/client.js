@@ -1,6 +1,6 @@
 import Citizen from "../models/Citizen.js";
+import OverallStat from "../models/OverallStat.js"; // Import your OverallStat model
 import Rescuer from "../models/Rescuer.js";
-// import Report from "../models/Report.js"
 
 // Citizens ////////////////////////////////////////
 export const getCitizens = async (req, res) => {
@@ -14,7 +14,7 @@ export const getCitizens = async (req, res) => {
 
 export const addCitizen = async (req, res) => {
   try {
-    const { firstName, lastName, username, password, email, mobileNumber, address, profileImage } = req.body; // Access profileImage directly from req.body
+    const { firstName, lastName, username, password, email, mobileNumber, address, profileImage } = req.body;
 
     const newCitizen = new Citizen({
       firstName,
@@ -24,10 +24,14 @@ export const addCitizen = async (req, res) => {
       email,
       mobileNumber,
       address,
-      profileImage, // Use the Base64 image string directly
+      profileImage,
     });
 
     await newCitizen.save();
+
+    // Increment the totalCitizens count in the overallstat collection
+    await OverallStat.updateOne({}, { $inc: { totalCitizens: 1 } });
+
     res.status(201).json(newCitizen);
   } catch (error) {
     console.error(error);
@@ -44,12 +48,15 @@ export const deleteCitizen = async (req, res) => {
     if (!deletedCitizen) {
       return res.status(404).json({ message: 'Citizen not found' });
     }
-    
+
+   // Decrement the totalCitizen count in OverallStat
+   await OverallStat.updateOne({}, { $inc: { totalCitizens: -1 } });
     res.status(200).json({ message: 'Citizen deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
 // UPDATE a citizen by ID
 export const updateCitizen = async (req, res) => {
   try {
@@ -60,7 +67,7 @@ export const updateCitizen = async (req, res) => {
     if (!updatedCitizen) {
       return res.status(404).json({ message: 'Citizen not found' });
     }
-    
+
     res.status(200).json(updatedCitizen);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -79,7 +86,7 @@ export const getRescuers = async (req, res) => {
 
 export const addRescuers = async (req, res) => {
   try {
-    const { firstName, lastName, username, password, email, mobileNumber, address, profileImage } = req.body; // Access profileImage directly from req.body
+    const { firstName, lastName, username, password, email, mobileNumber, address, profileImage } = req.body;
 
     const newRescuer = new Rescuer({
       firstName,
@@ -89,7 +96,7 @@ export const addRescuers = async (req, res) => {
       email,
       mobileNumber,
       address,
-      profileImage, // Use the Base64 image string directly
+      profileImage,
     });
 
     await newRescuer.save();
@@ -99,6 +106,7 @@ export const addRescuers = async (req, res) => {
     res.status(500).json({ message: 'Error creating Rescuer' });
   }
 };
+
 // Delete Citizen
 export const deleteRescuers = async (req, res) => {
   try {
@@ -108,14 +116,14 @@ export const deleteRescuers = async (req, res) => {
     if (!deletedRescuer) {
       return res.status(404).json({ message: 'Rescuer not found' });
     }
-    
+
     res.status(200).json({ message: 'Rescuer deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-// UPDATE a citizen by ID
+// UPDATE a rescuer by ID
 export const updateRescuers = async (req, res) => {
   try {
     const { id } = req.params;
@@ -125,7 +133,7 @@ export const updateRescuers = async (req, res) => {
     if (!updatedRescuer) {
       return res.status(404).json({ message: 'Rescuer not found' });
     }
-    
+
     res.status(200).json(updatedRescuer);
   } catch (error) {
     res.status(500).json({ message: error.message });
