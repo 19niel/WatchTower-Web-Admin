@@ -1,77 +1,40 @@
 import React, { useState } from "react";
-import { Box, useTheme, TextField, Button } from "@mui/material";
+import { Box, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { useGetTransactionsQuery } from "state/api";
 import Header from "components/Header";
 import DataGridCustomToolbar from "components/DataGridCustomToolbar";
+import { useGetReportsQuery } from "state/api"; // Assuming you have this query set up for fetching reports
 
 const Reports = () => {
   const theme = useTheme();
 
-  // values to be sent to the backend
+  // State initialization
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(20);
   const [sort, setSort] = useState({});
   const [search, setSearch] = useState("");
 
   const [searchInput, setSearchInput] = useState("");
-  const { data, isLoading } = useGetTransactionsQuery({
+  
+  // Fetching reports data from MongoDB
+  const { data, isLoading } = useGetReportsQuery({
     page,
     pageSize,
     sort: JSON.stringify(sort),
     search,
   });
+
   const columns = [
-    {
-        field: "_id",
-        headerName: "ID",
-        flex: 1,
-    },
-    {
-        field: "location",
-        headerName: "Location",
-        flex: 0.8,
-    },
-    {
-        field: "disasterCategory",
-        headerName: "Disaster Category",
-        flex: 0.6,
-    },
-    {
-        field: "disasterImage",
-        headerName: "Images",
-        flex: 0.6
-    },
-    {
-        field: "disasterInfi",
-        headerName: "Description",
-        flex: 1,
-    },
-    {
-        field: "createdAt",
-        headerName: "Date",
-        flex: 0.5,
-        renderCell: (params) => params.value.length // Grabbing the number of products
-    },
-    {
-        field: "rescuerName", // Should get the ID first 
-        headerName: "Rescued By",
-        flex: 1,
-        renderCell: (params) => `$${Number(params.value).toFixed(2)}`,
-    },
-    {
-      field: "reporterName",
-      headerName: "Reported By",
-      flex: 1,
-      renderCell: (params) => `$${Number(params.value).toFixed(2)}`,
-  },
-    {
-        field: "disasterStatus",
-        headerName: "Status",
-        flex: 0.5,
-        renderCell: (params) => `$${Number(params.value).toFixed(2)}`,
-    },
-];
+    { field: "_id", headerName: "ID", flex: 1 },
+    { field: "location", headerName: "Location", flex: 0.8 },
+    { field: "disasterCategory", headerName: "Disaster Category", flex: 0.6 },
+    { field: "disasterImage", headerName: "Images", flex: 0.6 },
+    { field: "disasterInfo", headerName: "Description", flex: 1 }, // Fixed typo from "disasterInfi"
+    { field: "createdAt", headerName: "Date", flex: 0.5 },
+    { field: "rescuerName", headerName: "Rescued By", flex: 1 },
+    { field: "reporterName", headerName: "Reported By", flex: 1 },
+    { field: "disasterStatus", headerName: "Status", flex: 0.5 },
+  ];
 
   return (
     <Box m="1.5rem 2.5rem">
@@ -103,11 +66,10 @@ const Reports = () => {
           },
         }}
       >
-        
         <DataGrid
           loading={isLoading || !data}
           getRowId={(row) => row._id}
-          rows={(data && data.transactions) || []}
+          rows={(data && data.reports) || []} // Changed from transactions to reports
           columns={columns}
           rowCount={(data && data.total) || 0}
           rowsPerPageOptions={[20, 50, 100]}
@@ -124,7 +86,6 @@ const Reports = () => {
             toolbar: { searchInput, setSearchInput, setSearch },
           }}
         />
-
       </Box>
     </Box>
   );
