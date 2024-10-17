@@ -28,10 +28,7 @@ export const api = createApi({
       query: (id) => `general/user/${id}`,
       providesTags: ["User"],
     }),
-    getAdmin: build.query({
-      query: (id) => `general/admin/${id}`,
-      providesTags: ["Admin"],
-    }),
+
     getProducts: build.query({
       query: () => "client/products",
       providesTags: ["Products"],
