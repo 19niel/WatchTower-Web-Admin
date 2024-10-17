@@ -7,7 +7,7 @@ const ReportSchema = new mongoose.Schema(
             ref: 'Citizen', // Reference to Citizen collection
             required: true
         },
-        reportedBy:{
+        reportedBy:{ // The Full Name of the Reporter
             type: String,
             required: true,
         },
@@ -40,10 +40,11 @@ const ReportSchema = new mongoose.Schema(
             ref: 'Rescuer', // Reference to Rescuer collection
             required: false
         },
-        isVerified:{
-            type: Boolean,
-            default: false
-        }
+        rescuerName: {
+            type: Schema.Types.ObjectId,
+            ref: 'Rescuer', // Reference to Rescuer collection
+            required: false
+        },
     },
     { timestamps: true }
 );
