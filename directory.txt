@@ -29,3 +29,7 @@ WatchTower/
 │   ├── index.js
 │   ├── package-lock.json
 │   └── package.json
+
+
+client is the frontend and the server is the backend
+

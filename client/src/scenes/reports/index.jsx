@@ -40,10 +40,11 @@ const Reports = () => {
     {
         field: "disasterImage",
         headerName: "Images",
-        flex: 0.6
+        flex: 0.6,
+        renderCell: (params) => <img src={params.value} alt="Disaster-Image" width="100" />,
     },
     {
-        field: "disasterInfi",
+        field: "disasterInfo",
         headerName: "Description",
         flex: 1,
     },
@@ -51,26 +52,24 @@ const Reports = () => {
         field: "createdAt",
         headerName: "Date",
         flex: 0.5,
-        renderCell: (params) => params.value.length // Grabbing the number of products
+        renderCell: (params) => new Date(params.value).toLocaleDateString(), // Format date
     },
     {
         field: "rescuerName", // Should get the ID first 
         headerName: "Rescued By",
         flex: 1,
-        renderCell: (params) => `$${Number(params.value).toFixed(2)}`,
     },
     {
       field: "reporterName",
       headerName: "Reported By",
       flex: 1,
-      renderCell: (params) => `$${Number(params.value).toFixed(2)}`,
-  },
+    },
     {
         field: "disasterStatus",
         headerName: "Status",
         flex: 0.5,
-        renderCell: (params) => `$${Number(params.value).toFixed(2)}`,
     },
+    
 ];
 
   return (

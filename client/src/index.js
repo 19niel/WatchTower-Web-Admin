@@ -6,15 +6,19 @@ import { configureStore } from "@reduxjs/toolkit";
 import globalReducer from "state";
 import { Provider } from "react-redux";
 import { setupListeners } from "@reduxjs/toolkit/query";
-import { api } from "state/api";
+import { api } from "state/api"; // Make sure this is your main API
+import reportApi from "state/reportApi"; // Default import for reportApi
 
 const store = configureStore({
   reducer: {
     global: globalReducer,
     [api.reducerPath]: api.reducer,
+    [reportApi.reducerPath]: reportApi.reducer, // Add reportApi reducer
   },
-  middleware: (getDefault) => getDefault().concat(api.middleware),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(api.middleware, reportApi.middleware), // Add reportApi middleware
 });
+
 setupListeners(store.dispatch);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));

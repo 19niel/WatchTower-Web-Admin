@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 import { Close as CloseIcon, PhotoCamera } from '@mui/icons-material';
 import SanJuanMap from './SanJuanMap'; // Assuming you're using the SanJuanMap component for location selection
+import { useCreateReportMutation } from '../state/reportApi'; // Import the mutation
 
 const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) => {
   const theme = useTheme();
@@ -29,6 +30,7 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
   const [disasterInfo, setDisasterInfo] = useState('');
   const [disasterCategory, setDisasterCategory] = useState('Pending');
   const [imagePreviews, setImagePreviews] = useState([]); // Previews for multiple images
+  const [createReport, { isLoading, isError, error }] = useCreateReportMutation(); // Call the mutation
 
   // Populate form fields if in edit mode
   useEffect(() => {
@@ -50,7 +52,7 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
     const files = Array.from(e.target.files);
     const updatedImages = [...disasterImages, ...files];
 
-    // Generate image previews without logging
+    // Generate image previews
     const updatedPreviews = files.map((file) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -80,51 +82,37 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
     setLocation(`Latitude: ${lat}, Longitude: ${lng}`);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault(); // Prevent default form submission
-  
-    // Log image names and base64 values only on submission
+
     const imageLogs = disasterImages.map((file) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
       return new Promise((resolve) => {
         reader.onloadend = () => {
-          console.log('Image Name:', file.name); // Log the image name
-          console.log('Base64 Encoded Image:', reader.result); // Log the base64 encoded value
           resolve(reader.result); // Resolve with base64 result
         };
       });
     });
-  
-    Promise.all(imageLogs).then((imageData) => {
-      const formData = {
-        reporterId,
-        reportedBy, // Use the static admin ID here
-        location,
-        disasterImages: imageData, // Send the array of base64 images
-        disasterInfo,
-        disasterCategory,
-        disasterStatus: 'active', // Set the disasterStatus to active
-        rescuerId: "No Rescuer Yet", // Add rescuerId with a default value
-        rescuedBy: "No Rescuer Yet" // Add rescuedBy with a default value
-      };
-  
-      // Log all field values including rescuer information
-      console.log('Form Field Values:', {
-        reporterId,
-        reportedBy,
-        location,
-        disasterInfo,
-        disasterCategory,
-        disasterStatus: 'active', // Reflect the value as in formData
-        rescuerId: formData.rescuerId, // Log rescuerId
-        rescuedBy: formData.rescuedBy // Log rescuedBy
-      });
-  
-      onSubmit(formData); // Call the onSubmit prop to notify parent
-    });
+
+    const imageData = await Promise.all(imageLogs);
+
+    const formData = {
+      reporterId,
+      reportedBy,
+      location,
+      disasterImages: imageData, // Send the array of base64 images
+      disasterInfo,
+      disasterCategory,
+      disasterStatus: 'active',
+      rescuerId: "No Rescuer Yet",
+      rescuedBy: "No Rescuer Yet"
+    };
+
+    // Call the createReport mutation
+    await createReport(formData).unwrap(); // Using unwrap to catch errors
+    onSubmit(formData); // Call the onSubmit prop to notify parent
   };
-  
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
@@ -151,17 +139,17 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
               <Box
                 display="flex"
                 alignItems="center"
-                justifyContent={imagePreviews.length === 0 ? 'center' : 'flex-start'} // Center icon initially
+                justifyContent={imagePreviews.length === 0 ? 'center' : 'flex-start'}
                 border={`2px dashed ${theme.palette.grey[400]}`}
                 borderRadius="8px"
                 position="relative"
                 p={2}
                 mb={2}
-                minHeight="250px" // Initial height
+                minHeight="250px"
                 width="100%"
                 flexWrap="wrap"
-                gap={2} // Gap between images to avoid overlap
-                sx={{ overflowY: 'auto' }} // Allows the box to scroll if necessary
+                gap={2}
+                sx={{ overflowY: 'auto' }}
               >
                 {imagePreviews.map((preview, index) => (
                   <Box key={index} position="relative" m={1}>
@@ -184,8 +172,6 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
                     />
                   </Box>
                 ))}
-
-                {/* Camera Icon, initially centered */}
                 <IconButton
                   color="primary"
                   aria-label="upload pictures"
@@ -203,7 +189,7 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
                 type="text"
                 fullWidth
                 value={reportedBy}
-                onChange={(e) => setReporterBy(e.target.value)} // Change this to reporterBy
+                onChange={(e) => setReporterBy(e.target.value)}
                 required
               />
 
@@ -246,10 +232,10 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
                 display="flex"
                 alignItems="center"
                 justifyContent="center"
-                height="250px" // Set same height as the photo upload box
+                height="250px"
                 mb={2}
               >
-                <SanJuanMap onLocationSelect={handleLocationSelect} /> {/* Pass the function to SanJuanMap */}
+                <SanJuanMap onLocationSelect={handleLocationSelect} />
               </Box>
 
               <TextField
@@ -265,10 +251,11 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
             <Button onClick={onClose} color="inherit" variant="outlined">
               Cancel
             </Button>
-            <Button type="submit" color="primary" variant="contained" sx={{ marginLeft: 2 }}>
+            <Button type="submit" color="primary" variant="contained" sx={{ marginLeft: 2 }} disabled={isLoading}>
               {editMode ? 'Update Report' : 'Add Report'}
             </Button>
           </Box>
+          {isError && <Typography color="error">Error: {error.message}</Typography>}
         </form>
       </DialogContent>
     </Dialog>
