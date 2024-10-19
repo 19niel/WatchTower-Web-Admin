@@ -1,10 +1,29 @@
 import OverallStat from "../models/OverallStat.js";
 import Report from '../models/Report.js';
+import multer from 'multer';
+import multerGridFsStorage from 'multer-gridfs-storage';
+import mongoose from 'mongoose';
+
+// Configure GridFS storage
+const storage = new multerGridFsStorage({
+  url: process.env.MONGO_URL,
+  file: (req, file) => {
+    return {
+      filename: `${Date.now()}-${file.originalname}`,
+      bucketName: 'uploads', // The name of the GridFS bucket
+    };
+  },
+});
+
+const upload = multer({ storage });
+
+// Upload images middleware
+export const uploadImages = upload.array('images', 5); // Adjust 'images' based on your form field
 
 // Fetch all reports
 export const getReports = async (req, res) => {
   try {
-    const reports = await Report.find(); // Fetch all reports
+    const reports = await Report.find().populate('reporterId rescuerId'); // Populating Citizen and Rescuer details
     res.status(200).json(reports);
   } catch (error) {
     res.status(404).json({ message: error.message });
@@ -15,7 +34,7 @@ export const getReports = async (req, res) => {
 export const getReportById = async (req, res) => {
   const { id } = req.params;
   try {
-    const report = await Report.findById(id);
+    const report = await Report.findById(id).populate('reporterId rescuerId');
     if (!report) {
       return res.status(404).json({ message: "Report not found" });
     }
@@ -27,12 +46,27 @@ export const getReportById = async (req, res) => {
 
 // Create a new report
 export const createReport = async (req, res) => {
-  const newReport = new Report(req.body); // Get the report details from the request body
   try {
-    const savedReport = await newReport.save(); // Save the report in the database
+    const { reporterId, reportedBy, location, disasterCategory, disasterInfo, rescuerId, isVerified } = req.body;
+    
+    // Retrieve image IDs from req.files if using multer
+    const disasterImages = req.files ? req.files.map(file => file.id) : []; // Handle multiple images
+
+    const newReport = new Report({
+      reporterId,
+      reportedBy,
+      location,
+      disasterCategory,
+      disasterImage: disasterImages, // Store array of image IDs
+      disasterInfo,
+      rescuerId,
+      isVerified,
+    });
+
+    const savedReport = await newReport.save();
     res.status(201).json(savedReport); // Return the saved report
-  } catch (error) {
-    res.status(409).json({ message: error.message });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -42,7 +76,7 @@ export const updateReport = async (req, res) => {
   const reportUpdates = req.body;
 
   try {
-    const updatedReport = await Report.findByIdAndUpdate(id, reportUpdates, { new: true });
+    const updatedReport = await Report.findByIdAndUpdate(id, reportUpdates, { new: true }).populate('reporterId rescuerId');
     if (!updatedReport) {
       return res.status(404).json({ message: "Report not found" });
     }
@@ -65,4 +99,13 @@ export const deleteReport = async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
+};
+
+export default {
+  uploadImages,
+  getReports,
+  getReportById,
+  createReport,
+  updateReport,
+  deleteReport,
 };
