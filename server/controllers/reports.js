@@ -1,11 +1,11 @@
 import OverallStat from "../models/OverallStat.js";
 import Report from '../models/Report.js';
 import multer from 'multer';
-import multerGridFsStorage from 'multer-gridfs-storage';
+import { GridFsStorage } from 'multer-gridfs-storage'; // Corrected import for GridFsStorage
 import mongoose from 'mongoose';
 
 // Configure GridFS storage
-const storage = new multerGridFsStorage({
+const storage = new GridFsStorage({ // Use GridFsStorage instead of multerGridFsStorage
   url: process.env.MONGO_URL,
   file: (req, file) => {
     return {

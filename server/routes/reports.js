@@ -1,6 +1,6 @@
 import express from 'express';
 import {
-  getAllReports,
+  getReports,
   createReport,
   getReportById,
   updateReport,
@@ -11,7 +11,7 @@ import {
 const router = express.Router();
 
 // Fetch all reports
-router.get('/', getAllReports);
+router.get('/', getReports);
 
 // Create a new report with images
 router.post('/', uploadImages, createReport); // Use the multer middleware here
