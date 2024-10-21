@@ -8,8 +8,7 @@ import path from "path";
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
-// data imports
-
+// Data imports
 import Rescuer from "./models/Rescuer.js";
 import {
   dataRescuer,
@@ -54,6 +53,10 @@ app.use("/reports", reportsRoutes);
 
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT || 9000;
+
+// Set the strictQuery option to suppress the deprecation warning
+mongoose.set('strictQuery', false); // or true based on your needs
+
 mongoose
     .connect(process.env.MONGO_URL, {
         useNewUrlParser: true,
