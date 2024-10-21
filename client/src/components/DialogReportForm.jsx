@@ -26,10 +26,8 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
   const [reporterId] = useState('66cc2f274aec4c32e965d452'); // Static admin ID
   const [reportedBy, setReporterBy] = useState('');
   const [location, setLocation] = useState('');
-  const [disasterImages, setDisasterImages] = useState([]); // Array to hold multiple images
   const [disasterInfo, setDisasterInfo] = useState('');
   const [disasterCategory, setDisasterCategory] = useState('Pending');
-  const [imagePreviews, setImagePreviews] = useState([]); // Previews for multiple images
   const [createReport, { isLoading, isError, error }] = useCreateReportMutation(); // Call the mutation
 
   // Populate form fields if in edit mode
@@ -38,45 +36,13 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
       setLocation(initialData.location || '');
       setDisasterInfo(initialData.disasterInfo || '');
       setDisasterCategory(initialData.disasterCategory || 'Pending');
-      setImagePreviews(initialData.disasterImages || []); // Load initial images if in edit mode
     } else {
       // Reset form fields for adding a new report
       setLocation('');
       setDisasterInfo('');
       setDisasterCategory('Pending');
-      setImagePreviews([]);
     }
   }, [editMode, initialData]);
-
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    const updatedImages = [...disasterImages, ...files];
-
-    // Generate image previews
-    const updatedPreviews = files.map((file) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      return new Promise((resolve) => {
-        reader.onloadend = () => {
-          resolve(reader.result); // Resolve with base64 result
-        };
-      });
-    });
-
-    Promise.all(updatedPreviews).then((previews) => {
-      setImagePreviews([...imagePreviews, ...previews]);
-    });
-
-    setDisasterImages(updatedImages);
-  };
-
-  const clearImage = (index) => {
-    const updatedPreviews = imagePreviews.filter((_, i) => i !== index);
-    const updatedImages = disasterImages.filter((_, i) => i !== index);
-
-    setImagePreviews(updatedPreviews);
-    setDisasterImages(updatedImages);
-  };
 
   const handleLocationSelect = ({ lat, lng }) => {
     setLocation(`Latitude: ${lat}, Longitude: ${lng}`);
@@ -85,23 +51,11 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
   const handleSubmit = async (event) => {
     event.preventDefault(); // Prevent default form submission
 
-    const imageLogs = disasterImages.map((file) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      return new Promise((resolve) => {
-        reader.onloadend = () => {
-          resolve(reader.result); // Resolve with base64 result
-        };
-      });
-    });
-
-    const imageData = await Promise.all(imageLogs);
-
     const formData = {
       reporterId,
       reportedBy,
       location,
-      disasterImages: imageData, // Send the array of base64 images
+      disasterImages: "No Images", // Set the value as a string
       disasterInfo,
       disasterCategory,
       disasterStatus: 'active',
@@ -134,12 +88,12 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <Typography variant="body1" mb={1}>
-                Upload Disaster Images
+                Upload Disaster Images (Demo Only)
               </Typography>
               <Box
                 display="flex"
                 alignItems="center"
-                justifyContent={imagePreviews.length === 0 ? 'center' : 'flex-start'}
+                justifyContent="center"
                 border={`2px dashed ${theme.palette.grey[400]}`}
                 borderRadius="8px"
                 position="relative"
@@ -149,36 +103,15 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
                 width="100%"
                 flexWrap="wrap"
                 gap={2}
-                sx={{ overflowY: 'auto' }}
               >
-                {imagePreviews.map((preview, index) => (
-                  <Box key={index} position="relative" m={1}>
-                    <IconButton
-                      color="inherit"
-                      onClick={() => clearImage(index)}
-                      sx={{ position: 'absolute', right: 8, top: 8 }}
-                    >
-                      <CloseIcon />
-                    </IconButton>
-                    <img
-                      src={preview}
-                      alt={`Preview ${index}`}
-                      style={{
-                        width: '150px',
-                        height: '150px',
-                        objectFit: 'cover',
-                        borderRadius: '8px',
-                      }}
-                    />
-                  </Box>
-                ))}
+                <Typography>No Images</Typography>
                 <IconButton
                   color="primary"
                   aria-label="upload pictures"
                   component="label"
                   sx={{ zIndex: 1 }}
                 >
-                  <input hidden accept="image/*" type="file" multiple onChange={handleImageChange} />
+                  <input hidden accept="image/*" type="file" multiple />
                   <PhotoCamera fontSize="large" />
                 </IconButton>
               </Box>
