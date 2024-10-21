@@ -18,8 +18,8 @@ import {
 import clientRoutes from "./routes/client.js";
 import generalRoutes from "./routes/general.js";
 import managementRoutes from "./routes/management.js";
-import salesRoutes from "./routes/sales.js";
 import reportsRoutes from "./routes/reports.js";
+import overallstatsRoutes from "./routes/overallstats.js";
 
 // Load environment variables
 dotenv.config();
@@ -48,7 +48,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/client", clientRoutes); // Include the client routes here
 app.use("/general", generalRoutes);
 app.use("/management", managementRoutes);
-app.use("/sales", salesRoutes);
+app.use("/overallstats", overallstatsRoutes);
 app.use("/reports", reportsRoutes);
 
 /* MONGOOSE SETUP */

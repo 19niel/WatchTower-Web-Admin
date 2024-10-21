@@ -4,9 +4,9 @@ import { getReports, createReport } from "../controllers/reports.js"; // Import 
 const router = express.Router();
 
 // Existing GET route
-router.get("/reports", getReports);
+router.get("/", getReports); // Change this line
 
 // New POST route for creating a report
-router.post("/reports", createReport); // Add this line
+router.post("/", createReport); // Change this line
 
 export default router;

@@ -20,6 +20,7 @@ export const api = createApi({
     "Reports",
     "Admins",
     "Dashboard",
+    "OverallStats"
 
 
   ],
@@ -45,9 +46,9 @@ export const api = createApi({
       query: () => "client/geography",
       providesTags: ["Geography"],
     }),
-    getSales: build.query({
-      query: () => "sales/sales",
-      providesTags: ["Sales"],
+    getOverallStats: build.query({
+      query: () => "overallstats",
+      providesTags: ["OverallStats"],
     }),
     getUserPerformance: build.query({
       query: (id) => `management/performance/${id}`,
@@ -65,7 +66,7 @@ export const api = createApi({
       providesTags: ["Rescuers"],
     }),
     getReports: build.query({
-      query: () => "reports/reports",
+      query: () => "reports",
       providesTags: ["Reports"],
     }),
     getAdmins: build.query({
@@ -84,7 +85,6 @@ export const {
   useGetProductsQuery,
   useGetTransactionsQuery,
   useGetGeographyQuery,
-  useGetSalesQuery,
   useGetUserPerformanceQuery,
 
   // WatchTower File
@@ -94,6 +94,6 @@ export const {
   useGetReportsQuery,
   useGetAdminsQuery,
   useGetDashboardQuery,
-
+  useGetOverallStatsQuery,
 
 } = api;

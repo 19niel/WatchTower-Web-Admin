@@ -1,11 +1,11 @@
 import React, { useMemo } from "react";
 import { ResponsiveLine } from "@nivo/line";
 import { useTheme } from "@mui/material";
-import { useGetSalesQuery } from "state/api";
+import { useGetOverallStatsQuery } from "state/api";
 
 const OverviewChart = ({ isDashboard = false, view }) => {
   const theme = useTheme();
-  const { data, isLoading } = useGetSalesQuery();
+  const { data, isLoading } = useGetOverallStatsQuery();
 
   const [totalReportsLine, totalReportsSolvedLine] = useMemo(() => {
     if (!data) return [];

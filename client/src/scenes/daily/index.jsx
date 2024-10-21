@@ -2,14 +2,14 @@ import React, { useMemo, useState } from "react";
 import { Box, useTheme } from "@mui/material";
 import Header from "components/Header";
 import { ResponsiveLine } from "@nivo/line";
-import { useGetSalesQuery } from "state/api";
+import { useGetOverallStatsQuery } from "state/api";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 const Daily = () => {
   const [startDate, setStartDate] = useState(new Date("2023-01-01"));
   const [endDate, setEndDate] = useState(new Date("2024-09-11"));
-  const { data } = useGetSalesQuery();
+  const { data } = useGetOverallStatsQuery ();
   const theme = useTheme();
 
   const [formattedData] = useMemo(() => {

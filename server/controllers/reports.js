@@ -1,16 +1,16 @@
-import OverallStat from "../models/OverallStat.js";
 import Report from "../models/Report.js"; // Adjust the path as needed
 
+// Function to get all reports from the Report collection
 export const getReports = async (req, res) => {
   try {
-    const overallStats = await OverallStat.find();
-    res.status(200).json(overallStats[0]); // First array is 2023
+    const reports = await Report.find(); // Fetch all reports from the Report collection
+    res.status(200).json(reports); // Return the reports
   } catch (error) {
-    res.status(404).json({ message: error.message });
+    res.status(404).json({ message: error.message }); // Handle any errors
   }
 };
 
-// New function to handle report creation
+// Function to handle report creation
 export const createReport = async (req, res) => {
   const reportData = req.body; // Get the report data from the request body
 

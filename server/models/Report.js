@@ -31,6 +31,7 @@ const ReportSchema = new mongoose.Schema(
         },
         disasterStatus: {
                 type: String,
+                // "Active", "In Progress", "Solved", "Failed", "Under Review", "Completed"
         },
         rescuerId: {
             type: String,

@@ -1,10 +1,10 @@
 import React from "react";
 import { ResponsivePie } from "@nivo/pie";
 import { Box, Typography, useTheme } from "@mui/material";
-import { useGetSalesQuery } from "state/api";
+import { useGetOverallStatsQuery } from "state/api";
 
 const BreakdownChart = ({ isDashboard = false }) => {
-  const { data, isLoading } = useGetSalesQuery();
+  const { data, isLoading } = useGetOverallStatsQuery();
   const theme = useTheme();
 
   if (!data || isLoading) return "Loading...";
@@ -15,6 +15,7 @@ const BreakdownChart = ({ isDashboard = false }) => {
     theme.palette.secondary[300],
     theme.palette.secondary[500],
   ];
+
   const formattedData = Object.entries(data.reportsByCategory).map(
     ([category, reports], i) => ({
       id: category,
@@ -22,8 +23,6 @@ const BreakdownChart = ({ isDashboard = false }) => {
       value: reports,
       color: colors[i],
     })
-
-
   );
 
   return (
