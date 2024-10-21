@@ -1,12 +1,18 @@
 import express from "express";
-import { getReports, createReport } from "../controllers/reports.js"; // Import the new function
+import { getReports, createReport, updateReport, deleteReport } from "../controllers/reports.js"; // Import the new function
 
 const router = express.Router();
 
 // Existing GET route
-router.get("/", getReports); // Change this line
+router.get("/", getReports); // Route to fetch reports
 
-// New POST route for creating a report
-router.post("/", createReport); // Change this line
+// POST route for creating a report
+router.post("/", createReport); // Route to create a new report
+
+// PATCH route for updating a report by ID
+router.patch("/:id", updateReport); // Route to update a report by ID
+
+// DELETE route for deleting a report by ID
+router.delete("/:id", deleteReport); // Route to delete a report by ID
 
 export default router;

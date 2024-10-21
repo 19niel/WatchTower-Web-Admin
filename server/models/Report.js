@@ -37,9 +37,9 @@ const ReportSchema = new mongoose.Schema(
             type: String,
             required: false, // allows rescuerId to be optional
         },
-        rescuerName: {
+        rescuedBy: {
             type: String,
-            required: false, // allows rescuerId to be optional
+            required: false, 
         },
     },
     { timestamps: true }
