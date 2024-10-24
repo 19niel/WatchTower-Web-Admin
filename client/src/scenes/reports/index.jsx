@@ -7,6 +7,7 @@ import DataGridCustomToolbar from "components/DataGridCustomToolbar";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DialogReportForm from "components/DialogReportForm"; // Import your dialog component
+import ImagePreview from "components/ImagePreview"; 
 
 const Reports = () => {
   const theme = useTheme();
@@ -15,13 +16,34 @@ const Reports = () => {
   const [sort, setSort] = useState({});
   const [search, setSearch] = useState("");
   const [searchInput, setSearchInput] = useState("");
-  const [openDialog, setOpenDialog] = useState(false); // State to control dialog open/close
-  const [currentReport, setCurrentReport] = useState(null); // State to hold the selected report
+  const [openDialog, setOpenDialog] = useState(false); 
+  const [currentReport, setCurrentReport] = useState(null);
 
-  // Fetching reports using the query hook
+  const [previewOpen, setPreviewOpen] = useState(false); 
+  const [previewImages, setPreviewImages] = useState([]); 
+  const [currentImageIndex, setCurrentImageIndex] = useState(0); 
+
   const { data, isLoading, refetch } = useFetchReportsQuery(); 
   const [updateReport] = useUpdateReportMutation(); 
   const [deleteReport] = useDeleteReportMutation(); 
+
+  const handleNextImage = () => {
+    if (currentImageIndex < previewImages.length - 1) {
+      setCurrentImageIndex((prevIndex) => prevIndex + 1);
+    }
+  };
+
+  const handlePrevImage = () => {
+    if (currentImageIndex > 0) {
+      setCurrentImageIndex((prevIndex) => prevIndex - 1);
+    }
+  };
+
+  const handleOpenPreview = (images, index) => {
+    setPreviewImages(images); // Set the images for preview
+    setCurrentImageIndex(index); // Set the current image index
+    setPreviewOpen(true); // Open the image preview modal
+  };
 
   const columns = [
     { field: "_id", headerName: "ID", flex: 1 },
@@ -31,12 +53,26 @@ const Reports = () => {
       field: "disasterImages",
       headerName: "Images",
       flex: 1,
-      renderCell: (params) =>
-        params.value[0] !== "No Images" ? (
-          <img src={params.value[0]} alt="Disaster" width="100" />
-        ) : (
-          <span>No Images</span>
-        ),
+      renderCell: (params) => {
+        const images = params.value;
+        if (!images.length || images[0] === "No Images") {
+          return <span>No Images</span>;
+        }
+        return (
+          <Box display="flex" justifyContent="space-between">
+            {images.slice(0, 3).map((image, index) => (
+              <img 
+                key={index} 
+                src={image} 
+                alt={`Disaster ${index + 1}`} 
+                width="80" 
+                style={{ marginRight: '4px', cursor: 'pointer' }} 
+                onClick={() => handleOpenPreview(images, index)} 
+              />
+            ))}
+          </Box>
+        );
+      },
     },
     { field: "disasterInfo", headerName: "Description", flex: 1 },
     {
@@ -56,7 +92,7 @@ const Reports = () => {
         <Box>
           <IconButton
             sx={{ color: theme.palette.success.main }} 
-            onClick={() => handleEditReport(params.row)} // Updated function name to handleEditReport
+            onClick={() => handleEditReport(params.row)} 
           >
             <EditIcon />
           </IconButton>
@@ -71,29 +107,30 @@ const Reports = () => {
     }
   ];
 
-  // Function to handle editing the selected report
   const handleEditReport = (report) => {
-    setCurrentReport(report); // Set the selected report data to currentReport state
-    setOpenDialog(true); // Open the dialog
+    setCurrentReport(report); 
+    setOpenDialog(true); 
   };
 
-  // Function to handle report deletion
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this report?")) {
       try {
         await deleteReport(id).unwrap();
         refetch(); 
       } catch (error) {
-        console.error("Failed to delete the report: ", error);
         alert("Failed to delete the report. Please try again.");
       }
     }
   };
 
-  // Function to close the dialog and clear selected report data
   const handleCloseDialog = () => {
-    setOpenDialog(false); // Close the dialog
-    setCurrentReport(null); // Clear the current report
+    setOpenDialog(false); 
+    setCurrentReport(null); 
+  };
+
+  const handleClosePreview = () => {
+    setPreviewOpen(false);
+    setCurrentImageIndex(0); // Reset index for next time the preview opens
   };
 
   return (
@@ -152,7 +189,17 @@ const Reports = () => {
       <DialogReportForm 
         open={openDialog} 
         onClose={handleCloseDialog} 
-        reportData={currentReport} // Pass the selected report data to DialogReportForm
+        reportData={currentReport} 
+      />
+
+      {/* Image Preview Modal */}
+      <ImagePreview 
+        open={previewOpen}
+        images={previewImages}
+        currentIndex={currentImageIndex}
+        onClose={handleClosePreview}
+        onNext={handleNextImage}
+        onPrev={handlePrevImage}
       />
     </Box>
   );
