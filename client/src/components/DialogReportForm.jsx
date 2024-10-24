@@ -27,7 +27,7 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
   const [reportedBy, setReportedBy] = useState('');
   const [location, setLocation] = useState('');
   const [disasterInfo, setDisasterInfo] = useState('');
-  const [disasterCategory, setDisasterCategory] = useState('Pending');
+  const [disasterCategory, setDisasterCategory] = useState('');
   const [priority, setPriority] = useState('Pending'); // Initialize priority
   const [images, setImages] = useState([]); // State for storing selected images
   const [createReport, { isLoading, isError, error }] = useCreateReportMutation(); // Call the mutation
@@ -37,7 +37,7 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
     if (editMode && initialData) {
       setLocation(initialData.location || '');
       setDisasterInfo(initialData.disasterInfo || '');
-      setDisasterCategory(initialData.disasterCategory || 'Pending');
+      setDisasterCategory(initialData.disasterCategory || '');
       setReportedBy(initialData.reportedBy || ''); // Populate reportedBy if in edit mode
       setPriority(initialData.priority || 'Pending'); // Populate priority if in edit mode
       // Handle initial images if any
@@ -46,7 +46,7 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
       // Reset form fields for adding a new report
       setLocation('');
       setDisasterInfo('');
-      setDisasterCategory('Pending');
+      setDisasterCategory('');
       setReportedBy('');
       setPriority('Pending');
       setImages([]);
@@ -60,7 +60,7 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
   const handleImages = (event) => {
     const files = Array.from(event.target.files);
     const imageURLs = files.map((file) => URL.createObjectURL(file)); // Create URLs for the selected images
-    setImages(imageURLs); // Update images state
+    setImages((prevImages) => [...prevImages, ...imageURLs]); // Update images state to append new images
   };
 
   const handleSubmit = async (event) => {
@@ -70,12 +70,12 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
       reporterId,
       reportedBy,
       location,
-      disasterImages: images, // Use the images state
+      disasterImages: images, // Use the images state, which is an array
       disasterInfo,
       disasterCategory,
       disasterStatus: 'active',
       rescuerId: "No Rescuer Yet",
-      rescuerName: "No Rescuer Yet",
+      rescuedBy: "No Rescuer Yet",
       priority // Include the priority field
     };
 
