@@ -33,6 +33,10 @@ const ReportSchema = new mongoose.Schema(
                 type: String,
                 // "Active", "In Progress", "Solved", "Failed", "Under Review", "Completed"
         },
+        priority: {
+            type: String,
+            // "Active", "In Progress", "Solved", "Failed", "Under Review", "Completed"
+         },
         rescuerId: {
             type: String,
             required: false, // allows rescuerId to be optional

@@ -89,6 +89,7 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
       formData.append('disasterImages', image);
     });
 
+
     // Call the createReport mutation with the FormData
     await createReport(formData).unwrap(); // Using unwrap to catch errors
     onSubmit(formData); // Call the onSubmit prop to notify parent
