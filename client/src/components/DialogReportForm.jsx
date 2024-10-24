@@ -15,7 +15,7 @@ import {
   InputLabel,
   FormControl
 } from '@mui/material';
-import { Close as CloseIcon, PhotoCamera, Cancel as CancelIcon } from '@mui/icons-material';
+import { Close as CloseIcon, PhotoCamera } from '@mui/icons-material';
 import SanJuanMap from './SanJuanMap'; // Assuming you're using the SanJuanMap component for location selection
 import { useCreateReportMutation } from '../state/reportApi'; // Import the mutation
 
@@ -24,28 +24,32 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
 
   // State initialization
   const [reporterId] = useState('66cc2f274aec4c32e965d452'); // Static admin ID
-  const [reportedBy, setReporterBy] = useState('');
+  const [reportedBy, setReportedBy] = useState('');
   const [location, setLocation] = useState('');
   const [disasterInfo, setDisasterInfo] = useState('');
-  const [disasterCategory, setDisasterCategory] = useState('Others');
-  const [priority, setPriority] = useState('Pending'); // State for Priority
+  const [disasterCategory, setDisasterCategory] = useState('Pending');
+  const [priority, setPriority] = useState('Pending'); // Initialize priority
+  const [images, setImages] = useState([]); // State for storing selected images
   const [createReport, { isLoading, isError, error }] = useCreateReportMutation(); // Call the mutation
-  const [selectedImages, setSelectedImages] = useState([]); // State for selected images
-  const [imagePreviews, setImagePreviews] = useState([]); // State for image previews
 
   // Populate form fields if in edit mode
   useEffect(() => {
     if (editMode && initialData) {
       setLocation(initialData.location || '');
       setDisasterInfo(initialData.disasterInfo || '');
-      setDisasterCategory(initialData.disasterCategory || 'Others');
-      setPriority(initialData.priority || 'Pending'); // Set the priority if in edit mode
+      setDisasterCategory(initialData.disasterCategory || 'Pending');
+      setReportedBy(initialData.reportedBy || ''); // Populate reportedBy if in edit mode
+      setPriority(initialData.priority || 'Pending'); // Populate priority if in edit mode
+      // Handle initial images if any
+      setImages(initialData.disasterImages || []);
     } else {
       // Reset form fields for adding a new report
       setLocation('');
       setDisasterInfo('');
-      setDisasterCategory('Others');
-      setPriority('Pending'); // Default value for Priority
+      setDisasterCategory('Pending');
+      setReportedBy('');
+      setPriority('Pending');
+      setImages([]);
     }
   }, [editMode, initialData]);
 
@@ -53,44 +57,29 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
     setLocation(`Latitude: ${lat}, Longitude: ${lng}`);
   };
 
-  const handleImageChange = (event) => {
+  const handleImages = (event) => {
     const files = Array.from(event.target.files);
-    setSelectedImages([...selectedImages, ...files]);
-
-    // Create image previews
-    const previews = files.map((file) => URL.createObjectURL(file));
-    setImagePreviews([...imagePreviews, ...previews]);
-  };
-
-  const handleRemoveImage = (index) => {
-    const updatedImages = selectedImages.filter((_, i) => i !== index);
-    const updatedPreviews = imagePreviews.filter((_, i) => i !== index);
-
-    setSelectedImages(updatedImages);
-    setImagePreviews(updatedPreviews);
+    const imageURLs = files.map((file) => URL.createObjectURL(file)); // Create URLs for the selected images
+    setImages(imageURLs); // Update images state
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault(); // Prevent default form submission
 
-    const formData = new FormData();
-    formData.append('reporterId', reporterId);
-    formData.append('reportedBy', reportedBy);
-    formData.append('location', location);
-    formData.append('disasterInfo', disasterInfo);
-    formData.append('disasterCategory', disasterCategory);
-    formData.append('priority', priority); // Append priority
-    formData.append('disasterStatus', 'active');
-    formData.append('rescuerId', "No Rescuer Yet");
-    formData.append('rescuerName', "No Rescuer Yet");
+    const formData = {
+      reporterId,
+      reportedBy,
+      location,
+      disasterImages: images, // Use the images state
+      disasterInfo,
+      disasterCategory,
+      disasterStatus: 'active',
+      rescuerId: "No Rescuer Yet",
+      rescuerName: "No Rescuer Yet",
+      priority // Include the priority field
+    };
 
-    // Append all selected images
-    selectedImages.forEach((image) => {
-      formData.append('disasterImages', image);
-    });
-
-
-    // Call the createReport mutation with the FormData
+    // Call the createReport mutation
     await createReport(formData).unwrap(); // Using unwrap to catch errors
     onSubmit(formData); // Call the onSubmit prop to notify parent
   };
@@ -131,31 +120,12 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
                 flexWrap="wrap"
                 gap={2}
               >
-                {imagePreviews.length > 0 ? (
-                  imagePreviews.map((preview, index) => (
-                    <Box key={index} position="relative">
-                      <img
-                        src={preview}
-                        alt={`preview-${index}`}
-                        style={{ width: '100px', height: '100px', objectFit: 'cover', margin: '5px' }}
-                      />
-                      <IconButton
-                        size="small"
-                        sx={{
-                          position: 'absolute',
-                          top: 0,
-                          right: 0,
-                          color: 'white',
-                          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                        }}
-                        onClick={() => handleRemoveImage(index)}
-                      >
-                        <CancelIcon fontSize="small" />
-                      </IconButton>
-                    </Box>
+                {images.length > 0 ? (
+                  images.map((img, index) => (
+                    <img key={index} src={img} alt={`disaster-image-${index}`} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
                   ))
                 ) : (
-                  <Typography>Upload Image</Typography>
+                  <Typography>No Images</Typography>
                 )}
                 <IconButton
                   color="primary"
@@ -163,7 +133,7 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
                   component="label"
                   sx={{ zIndex: 1 }}
                 >
-                  <input hidden accept="image/*" type="file" multiple onChange={handleImageChange} />
+                  <input hidden accept="image/*" type="file" multiple onChange={handleImages} />
                   <PhotoCamera fontSize="large" />
                 </IconButton>
               </Box>
@@ -174,7 +144,7 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
                 type="text"
                 fullWidth
                 value={reportedBy}
-                onChange={(e) => setReporterBy(e.target.value)}
+                onChange={(e) => setReportedBy(e.target.value)}
                 required
               />
 
@@ -230,6 +200,7 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
                 onChange={(e) => setLocation(e.target.value)}
               />
 
+              {/* Priority Field */}
               <FormControl fullWidth margin="dense">
                 <InputLabel>Priority</InputLabel>
                 <Select
@@ -247,14 +218,15 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
             </Grid>
           </Grid>
 
-          <Box display="flex" justifyContent="flex-end" mt={2}>
-            <Button onClick={onClose} sx={{ marginRight: 2 }} variant="outlined">
+          <Box display="flex" justifyContent="flex-end" p={2}>
+            <Button onClick={onClose} color="inherit" variant="outlined">
               Cancel
             </Button>
-            <Button type="submit" color="primary" variant="contained">
-              {editMode ? 'Save Changes' : 'Add Report'}
+            <Button type="submit" color="primary" variant="contained" sx={{ marginLeft: 2 }} disabled={isLoading}>
+              {editMode ? 'Update Report' : 'Add Report'}
             </Button>
           </Box>
+          {isError && <Typography color="error">Error: {error.message}</Typography>}
         </form>
       </DialogContent>
     </Dialog>
