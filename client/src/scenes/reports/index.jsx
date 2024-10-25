@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Box, Button, IconButton, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { useFetchReportsQuery, useUpdateReportMutation, useDeleteReportMutation } from "state/reportApi"; 
+import { useFetchReportsQuery, useUpdateReportMutation, useDeleteReportMutation, useCreateReportMutation } from "state/reportApi"; 
 import Header from "components/Header";
 import DataGridCustomToolbar from "components/DataGridCustomToolbar";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import DialogReportForm from "components/DialogReportForm"; // Import your dialog component
+import DialogReportForm from "components/DialogReportForm"; 
 import ImagePreview from "components/ImagePreview"; 
 
 const Reports = () => {
@@ -25,7 +25,8 @@ const Reports = () => {
 
   const { data, isLoading, refetch } = useFetchReportsQuery(); 
   const [updateReport] = useUpdateReportMutation(); 
-  const [deleteReport] = useDeleteReportMutation(); 
+  const [deleteReport] = useDeleteReportMutation();
+  const [createReport] = useCreateReportMutation(); // Added create report mutation
 
   const handleNextImage = () => {
     if (currentImageIndex < previewImages.length - 1) {
@@ -40,9 +41,9 @@ const Reports = () => {
   };
 
   const handleOpenPreview = (images, index) => {
-    setPreviewImages(images); // Set the images for preview
-    setCurrentImageIndex(index); // Set the current image index
-    setPreviewOpen(true); // Open the image preview modal
+    setPreviewImages(images);
+    setCurrentImageIndex(index);
+    setPreviewOpen(true);
   };
 
   const columns = [
@@ -108,15 +109,35 @@ const Reports = () => {
   ];
 
   const handleEditReport = (report) => {
-    setCurrentReport(report); 
-    setOpenDialog(true); 
+    setCurrentReport(report);
+    setOpenDialog(true);
+  };
+
+  const handleUpdateReport = async (updatedReport) => {
+    try {
+      await updateReport(updatedReport).unwrap();
+      refetch(); // Refetch reports after update
+      handleCloseDialog(); 
+    } catch (error) {
+      alert("Failed to update the report. Please try again.");
+    }
+  };
+
+  const handleCreateReport = async (newReport) => {
+    try {
+      await createReport(newReport).unwrap(); // Create new report
+      refetch(); // Refetch reports after creation
+      handleCloseDialog(); 
+    } catch (error) {
+      alert("Failed to create the report. Please try again.");
+    }
   };
 
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this report?")) {
       try {
         await deleteReport(id).unwrap();
-        refetch(); 
+        refetch(); // Refetch reports after deletion
       } catch (error) {
         alert("Failed to delete the report. Please try again.");
       }
@@ -124,13 +145,13 @@ const Reports = () => {
   };
 
   const handleCloseDialog = () => {
-    setOpenDialog(false); 
-    setCurrentReport(null); 
+    setOpenDialog(false);
+    setCurrentReport(null);
   };
 
   const handleClosePreview = () => {
     setPreviewOpen(false);
-    setCurrentImageIndex(0); // Reset index for next time the preview opens
+    setCurrentImageIndex(0);
   };
 
   return (
@@ -185,14 +206,13 @@ const Reports = () => {
         />
       </Box>
 
-      {/* Dialog for Editing Report */}
       <DialogReportForm 
         open={openDialog} 
         onClose={handleCloseDialog} 
         reportData={currentReport} 
+        onSave={currentReport ? handleUpdateReport : handleCreateReport} // Call the correct handler based on context
       />
 
-      {/* Image Preview Modal */}
       <ImagePreview 
         open={previewOpen}
         images={previewImages}

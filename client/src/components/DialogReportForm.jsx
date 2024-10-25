@@ -38,20 +38,23 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
       setLocation(initialData.location || '');
       setDisasterInfo(initialData.disasterInfo || '');
       setDisasterCategory(initialData.disasterCategory || '');
-      setReportedBy(initialData.reportedBy || ''); // Populate reportedBy if in edit mode
-      setPriority(initialData.priority || 'Pending'); // Populate priority if in edit mode
-      // Handle initial images if any
+      setReportedBy(initialData.reportedBy || '');
+      setPriority(initialData.priority || 'Pending');
       setImages(initialData.disasterImages || []);
     } else {
       // Reset form fields for adding a new report
-      setLocation('');
-      setDisasterInfo('');
-      setDisasterCategory('');
-      setReportedBy('');
-      setPriority('Pending');
-      setImages([]);
+      resetFormFields();
     }
   }, [editMode, initialData]);
+
+  const resetFormFields = () => {
+    setLocation('');
+    setDisasterInfo('');
+    setDisasterCategory('');
+    setReportedBy('');
+    setPriority('Pending');
+    setImages([]);
+  };
 
   const handleLocationSelect = ({ lat, lng }) => {
     setLocation(`Latitude: ${lat}, Longitude: ${lng}`);
@@ -61,6 +64,10 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
     const files = Array.from(event.target.files);
     const imageURLs = files.map((file) => URL.createObjectURL(file)); // Create URLs for the selected images
     setImages((prevImages) => [...prevImages, ...imageURLs]); // Update images state to append new images
+  };
+
+  const removeImage = (index) => {
+    setImages((prevImages) => prevImages.filter((_, i) => i !== index)); // Remove the image at the specified index
   };
 
   const handleSubmit = async (event) => {
@@ -79,9 +86,15 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
       priority // Include the priority field
     };
 
-    // Call the createReport mutation
-    await createReport(formData).unwrap(); // Using unwrap to catch errors
-    onSubmit(formData); // Call the onSubmit prop to notify parent
+    try {
+      // Call the createReport mutation
+      await createReport(formData).unwrap(); // Using unwrap to catch errors
+      resetFormFields(); // Reset fields after successful submission
+      onSubmit(); // Notify parent of successful submission
+      onClose(); // Close the dialog after submission
+    } catch (error) {
+      console.error('Failed to create report:', error);
+    }
   };
 
   return (
@@ -122,7 +135,26 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
               >
                 {images.length > 0 ? (
                   images.map((img, index) => (
-                    <img key={index} src={img} alt={`disaster-image-${index}`} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+                    <Box key={index} position="relative">
+                      <img
+                        src={img}
+                        alt={`disaster-image-${index}`}
+                        style={{ width: '100px', height: '100px', objectFit: 'cover' }}
+                      />
+                      <IconButton
+                        onClick={() => removeImage(index)} // Call removeImage when clicked
+                        size="small"
+                        sx={{
+                          position: 'absolute',
+                          top: 0,
+                          right: 0,
+                          bgcolor: 'white',
+                          borderRadius: '50%',
+                        }}
+                      >
+                        <CloseIcon fontSize="small" />
+                      </IconButton>
+                    </Box>
                   ))
                 ) : (
                   <Typography>No Images</Typography>
@@ -223,10 +255,9 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
               Cancel
             </Button>
             <Button type="submit" color="primary" variant="contained" sx={{ marginLeft: 2 }} disabled={isLoading}>
-              {editMode ? 'Update Report' : 'Add Report'}
+              {isLoading ? 'Submitting...' : 'Submit'}
             </Button>
           </Box>
-          {isError && <Typography color="error">Error: {error.message}</Typography>}
         </form>
       </DialogContent>
     </Dialog>

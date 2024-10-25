@@ -69,6 +69,15 @@ export const api = createApi({
       query: () => "reports",
       providesTags: ["Reports"],
     }),
+    // Add this new mutation for adding reports
+    addReport: build.mutation({
+      query: (newReport) => ({
+        url: "reports",
+        method: "POST",
+        body: newReport,
+      }),
+      invalidatesTags: ["Reports"], // This will re-fetch the reports
+    }),
     getAdmins: build.query({
       query: () => "management/admins",
       providesTags: ["Admins"],
@@ -92,6 +101,7 @@ export const {
   useGetCitizensQuery,
   useGetRescuersQuery,
   useGetReportsQuery,
+  useAddReportMutation,
   useGetAdminsQuery,
   useGetDashboardQuery,
   useGetOverallStatsQuery,
