@@ -1,57 +1,40 @@
 // client/src/scenes/pendingreports/index.jsx
 
-import React, { useState } from "react";
-import { Box, useTheme, Grid } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Box, useTheme, Grid } from "@mui/material"; // Import Grid for layout
 import Header from "components/Header";
-import PendingReportCard from "../../components/PendingReportCard";
-import PriorityDialog from "../../components/PriorityDialog";
-import {
-  useGetPendingReportsQuery,
-  useActivateReportMutation,
-  useDeleteReportMutation,
-} from "../../state/pendingApi";
+import PendingReportCard from "../../components/PendingReportCard"; // Adjust path as necessary
 
 const PendingReports = () => {
   const theme = useTheme();
-  const { data: pendingReports = [], error, isLoading } = useGetPendingReportsQuery();
-  const [activateReport] = useActivateReportMutation();
-  const [deleteReport] = useDeleteReportMutation();
+  const [pendingReports, setPendingReports] = useState([]);
 
-  // State to manage dialog visibility and selected report
-  const [openDialog, setOpenDialog] = useState(false);
-  const [selectedReport, setSelectedReport] = useState(null);
+  useEffect(() => {
+    // Fetch pending reports from your API
+    const fetchPendingReports = async () => {
+      try {
+        const response = await fetch('/api/reports/pending'); // Adjust the endpoint as needed
+        const data = await response.json();
+        setPendingReports(data); // Set the fetched reports to state
+      } catch (error) {
+        console.error('Error fetching pending reports:', error);
+      }
+    };
 
-  const handleOpenDialog = (report) => {
-    setSelectedReport(report);
-    setOpenDialog(true);
+    fetchPendingReports();
+  }, []);
+
+  const handleActivate = (id) => {
+    // Logic to activate report
+    console.log(`Activating report with ID: ${id}`);
+    // Call your API to update the report status here
   };
 
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-    setSelectedReport(null);
+  const handleDelete = (id) => {
+    // Logic to delete report
+    console.log(`Deleting report with ID: ${id}`);
+    // Call your API to delete the report here
   };
-
-  const handleConfirmPriority = async (priority) => {
-    try {
-      await activateReport({ id: selectedReport._id, priority }).unwrap();
-      alert('Report activated with priority: ' + priority);
-    } catch (error) {
-      console.error('Error activating report:', error);
-    }
-    handleCloseDialog();
-  };
-
-  const handleDelete = async (id) => {
-    try {
-      await deleteReport(id).unwrap();
-      alert('Report deleted successfully');
-    } catch (error) {
-      console.error('Error deleting report:', error);
-    }
-  };
-
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error fetching reports</div>;
 
   return (
     <Box m="1.5rem 2.5rem">
@@ -70,20 +53,13 @@ const PendingReports = () => {
             <Grid item key={report._id}>
               <PendingReportCard
                 report={report}
-                onActivate={() => handleOpenDialog(report)}
-                onDelete={() => handleDelete(report._id)}
+                onActivate={handleActivate}
+                onDelete={handleDelete}
               />
             </Grid>
           ))}
         </Grid>
       </Box>
-
-      {/* Priority Dialog */}
-      <PriorityDialog
-        open={openDialog}
-        onClose={handleCloseDialog}
-        onConfirm={handleConfirmPriority}
-      />
     </Box>
   );
 };
