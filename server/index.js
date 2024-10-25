@@ -20,6 +20,8 @@ import generalRoutes from "./routes/general.js";
 import managementRoutes from "./routes/management.js";
 import reportsRoutes from "./routes/reports.js";
 import overallstatsRoutes from "./routes/overallstats.js";
+import pendingReportsRoutes from "./routes/pendingReports.js"; // Import new pending reports route
+
 
 // Load environment variables
 dotenv.config();
@@ -50,6 +52,7 @@ app.use("/general", generalRoutes);
 app.use("/management", managementRoutes);
 app.use("/overallstats", overallstatsRoutes);
 app.use("/reports", reportsRoutes);
+app.use("/api/pending", pendingReportsRoutes); // Add new route here
 
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT || 9000;
