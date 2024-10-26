@@ -26,7 +26,7 @@ const Reports = () => {
   const { data, isLoading, refetch } = useFetchReportsQuery(); 
   const [updateReport] = useUpdateReportMutation(); 
   const [deleteReport] = useDeleteReportMutation();
-  const [createReport] = useCreateReportMutation(); // Added create report mutation
+  const [createReport] = useCreateReportMutation();
 
   const handleNextImage = () => {
     if (currentImageIndex < previewImages.length - 1) {
@@ -116,7 +116,7 @@ const Reports = () => {
   const handleUpdateReport = async (updatedReport) => {
     try {
       await updateReport(updatedReport).unwrap();
-      refetch(); // Refetch reports after update
+      refetch();
       handleCloseDialog(); 
     } catch (error) {
       alert("Failed to update the report. Please try again.");
@@ -125,8 +125,8 @@ const Reports = () => {
 
   const handleCreateReport = async (newReport) => {
     try {
-      await createReport(newReport).unwrap(); // Create new report
-      refetch(); // Refetch reports after creation
+      await createReport(newReport).unwrap(); 
+      refetch(); 
       handleCloseDialog(); 
     } catch (error) {
       alert("Failed to create the report. Please try again.");
@@ -137,7 +137,7 @@ const Reports = () => {
     if (window.confirm("Are you sure you want to delete this report?")) {
       try {
         await deleteReport(id).unwrap();
-        refetch(); // Refetch reports after deletion
+        refetch(); 
       } catch (error) {
         alert("Failed to delete the report. Please try again.");
       }
@@ -210,7 +210,7 @@ const Reports = () => {
         open={openDialog} 
         onClose={handleCloseDialog} 
         reportData={currentReport} 
-        onSave={currentReport ? handleUpdateReport : handleCreateReport} // Call the correct handler based on context
+        onSave={currentReport ? handleUpdateReport : handleCreateReport} 
       />
 
       <ImagePreview 
