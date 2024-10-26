@@ -28,4 +28,8 @@ const storage = new GridFsStorage({
 const upload = multer({ storage });
 
 // Export using ES Modules syntax
+<<<<<<< HEAD
 export { upload }; 
+=======
+export { upload }; 
+>>>>>>> f0f368e (May grid fs kaso walang image preview)
