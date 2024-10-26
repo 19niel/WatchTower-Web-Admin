@@ -21,7 +21,7 @@ const ReportSchema = new mongoose.Schema(
             required: true
         },
         disasterImages: {
-            type: [{ url: String, fileName: String }], // Array of strings (URLs or file paths)
+            type: [String], // Array of strings (URLs or file paths)
             default: [], // Default to an empty array if no images are uploaded
         },
         disasterInfo: {

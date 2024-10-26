@@ -16,21 +16,23 @@ import {
   FormControl
 } from '@mui/material';
 import { Close as CloseIcon, PhotoCamera } from '@mui/icons-material';
-import SanJuanMap from './SanJuanMap';
-import { useCreateReportMutation } from '../state/reportApi';
+import SanJuanMap from './SanJuanMap'; // Assuming you're using the SanJuanMap component for location selection
+import { useCreateReportMutation } from '../state/reportApi'; // Import the mutation
 
 const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) => {
   const theme = useTheme();
 
-  const [reporterId] = useState('66cc2f274aec4c32e965d452');
+  // State initialization
+  const [reporterId] = useState('66cc2f274aec4c32e965d452'); // Static admin ID
   const [reportedBy, setReportedBy] = useState('');
   const [location, setLocation] = useState('');
   const [disasterInfo, setDisasterInfo] = useState('');
   const [disasterCategory, setDisasterCategory] = useState('');
-  const [priority, setPriority] = useState('Pending');
-  const [images, setImages] = useState([]); // Array of { file, previewUrl }
-  const [createReport, { isLoading }] = useCreateReportMutation();
+  const [priority, setPriority] = useState('Pending'); // Initialize priority
+  const [images, setImages] = useState([]); // State for storing selected images
+  const [createReport, { isLoading, isError, error }] = useCreateReportMutation(); // Call the mutation
 
+  // Populate form fields if in edit mode
   useEffect(() => {
     if (editMode && initialData) {
       setLocation(initialData.location || '');
@@ -38,8 +40,9 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
       setDisasterCategory(initialData.disasterCategory || '');
       setReportedBy(initialData.reportedBy || '');
       setPriority(initialData.priority || 'Pending');
-      setImages(initialData.disasterImages?.map(url => ({ previewUrl: url })) || []);
+      setImages(initialData.disasterImages || []);
     } else {
+      // Reset form fields for adding a new report
       resetFormFields();
     }
   }, [editMode, initialData]);
@@ -59,51 +62,36 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
 
   const handleImages = (event) => {
     const files = Array.from(event.target.files);
-
-    // Create an array of files with preview URLs
-    const newImages = files.map(file => ({
-      file,
-      previewUrl: URL.createObjectURL(file),
-    }));
-
-    setImages((prevImages) => [...prevImages, ...newImages]);
+    const imageURLs = files.map((file) => URL.createObjectURL(file)); // Create URLs for the selected images
+    setImages((prevImages) => [...prevImages, ...imageURLs]); // Update images state to append new images
   };
 
   const removeImage = (index) => {
-    setImages((prevImages) => {
-      const updatedImages = [...prevImages];
-      // Revoke the URL to prevent memory leaks
-      URL.revokeObjectURL(updatedImages[index].previewUrl);
-      updatedImages.splice(index, 1);
-      return updatedImages;
-    });
+    setImages((prevImages) => prevImages.filter((_, i) => i !== index)); // Remove the image at the specified index
   };
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
-    
-    const formData = new FormData();
-    formData.append("reporterId", reporterId);
-    formData.append("reportedBy", reportedBy);
-    formData.append("location", location);
-    formData.append("disasterInfo", disasterInfo);
-    formData.append("disasterCategory", disasterCategory);
-    formData.append("disasterStatus", "active");
-    formData.append("rescuerId", "No Rescuer Yet");
-    formData.append("rescuedBy", "No Rescuer Yet");
-    formData.append("priority", priority);
+    event.preventDefault(); // Prevent default form submission
 
-    images.forEach((imageObj) => {
-      if (imageObj.file) {
-        formData.append("disasterImages", imageObj.file);
-      }
-    });
+    const formData = {
+      reporterId,
+      reportedBy,
+      location,
+      disasterImages: images, // Use the images state, which is an array
+      disasterInfo,
+      disasterCategory,
+      disasterStatus: 'active',
+      rescuerId: "No Rescuer Yet",
+      rescuedBy: "No Rescuer Yet",
+      priority // Include the priority field
+    };
 
     try {
-      await createReport(formData).unwrap();
-      resetFormFields();
-      onSubmit();
-      onClose();
+      // Call the createReport mutation
+      await createReport(formData).unwrap(); // Using unwrap to catch errors
+      resetFormFields(); // Reset fields after successful submission
+      onSubmit(); // Notify parent of successful submission
+      onClose(); // Close the dialog after submission
     } catch (error) {
       console.error('Failed to create report:', error);
     }
@@ -146,20 +134,21 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
                 gap={2}
               >
                 {images.length > 0 ? (
-                  images.map((imgObj, index) => (
+                  images.map((img, index) => (
                     <Box key={index} position="relative">
                       <img
-                        src={imgObj.previewUrl}
+                        src={img}
                         alt={`disaster-image-${index}`}
                         style={{ width: '100px', height: '100px', objectFit: 'cover' }}
                       />
                       <IconButton
-                        onClick={() => removeImage(index)}
+                        onClick={() => removeImage(index)} // Call removeImage when clicked
                         size="small"
                         sx={{
                           position: 'absolute',
                           top: 0,
                           right: 0,
+                          bgcolor: 'white',
                           borderRadius: '50%',
                         }}
                       >
@@ -243,6 +232,7 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
                 onChange={(e) => setLocation(e.target.value)}
               />
 
+              {/* Priority Field */}
               <FormControl fullWidth margin="dense">
                 <InputLabel>Priority</InputLabel>
                 <Select

@@ -7,13 +7,12 @@ import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import Grid from 'gridfs-stream'; // Import GridFS
-import multer from 'multer';
-import { GridFsStorage } from 'multer-gridfs-storage'; // Corrected import
 
 // Data imports
 import Rescuer from "./models/Rescuer.js";
-import { dataRescuer } from "./data/watchtowerdata.js";
+import {
+  dataRescuer,
+} from "./data/watchtowerdata.js";
 
 // Import your routes
 import clientRoutes from "./routes/client.js";
@@ -21,7 +20,7 @@ import generalRoutes from "./routes/general.js";
 import managementRoutes from "./routes/management.js";
 import reportsRoutes from "./routes/reports.js";
 import overallstatsRoutes from "./routes/overallstats.js";
-import imageRoutes from "./routes/imageRoutes.js"; // Import the image routes
+import pendingReportsRoutes from "./routes/pendingReports.js"; // Import new pending reports route
 
 
 // Load environment variables
@@ -47,60 +46,28 @@ const __dirname = dirname(__filename);
 // Serve static files (e.g., for serving uploaded images)
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-/* MONGOOSE SETUP */
-const PORT = process.env.PORT || 9000;
-
-// Set the strictQuery option to suppress the deprecation warning
-mongoose.set('strictQuery', false); // or true based on your needs
-
-// Create connection for GridFS
-const mongoURI = process.env.MONGO_URL; // MongoDB URI
-const conn = mongoose.createConnection(mongoURI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-});
-
-let gfs;
-
-conn.once('open', () => {
-    // Initialize stream
-    gfs = Grid(conn.db, mongoose.mongo);
-    gfs.collection('uploads'); // Set the collection name
-});
-
-// Create storage engine for multer
-const storage = new GridFsStorage({
-    url: mongoURI,
-    file: (req, file) => {
-        return {
-            filename: file.originalname,
-            bucketName: 'uploads', // Set the name of the collection to store the images
-        };
-    },
-});
-
-const upload = multer({ storage });
-
-// Image upload route
-app.post('/api/images/upload', upload.array('images', 10), (req, res) => {
-    res.status(200).json({ file: req.files }); // Respond with uploaded file info
-});
-
 /* ROUTES */
 app.use("/client", clientRoutes); // Include the client routes here
 app.use("/general", generalRoutes);
 app.use("/management", managementRoutes);
 app.use("/overallstats", overallstatsRoutes);
 app.use("/reports", reportsRoutes);
+app.use("/api/pending", pendingReportsRoutes); // Add new route here
+
+/* MONGOOSE SETUP */
+const PORT = process.env.PORT || 9000;
+
+// Set the strictQuery option to suppress the deprecation warning
+mongoose.set('strictQuery', false); // or true based on your needs
 
 mongoose
-    .connect(mongoURI, {
+    .connect(process.env.MONGO_URL, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     })
     .then(() => {
         app.listen(PORT, () => console.log(`Server Port: ${PORT}`));
-                /* ONLY ADD DATA ONE TIME */
+        /* ONLY ADD DATA ONE TIME */
         // AffiliateStat.insertMany(dataAffiliateStat);
         // Product.insertMany(dataProduct);
         // ProductStat.insertMany(dataProductStat);

@@ -12,19 +12,7 @@ export const getReports = async (req, res) => {
 
 // Function to handle report creation
 export const createReport = async (req, res) => {
-  // Get report data from the request body
-  const reportData = {
-    reporterId: req.body.reporterId,
-    reportedBy: req.body.reportedBy,
-    location: req.body.location,
-    disasterCategory: req.body.disasterCategory,
-    disasterInfo: req.body.disasterInfo,
-    disasterStatus: req.body.disasterStatus,
-    priority: req.body.priority,
-    rescuerId: req.body.rescuerId,
-    rescuedBy: req.body.rescuedBy,
-    disasterImages: req.files ? req.files.map(file => file.id) : [], // Extract file IDs
-  };
+  const reportData = req.body; // Get the report data from the request body
 
   try {
     const newReport = new Report(reportData); // Create a new instance of the Report model
@@ -52,6 +40,7 @@ export const deleteReport = async (req, res) => {
     res.status(500).json({ message: 'Failed to delete report' }); // Handle any errors
   }
 };
+
 
 // Function to handle report updating
 export const updateReport = async (req, res) => {
