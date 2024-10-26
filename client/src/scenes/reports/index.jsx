@@ -8,6 +8,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DialogReportForm from "components/DialogReportForm"; 
 import ImagePreview from "components/ImagePreview"; 
+import { getImageUrlById } from '../../utils/imageUtils';
+
 
 const Reports = () => {
   const theme = useTheme();
@@ -56,19 +58,22 @@ const Reports = () => {
       flex: 1,
       renderCell: (params) => {
         const images = params.value;
-        if (!images.length || images[0] === "No Images") {
+  
+        // Check if images exist
+        if (!images || images.length === 0) {
           return <span>No Images</span>;
         }
+  
         return (
           <Box display="flex" justifyContent="space-between">
-            {images.slice(0, 3).map((image, index) => (
-              <img 
-                key={index} 
-                src={image} 
-                alt={`Disaster ${index + 1}`} 
-                width="80" 
-                style={{ marginRight: '4px', cursor: 'pointer' }} 
-                onClick={() => handleOpenPreview(images, index)} 
+            {images.slice(0, 3).map((image) => (
+              <img
+                key={image._id}
+                src={getImageUrlById(image._id)} // Generate the URL
+                alt={`Disaster Image ${image._id}`} 
+                width="80"
+                style={{ marginRight: '4px', cursor: 'pointer' }}
+                onClick={() => handleOpenPreview(images, images.indexOf(image))} // Open preview on click
               />
             ))}
           </Box>
@@ -82,7 +87,7 @@ const Reports = () => {
       flex: 0.5,
       renderCell: (params) => new Date(params.value).toLocaleDateString(),
     },
-    { field: "rescuerId", headerName: "Rescued By", flex: 1 }, 
+    { field: "rescuerId", headerName: "Rescued By", flex: 1 },
     { field: "reportedBy", headerName: "Reported By", flex: 1 },
     { field: "disasterStatus", headerName: "Status", flex: 0.7 },
     {
