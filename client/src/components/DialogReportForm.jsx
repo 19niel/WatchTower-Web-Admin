@@ -29,7 +29,7 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
   const [disasterInfo, setDisasterInfo] = useState('');
   const [disasterCategory, setDisasterCategory] = useState('');
   const [priority, setPriority] = useState('Pending'); // Initialize priority
-  const [images, setImages] = useState([]); // State for storing selected images
+  const [images, setImages] = useState([]); // State for storing selected image files
   const [createReport, { isLoading, isError, error }] = useCreateReportMutation(); // Call the mutation
 
   // Populate form fields if in edit mode
@@ -40,7 +40,7 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
       setDisasterCategory(initialData.disasterCategory || '');
       setReportedBy(initialData.reportedBy || '');
       setPriority(initialData.priority || 'Pending');
-      setImages(initialData.disasterImages || []);
+      setImages(initialData.disasterImages || []); // Populate images for editing
     } else {
       // Reset form fields for adding a new report
       resetFormFields();
@@ -53,7 +53,7 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
     setDisasterCategory('');
     setReportedBy('');
     setPriority('Pending');
-    setImages([]);
+    setImages([]); // Reset image files
   };
 
   const handleLocationSelect = ({ lat, lng }) => {
@@ -62,8 +62,7 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
 
   const handleImages = (event) => {
     const files = Array.from(event.target.files);
-    const imageURLs = files.map((file) => URL.createObjectURL(file)); // Create URLs for the selected images
-    setImages((prevImages) => [...prevImages, ...imageURLs]); // Update images state to append new images
+    setImages((prevImages) => [...prevImages, ...files]); // Store File objects
   };
 
   const removeImage = (index) => {
@@ -73,18 +72,21 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
   const handleSubmit = async (event) => {
     event.preventDefault(); // Prevent default form submission
 
-    const formData = {
-      reporterId,
-      reportedBy,
-      location,
-      disasterImages: images, // Use the images state, which is an array
-      disasterInfo,
-      disasterCategory,
-      disasterStatus: 'active',
-      rescuerId: "No Rescuer Yet",
-      rescuedBy: "No Rescuer Yet",
-      priority // Include the priority field
-    };
+    const formData = new FormData();
+    formData.append('reporterId', reporterId);
+    formData.append('reportedBy', reportedBy);
+    formData.append('location', location);
+    formData.append('disasterInfo', disasterInfo);
+    formData.append('disasterCategory', disasterCategory);
+    formData.append('disasterStatus', 'active');
+    formData.append('rescuerId', 'No Rescuer Yet');
+    formData.append('rescuedBy', 'No Rescuer Yet');
+    formData.append('priority', priority);
+    
+    // Append each image file to formData
+    images.forEach((image) => {
+        formData.append('images', image); // Use the File object directly
+    });
 
     try {
       // Call the createReport mutation
@@ -134,10 +136,10 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
                 gap={2}
               >
                 {images.length > 0 ? (
-                  images.map((img, index) => (
+                  images.map((file, index) => (
                     <Box key={index} position="relative">
                       <img
-                        src={img}
+                        src={URL.createObjectURL(file)} // Use URL.createObjectURL to show preview
                         alt={`disaster-image-${index}`}
                         style={{ width: '100px', height: '100px', objectFit: 'cover' }}
                       />
@@ -254,10 +256,17 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
             <Button onClick={onClose} color="inherit" variant="outlined">
               Cancel
             </Button>
-            <Button type="submit" color="primary" variant="contained" sx={{ marginLeft: 2 }} disabled={isLoading}>
+            <Button type="submit" color="primary" variant="contained" sx={{ ml: 2 }} disabled={isLoading}>
               {isLoading ? 'Submitting...' : 'Submit'}
             </Button>
           </Box>
+
+          {/* Display error message if any */}
+          {isError && (
+            <Typography color="error" align="center" mt={2}>
+              {error.data.message || 'An error occurred! Please try again.'}
+            </Typography>
+          )}
         </form>
       </DialogContent>
     </Dialog>
