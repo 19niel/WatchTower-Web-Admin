@@ -56,19 +56,20 @@ const Reports = () => {
       flex: 1,
       renderCell: (params) => {
         const images = params.value;
-        if (!images.length || images[0] === "No Images") {
+        // Ensure images is defined and is an array
+        if (!Array.isArray(images) || images.length === 0 || images[0] === "No Images") {
           return <span>No Images</span>;
         }
         return (
           <Box display="flex" justifyContent="space-between">
             {images.slice(0, 3).map((image, index) => (
-              <img 
-                key={index} 
-                src={image} 
-                alt={`Disaster ${index + 1}`} 
-                width="80" 
-                style={{ marginRight: '4px', cursor: 'pointer' }} 
-                onClick={() => handleOpenPreview(images, index)} 
+              <img
+                key={index}
+                src={image}
+                alt={`Disaster ${index + 1}`}
+                width="80"
+                style={{ marginRight: '4px', cursor: 'pointer' }}
+                onClick={() => handleOpenPreview(images, index)}
               />
             ))}
           </Box>
