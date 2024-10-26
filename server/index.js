@@ -61,10 +61,7 @@ const PORT = process.env.PORT || 9000;
 mongoose.set('strictQuery', false); // or true based on your needs
 
 mongoose
-    .connect(process.env.MONGO_URL, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    })
+    .connect(process.env.MONGO_URL)
     .then(() => {
         app.listen(PORT, () => console.log(`Server Port: ${PORT}`));
         /* ONLY ADD DATA ONE TIME */
