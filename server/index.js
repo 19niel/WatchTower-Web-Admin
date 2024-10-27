@@ -8,6 +8,12 @@ import path from "path";
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
+// Grid FS
+import multer from "multer";
+import { GridFsStorage } from "multer-gridfs-storage";
+import Grid from "gridfs-stream";
+
+
 // Data imports
 import Rescuer from "./models/Rescuer.js";
 import {
@@ -26,6 +32,33 @@ import pendingReportsRoutes from "./routes/pendingReports.js"; // Import new pen
 // Load environment variables
 dotenv.config();
 const app = express();
+
+
+// Grid FS
+const mongoURI = process.env.MONGO_URL;
+
+// Initialize GridFS stream
+const conn = mongoose.connection;
+let gfs;
+
+conn.once("open", () => {
+    gfs = Grid(conn.db, mongoose.mongo);
+    gfs.collection("uploads"); // Collection to store files
+});
+
+const storage = new GridFsStorage({
+    url: mongoURI,
+    options: { useNewUrlParser: true, useUnifiedTopology: true },
+    file: (req, file) => {
+        return {
+            filename: `${Date.now()}-${file.originalname}`,
+            bucketName: "uploads", // Matches the collection name in `gfs.collection`
+        };
+    },
+});
+
+const upload = multer({ storage }); // Initialize multer with GridFS storage
+
 
 // Middleware
 app.use(express.json({ limit: '10mb' })); // Set a higher limit for JSON requests
@@ -53,6 +86,10 @@ app.use("/management", managementRoutes);
 app.use("/overallstats", overallstatsRoutes);
 app.use("/reports", reportsRoutes);
 app.use("/api/pending", pendingReportsRoutes); // Add new route here
+
+app.post("/upload", upload.single("file"), (req, res) => {
+    res.status(200).json({ file: req.file });
+});
 
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT || 9000;
