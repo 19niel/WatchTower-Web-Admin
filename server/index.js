@@ -13,12 +13,9 @@ import multer from "multer";
 import { GridFsStorage } from "multer-gridfs-storage";
 import Grid from "gridfs-stream";
 
-
 // Data imports
 import Rescuer from "./models/Rescuer.js";
-import {
-  dataRescuer,
-} from "./data/watchtowerdata.js";
+import { dataRescuer } from "./data/watchtowerdata.js";
 
 // Import your routes
 import clientRoutes from "./routes/client.js";
@@ -28,13 +25,11 @@ import reportsRoutes from "./routes/reports.js";
 import overallstatsRoutes from "./routes/overallstats.js";
 import pendingReportsRoutes from "./routes/pendingReports.js"; // Import new pending reports route
 
-
 // Load environment variables
 dotenv.config();
 const app = express();
 
-
-// Grid FS
+// Grid FS setup
 const mongoURI = process.env.MONGO_URL;
 
 // Initialize GridFS stream
@@ -58,7 +53,6 @@ const storage = new GridFsStorage({
 });
 
 const upload = multer({ storage }); // Initialize multer with GridFS storage
-
 
 // Middleware
 app.use(express.json({ limit: '10mb' })); // Set a higher limit for JSON requests
@@ -87,6 +81,7 @@ app.use("/overallstats", overallstatsRoutes);
 app.use("/reports", reportsRoutes);
 app.use("/api/pending", pendingReportsRoutes); // Add new route here
 
+// Upload route for single file upload using GridFS
 app.post("/upload", upload.single("file"), (req, res) => {
     res.status(200).json({ file: req.file });
 });
@@ -98,7 +93,7 @@ const PORT = process.env.PORT || 9000;
 mongoose.set('strictQuery', false); // or true based on your needs
 
 mongoose
-    .connect(process.env.MONGO_URL)
+    .connect(mongoURI)
     .then(() => {
         app.listen(PORT, () => console.log(`Server Port: ${PORT}`));
         /* ONLY ADD DATA ONE TIME */

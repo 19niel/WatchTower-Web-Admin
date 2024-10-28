@@ -1,38 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Box,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  Grid,
-  TextField,
-  IconButton,
-  Typography,
-  useTheme,
-  Select,
-  MenuItem,
-  InputLabel,
-  FormControl
+  Box, Button, Dialog, DialogTitle, DialogContent, Grid,
+  TextField, IconButton, Typography, useTheme,
+  Select, MenuItem, InputLabel, FormControl
 } from '@mui/material';
 import { Close as CloseIcon, PhotoCamera } from '@mui/icons-material';
-import SanJuanMap from './SanJuanMap'; // Assuming you're using the SanJuanMap component for location selection
-import { useCreateReportMutation } from '../state/reportApi'; // Import the mutation
+import SanJuanMap from './SanJuanMap'; 
+import { useCreateReportMutation } from '../state/reportApi';
 
 const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) => {
   const theme = useTheme();
-
-  // State initialization
-  const [reporterId] = useState('66cc2f274aec4c32e965d452'); // Static admin ID
+  const [reporterId] = useState('66cc2f274aec4c32e965d452'); 
   const [reportedBy, setReportedBy] = useState('');
   const [location, setLocation] = useState('');
   const [disasterInfo, setDisasterInfo] = useState('');
   const [disasterCategory, setDisasterCategory] = useState('');
-  const [priority, setPriority] = useState('Pending'); // Initialize priority
-  const [images, setImages] = useState([]); // State for storing selected images
-  const [createReport, { isLoading, isError, error }] = useCreateReportMutation(); // Call the mutation
+  const [priority, setPriority] = useState('Pending');
+  const [images, setImages] = useState([]); 
+  const [createReport, { isLoading, isError, error }] = useCreateReportMutation(); 
 
-  // Populate form fields if in edit mode
   useEffect(() => {
     if (editMode && initialData) {
       setLocation(initialData.location || '');
@@ -42,7 +28,6 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
       setPriority(initialData.priority || 'Pending');
       setImages(initialData.disasterImages || []);
     } else {
-      // Reset form fields for adding a new report
       resetFormFields();
     }
   }, [editMode, initialData]);
@@ -62,36 +47,37 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
 
   const handleImages = (event) => {
     const files = Array.from(event.target.files);
-    const imageURLs = files.map((file) => URL.createObjectURL(file)); // Create URLs for the selected images
-    setImages((prevImages) => [...prevImages, ...imageURLs]); // Update images state to append new images
+    setImages((prevImages) => [...prevImages, ...files]); // Store File objects directly
   };
 
   const removeImage = (index) => {
-    setImages((prevImages) => prevImages.filter((_, i) => i !== index)); // Remove the image at the specified index
+    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (event) => {
-    event.preventDefault(); // Prevent default form submission
+    event.preventDefault();
 
-    const formData = {
-      reporterId,
-      reportedBy,
-      location,
-      disasterImages: images, // Use the images state, which is an array
-      disasterInfo,
-      disasterCategory,
-      disasterStatus: 'active',
-      rescuerId: "No Rescuer Yet",
-      rescuedBy: "No Rescuer Yet",
-      priority // Include the priority field
-    };
+    const formData = new FormData();
+    formData.append("reporterId", reporterId);
+    formData.append("reportedBy", reportedBy);
+    formData.append("location", location);
+    formData.append("disasterInfo", disasterInfo);
+    formData.append("disasterCategory", disasterCategory);
+    formData.append("disasterStatus", 'active');
+    formData.append("rescuerId", "No Rescuer Yet");
+    formData.append("rescuedBy", "No Rescuer Yet");
+    formData.append("priority", priority);
+    
+    // Append each image file to FormData
+    images.forEach((image, index) => {
+      formData.append("disasterImages", image);
+    });
 
     try {
-      // Call the createReport mutation
-      await createReport(formData).unwrap(); // Using unwrap to catch errors
-      resetFormFields(); // Reset fields after successful submission
-      onSubmit(); // Notify parent of successful submission
-      onClose(); // Close the dialog after submission
+      await createReport(formData).unwrap();
+      resetFormFields();
+      onSubmit();
+      onClose();
     } catch (error) {
       console.error('Failed to create report:', error);
     }
@@ -137,12 +123,12 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
                   images.map((img, index) => (
                     <Box key={index} position="relative">
                       <img
-                        src={img}
+                        src={URL.createObjectURL(img)} // Use Object URL for preview
                         alt={`disaster-image-${index}`}
                         style={{ width: '100px', height: '100px', objectFit: 'cover' }}
                       />
                       <IconButton
-                        onClick={() => removeImage(index)} // Call removeImage when clicked
+                        onClick={() => removeImage(index)}
                         size="small"
                         sx={{
                           position: 'absolute',
@@ -232,7 +218,6 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
                 onChange={(e) => setLocation(e.target.value)}
               />
 
-              {/* Priority Field */}
               <FormControl fullWidth margin="dense">
                 <InputLabel>Priority</InputLabel>
                 <Select

@@ -1,45 +1,39 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-// Define a service using a base URL and expected endpoints
 const reportApi = createApi({
     reducerPath: 'reportApi',
-    baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_BASE_URL }), // Update to your server's base URL
+    baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_BASE_URL }), // Ensure base URL is set in .env
     endpoints: (builder) => ({
-        // Endpoint to fetch all reports
         fetchReports: builder.query({
-            query: () => '/reports', // Adjust the URL to match your backend route
-            providesTags: ['Report'], // Adding tags for caching
+            query: () => '/reports',
+            providesTags: ['Report'],
         }),
-        // Endpoint to create a new report
         createReport: builder.mutation({
-            query: (reportData) => ({
-                url: '/reports', // Adjust the URL to match your backend route
+            query: (formData) => ({
+                url: '/reports',
                 method: 'POST',
-                body: reportData,
+                body: formData, // Send FormData directly
             }),
-            invalidatesTags: ['Report'], // Invalidate cache after creation
+            invalidatesTags: ['Report'],
         }),
-        // Optional: Endpoint to update a report
         updateReport: builder.mutation({
             query: ({ id, ...patch }) => ({
-                url: `/reports/${id}`, // Adjust the URL to match your backend route
+                url: `/reports/${id}`,
                 method: 'PATCH',
                 body: patch,
             }),
-            invalidatesTags: ['Report'], // Invalidate cache after update
+            invalidatesTags: ['Report'],
         }),
-        // Optional: Endpoint to delete a report
         deleteReport: builder.mutation({
             query: (id) => ({
-                url: `/reports/${id}`, // Adjust the URL to match your backend route
+                url: `/reports/${id}`,
                 method: 'DELETE',
             }),
-            invalidatesTags: ['Report'], // Invalidate cache after deletion
+            invalidatesTags: ['Report'],
         }),
     }),
 });
 
-// Export hooks for usage in functional components
 export const {
     useFetchReportsQuery,
     useCreateReportMutation,
@@ -47,5 +41,4 @@ export const {
     useDeleteReportMutation,
 } = reportApi;
 
-// Export the API service to be included in the store
 export default reportApi;
