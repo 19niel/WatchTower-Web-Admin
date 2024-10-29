@@ -8,6 +8,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DialogReportForm from "components/DialogReportForm"; 
 import ImagePreview from "components/ImagePreview"; 
+import { getImageUrlById } from "utils/imageUtils";
 
 const Reports = () => {
   const theme = useTheme();
@@ -56,20 +57,19 @@ const Reports = () => {
       flex: 1,
       renderCell: (params) => {
         const images = params.value;
-        // Ensure images is defined and is an array
-        if (!Array.isArray(images) || images.length === 0 || images[0] === "No Images") {
+        if (!Array.isArray(images) || images.length === 0) {
           return <span>No Images</span>;
         }
         return (
           <Box display="flex" justifyContent="space-between">
-            {images.slice(0, 3).map((image, index) => (
+            {images.slice(0, 3).map((imageId, index) => (
               <img
                 key={index}
-                src={image}
+                src={getImageUrlById(imageId)}
                 alt={`Disaster ${index + 1}`}
                 width="80"
                 style={{ marginRight: '4px', cursor: 'pointer' }}
-                onClick={() => handleOpenPreview(images, index)}
+                onClick={() => handleOpenPreview(images.map(id => getImageUrlById(id)), index)}
               />
             ))}
           </Box>
