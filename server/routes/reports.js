@@ -1,6 +1,6 @@
 import express from "express";
 import multer from "multer"; // Import multer
-import { getReports, createReport, updateReport, deleteReport, getImage, getUnverifiedReports } from "../controllers/reports.js";
+import { getReports, createReport, updateReport, deleteReport, getImage, getUnverifiedReports, acceptRescuer  } from "../controllers/reports.js";
 
 const router = express.Router();
 
@@ -39,6 +39,8 @@ router.put('/:id/activate', async (req, res) => {
     }
   });
 
+
+  router.put('/:id/accept', acceptRescuer);  
 
 
 export default router;

@@ -31,11 +31,11 @@ const ReportSchema = new mongoose.Schema(
         },
         disasterStatus: {
                 type: String,
-                // "Active", "In Progress", "Solved", "Failed", "Under Review", "Completed"
+                // "Active", "Pending","In Progress", "Failed", "unverified", "Completed"
         },
         priority: {
             type: String,
-            // "High Priority", "Mid Priority", "Low Priority", "Lowest priority", "Pending"
+            // "High Priority", "Mid Priority", "Low Priority", "Lowest priority", 
          },
         rescuerId: {
             type: String,

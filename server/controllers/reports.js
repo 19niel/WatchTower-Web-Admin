@@ -126,3 +126,26 @@ export const getUnverifiedReports = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch unverified reports" });
   }
 };
+
+// Accept a rescuer for a report
+export const acceptRescuer = async (req, res) => {
+  const { id } = req.params;
+  const { rescuer, status } = req.body; // Expect rescuer ID and new status
+
+  try {
+    const updatedReport = await Report.findByIdAndUpdate(
+      id,
+      { rescuerId: rescuer, disasterStatus: status },
+      { new: true, runValidators: true } // Ensure that validation occurs on update
+    );
+
+    if (!updatedReport) {
+      return res.status(404).json({ message: 'Report not found' });
+    }
+
+    res.status(200).json(updatedReport);
+  } catch (error) {
+    console.error("Error accepting rescuer:", error);
+    res.status(400).json({ message: error.message });
+  }
+};
