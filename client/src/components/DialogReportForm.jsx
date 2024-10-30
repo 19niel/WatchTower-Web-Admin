@@ -15,7 +15,7 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
   const [location, setLocation] = useState('');
   const [disasterInfo, setDisasterInfo] = useState('');
   const [disasterCategory, setDisasterCategory] = useState('');
-  const [priority, setPriority] = useState('Pending');
+  const [priority, setPriority] = useState('Active');
   const [images, setImages] = useState([]); 
   const [createReport, { isLoading, isError, error }] = useCreateReportMutation(); 
 
@@ -25,7 +25,7 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
       setDisasterInfo(initialData.disasterInfo || '');
       setDisasterCategory(initialData.disasterCategory || '');
       setReportedBy(initialData.reportedBy || '');
-      setPriority(initialData.priority || 'Pending');
+      setPriority(initialData.priority || 'Active');
       setImages(initialData.disasterImages || []);
     } else {
       resetFormFields();
@@ -37,7 +37,7 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
     setDisasterInfo('');
     setDisasterCategory('');
     setReportedBy('');
-    setPriority('Pending');
+    setPriority('Active');
     setImages([]);
   };
 
@@ -229,7 +229,7 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
                   <MenuItem value="Medium Priority">Medium Priority</MenuItem>
                   <MenuItem value="Low Priority">Low Priority</MenuItem>
                   <MenuItem value="Lowest Priority">Lowest Priority</MenuItem>
-                  <MenuItem value="Pending">Pending</MenuItem>
+                  <MenuItem value="Active">Active</MenuItem>
                 </Select>
               </FormControl>
             </Grid>

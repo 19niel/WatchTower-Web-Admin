@@ -31,11 +31,11 @@ router.put('/:id/activate', async (req, res) => {
     const { id } = req.params;
   
     try {
-      // Update the report status to "active"
-      await Report.findByIdAndUpdate(id, { disasterStatus: "active" });
-      res.status(200).send({ message: "Report activated successfully." });
+      // Update the report status to "verified"
+      await Report.findByIdAndUpdate(id, { disasterStatus: "verified" });
+      res.status(200).send({ message: "Report verified successfully." });
     } catch (error) {
-      res.status(500).send({ message: "Error activating report.", error });
+      res.status(500).send({ message: "Error verifying report.", error });
     }
   });
 

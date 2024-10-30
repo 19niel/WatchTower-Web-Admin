@@ -31,7 +31,7 @@ const ReportSchema = new mongoose.Schema(
         },
         disasterStatus: {
                 type: String,
-                // "Active", "Pending","In Progress", "Failed", "unverified", "Completed"
+                //  "Pending","In Progress", "Failed", "unverified", "verified" , "Completed"
         },
         priority: {
             type: String,
