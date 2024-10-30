@@ -1,39 +1,53 @@
-// client/src/scenes/pendingreports/index.jsx
-
 import React, { useEffect, useState } from "react";
-import { Box, useTheme, Grid } from "@mui/material"; // Import Grid for layout
+import { Box, useTheme, Grid } from "@mui/material";
 import Header from "components/Header";
-import PendingReportCard from "../../components/PendingReportCard"; // Adjust path as necessary
+import PendingReportCard from "../../components/PendingReportCard";
 
 const PendingReports = () => {
   const theme = useTheme();
-  const [pendingReports, setPendingReports] = useState([]);
+  const [reports, setReports] = useState([]);
 
   useEffect(() => {
-    // Fetch pending reports from your API
     const fetchPendingReports = async () => {
       try {
-        const response = await fetch('/api/reports/pending'); // Adjust the endpoint as needed
+        const response = await fetch('http://localhost:5001/reports');
         const data = await response.json();
-        setPendingReports(data); // Set the fetched reports to state
+        setReports(data);
       } catch (error) {
-        console.error('Error fetching pending reports:', error);
+        console.error('Error fetching reports:', error);
       }
     };
 
     fetchPendingReports();
   }, []);
 
-  const handleActivate = (id) => {
-    // Logic to activate report
-    console.log(`Activating report with ID: ${id}`);
-    // Call your API to update the report status here
+  // Filter reports to show only those with disasterStatus "unverified"
+  const pendingReports = reports.filter(report => report.disasterStatus === "unverified");
+
+  const handleActivate = async (id) => {
+    try {
+      await fetch(`http://localhost:5001/reports/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ disasterStatus: "active" }),
+      });
+      setReports((prevReports) =>
+        prevReports.map((report) =>
+          report._id === id ? { ...report, disasterStatus: "active" } : report
+        )
+      );
+    } catch (error) {
+      console.error("Error updating report:", error);
+    }
   };
 
-  const handleDelete = (id) => {
-    // Logic to delete report
-    console.log(`Deleting report with ID: ${id}`);
-    // Call your API to delete the report here
+  const handleDelete = async (id) => {
+    try {
+      await fetch(`http://localhost:5001/reports/${id}`, { method: "DELETE" });
+      setReports((prevReports) => prevReports.filter((report) => report._id !== id));
+    } catch (error) {
+      console.error("Error deleting report:", error);
+    }
   };
 
   return (

@@ -35,7 +35,7 @@ const ReportSchema = new mongoose.Schema(
         },
         priority: {
             type: String,
-            // "Active", "In Progress", "Solved", "Failed", "Under Review", "Completed"
+            // "High Priority", "Mid Priority", "Low Priority", "Lowest priority", "Pending"
          },
         rescuerId: {
             type: String,

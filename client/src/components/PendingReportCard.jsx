@@ -1,47 +1,55 @@
 // client/src/components/PendingReportCard.jsx
-
-import * as React from 'react';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import { IconButton } from '@mui/material';
-import CheckIcon from '@mui/icons-material/Check'; // Import check icon
-import CloseIcon from '@mui/icons-material/Close'; // Import close icon
+import React from "react";
+import { Box, Typography, IconButton } from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
 
 const PendingReportCard = ({ report, onActivate, onDelete }) => {
   return (
-    <Card sx={{ width: '20%', margin: 2 }}> {/* Adjust width as needed */}
-      <CardMedia
-        sx={{ height: 140 }}
-        image={report.disasterImages[0]} // Display the first disaster image
-        title={report.disasterCategory}
-      />
-      <CardContent>
-        <Typography gutterBottom variant="h5" component="div">
-          {report.disasterCategory}
-        </Typography>
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {report.disasterInfo}
-        </Typography>
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          Reported By: {report.reportedBy}
-        </Typography>
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          Date: {new Date(report.createdAt).toLocaleDateString()}
-        </Typography>
-      </CardContent>
-      <CardActions>
-        <IconButton onClick={() => onActivate(report._id)}>
-          <CheckIcon />
+    <Box
+      sx={{
+        width: 300,
+        p: 2,
+        border: "1px solid gray",
+        borderRadius: 4,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 1,
+      }}
+    >
+      <Box sx={{ height: 200, width: "100%", overflow: "hidden", borderRadius: 4 }}>
+        <img
+          src={`/api/reports/image/${report.disasterImages[0]}`}
+          alt="Disaster"
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+        />
+      </Box>
+      <Typography variant="h6">{report.disasterCategory}</Typography>
+      <Typography variant="body2" color="textSecondary">
+        {report.location}
+      </Typography>
+      <Typography variant="body2">{report.disasterInfo}</Typography>
+      <Typography variant="caption" color="textSecondary">
+        Reported By: {report.reportedBy}
+      </Typography>
+      <Box display="flex" justifyContent="space-between" mt={2} width="100%">
+        <IconButton
+          color="error"
+          onClick={() => onDelete(report._id)}
+          aria-label="delete report"
+        >
+          <CancelIcon fontSize="large" />
         </IconButton>
-        <IconButton onClick={() => onDelete(report._id)}>
-          <CloseIcon />
+        <IconButton
+          color="success"
+          onClick={() => onActivate(report._id)}
+          aria-label="activate report"
+        >
+          <CheckCircleIcon fontSize="large" />
         </IconButton>
-      </CardActions>
-    </Card>
+      </Box>
+    </Box>
   );
 };
 

@@ -7,11 +7,11 @@ const LiveReports = () => {
   const theme = useTheme();
 
   const columns = [
+    { id: "pending", title: "On Progress", tasks: [] },
     { id: "high", title: "High Priority", tasks: [] },
     { id: "medium", title: "Medium Priority", tasks: [] },
     { id: "low", title: "Low Priority", tasks: [] },
-    { id: "lowest", title: "Lowest Priority", tasks: [] },
-    { id: "pending", title: "Pending", tasks: [] },
+    { id: "unverified", title: "Unverified", tasks: [] },
   ];
 
   const onDragEnd = (result) => {

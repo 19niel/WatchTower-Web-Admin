@@ -113,3 +113,16 @@ export const updateReport = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+
+// Pending Reports
+
+export const getUnverifiedReports = async (req, res) => {
+  try {
+    const unverifiedReports = await Report.find({ disasterStatus: "unverified" });
+    res.status(200).json(unverifiedReports);
+  } catch (error) {
+    console.error("Error fetching unverified reports:", error);
+    res.status(500).json({ message: "Failed to fetch unverified reports" });
+  }
+};

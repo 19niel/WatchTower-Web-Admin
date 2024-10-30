@@ -1,6 +1,6 @@
 import express from "express";
 import multer from "multer"; // Import multer
-import { getReports, createReport, updateReport, deleteReport, getImage } from "../controllers/reports.js";
+import { getReports, createReport, updateReport, deleteReport, getImage, getUnverifiedReports } from "../controllers/reports.js";
 
 const router = express.Router();
 
@@ -22,5 +22,10 @@ router.delete("/:id", deleteReport); // Route to delete a report by ID
 
 
 router.get('/image/:id', getImage); // Add this line to fetch image by ID
+
+router.get("/pending", getUnverifiedReports); // Add this line
+
+
+
 
 export default router;
