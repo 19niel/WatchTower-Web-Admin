@@ -11,7 +11,7 @@ const LiveReports = () => {
     { id: "high", title: "High Priority", tasks: [] },
     { id: "medium", title: "Medium Priority", tasks: [] },
     { id: "low", title: "Low Priority", tasks: [] },
-    { id: "unverified", title: "Unverified", tasks: [] },
+    { id: "active", title: "Active", tasks: [] },
   ];
 
   const onDragEnd = (result) => {

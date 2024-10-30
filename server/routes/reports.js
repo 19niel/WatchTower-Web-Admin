@@ -26,6 +26,19 @@ router.get('/image/:id', getImage); // Add this line to fetch image by ID
 router.get("/pending", getUnverifiedReports); // Add this line
 
 
+// Activate report endpoint
+router.put('/:id/activate', async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      // Update the report status to "active"
+      await Report.findByIdAndUpdate(id, { disasterStatus: "active" });
+      res.status(200).send({ message: "Report activated successfully." });
+    } catch (error) {
+      res.status(500).send({ message: "Error activating report.", error });
+    }
+  });
+
 
 
 export default router;
