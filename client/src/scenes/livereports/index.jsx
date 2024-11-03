@@ -38,7 +38,7 @@ const LiveReports = () => {
     };
 
     reports.forEach(report => {
-      if (report.disasterStatus === "active") {
+      if (report.priority === "active") {
         newColumns.active.tasks.push(report);
       } else if (report.priority === "high") {
         newColumns.high.tasks.push(report);
@@ -54,7 +54,7 @@ const LiveReports = () => {
     setColumns(newColumns);
   }, [reports]);
 
-  const onDragEnd = (result) => {
+  const onDragEnd = async (result) => {
     const { destination, source } = result;
 
     if (!destination) {
@@ -74,6 +74,20 @@ const LiveReports = () => {
     const destTasks = [...destColumn.tasks];
     const [movedReport] = sourceTasks.splice(source.index, 1);
     
+    // Only update the priority if not moved to the "On Progress" column
+    if (destination.droppableId !== "pending") {
+      movedReport.priority = destination.droppableId;
+      
+      // Update the report priority in the backend
+      try {
+        await axios.patch(`http://localhost:5001/reports/${movedReport._id}`, {
+          priority: movedReport.priority,
+        });
+      } catch (error) {
+        console.error("Error updating report priority:", error);
+      }
+    }
+
     // Add the moved report to the destination column
     destTasks.splice(destination.index, 0, movedReport);
 
@@ -136,7 +150,7 @@ const LiveReports = () => {
                                   borderRadius="4px"
                                   marginBottom="5px"
                                   bgcolor={theme.palette.primary.light}
-                                  style={{ cursor: "grab" }} // Change cursor style
+                                  style={{ cursor: "grab" }}
                                 >
                                   <Typography variant="body1">{report.disasterCategory}</Typography>
                                   <Typography variant="body2">{report.location}</Typography>
@@ -145,7 +159,7 @@ const LiveReports = () => {
                                     {report.disasterImages.map((imageId) => (
                                       <img
                                         key={imageId}
-                                        src={`http://localhost:5001/reports/image/${imageId}`} // Use your getImage URL
+                                        src={`http://localhost:5001/reports/image/${imageId}`}
                                         alt="Disaster"
                                         style={{ width: "50px", height: "50px", objectFit: "cover", borderRadius: "4px" }}
                                       />
