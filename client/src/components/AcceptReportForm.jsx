@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Button, Typography, Dialog } from "@mui/material";
-import { GoogleMap, Marker } from "@react-google-maps/api";
+import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
 
 const mapContainerStyle = {
   width: "100%",
@@ -8,6 +8,10 @@ const mapContainerStyle = {
 };
 
 const AcceptReportForm = ({ open, onClose, onSubmit, report }) => {
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY, // Make sure this key is defined
+  });
+
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(report._id);
@@ -39,20 +43,17 @@ const AcceptReportForm = ({ open, onClose, onSubmit, report }) => {
         </Typography>
         
         <Box sx={{ mt: 2 }}>
-          <GoogleMap
-            mapContainerStyle={mapContainerStyle}
-            center={{ lat: latitude, lng: longitude }}
-            zoom={15}
-          >
-            {/* Check if latitude and longitude are valid numbers */}
-            {isNaN(latitude) || isNaN(longitude) ? (
-              <Typography variant="body2" color="error">
-                Invalid location coordinates.
-              </Typography>
-            ) : (
+          {isLoaded ? (
+            <GoogleMap
+              mapContainerStyle={mapContainerStyle}
+              center={{ lat: latitude, lng: longitude }}
+              zoom={15}
+            >
               <Marker position={{ lat: latitude, lng: longitude }} />
-            )}
-          </GoogleMap>
+            </GoogleMap>
+          ) : (
+            <Typography>Loading Map...</Typography>
+          )}
         </Box>
         
         <form onSubmit={handleSubmit}>
