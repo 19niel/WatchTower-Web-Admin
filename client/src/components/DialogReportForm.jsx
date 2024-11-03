@@ -63,7 +63,7 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
     formData.append("location", location);
     formData.append("disasterInfo", disasterInfo);
     formData.append("disasterCategory", disasterCategory);
-    formData.append("disasterStatus", 'active');
+    formData.append("disasterStatus", 'verified');
     formData.append("rescuerId", "No Rescuer Yet");
     formData.append("rescuedBy", "No Rescuer Yet");
     formData.append("priority", priority);

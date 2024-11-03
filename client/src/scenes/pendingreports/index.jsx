@@ -26,18 +26,22 @@ const PendingReports = () => {
 
   const handleActivate = async (id) => {
     try {
-      await fetch(`http://localhost:5001/reports/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ disasterStatus: "active" }),
+      const response = await fetch(`/api/reports/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ disasterStatus: "verified", priority: "active" }),
       });
-      setReports((prevReports) =>
-        prevReports.map((report) =>
-          report._id === id ? { ...report, disasterStatus: "active" } : report
-        )
-      );
+  
+      if (response.ok) {
+        // Update the UI after successful status and priority change
+        setReports((prevReports) => prevReports.filter((report) => report._id !== id));
+      } else {
+        console.error("Failed to verify and activate report");
+      }
     } catch (error) {
-      console.error("Error updating report:", error);
+      console.error("Error verifying and activating report:", error);
     }
   };
 
