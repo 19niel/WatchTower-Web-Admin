@@ -228,7 +228,7 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
                   <MenuItem value="high">High Priority</MenuItem>
                   <MenuItem value="medium">Medium Priority</MenuItem>
                   <MenuItem value="low">Low Priority</MenuItem>
-                  <MenuItem value="Active">Active</MenuItem>
+                  <MenuItem value="active">Active</MenuItem>
                 </Select>
               </FormControl>
             </Grid>

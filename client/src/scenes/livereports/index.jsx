@@ -38,16 +38,19 @@ const LiveReports = () => {
     };
 
     reports.forEach(report => {
-      if (report.priority === "active") {
-        newColumns.active.tasks.push(report);
-      } else if (report.priority === "high") {
-        newColumns.high.tasks.push(report);
-      } else if (report.priority === "medium") {
-        newColumns.medium.tasks.push(report);
-      } else if (report.priority === "low") {
-        newColumns.low.tasks.push(report);
-      } else {
-        newColumns.pending.tasks.push(report);
+      // Only include reports that are verified
+      if (report.disasterStatus === "verified") {
+        if (report.priority === "active") {
+          newColumns.active.tasks.push(report);
+        } else if (report.priority === "high") {
+          newColumns.high.tasks.push(report);
+        } else if (report.priority === "medium") {
+          newColumns.medium.tasks.push(report);
+        } else if (report.priority === "low") {
+          newColumns.low.tasks.push(report);
+        } else {
+          newColumns.pending.tasks.push(report);
+        }
       }
     });
 
