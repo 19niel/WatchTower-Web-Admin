@@ -1,6 +1,6 @@
 import express from "express";
 import multer from "multer"; // Import multer
-import { getReports, createReport, updateReport, deleteReport, getImage, getUnverifiedReports, acceptRescuer  } from "../controllers/reports.js";
+import { getReports, getReportById, createReport, updateReport, deleteReport, getImage, getUnverifiedReports, acceptRescuerAndUpdatePriority  } from "../controllers/reports.js";
 
 const router = express.Router();
 
@@ -10,6 +10,9 @@ const upload = multer({ storage });
 
 // Existing GET route
 router.get("/", getReports); // Route to fetch reports
+
+// Add the route to fetch a single report by its ID
+router.get("/:id", getReportById);  // Fetch report by ID
 
 // POST route for creating a report
 router.post("/", upload.array("disasterImages"), createReport); // Include multer middleware for file uploads
@@ -40,7 +43,8 @@ router.put('/:id/activate', async (req, res) => {
   });
 
 
-  router.put('/:id/accept', acceptRescuer);  
+  // Use the combined route for accepting rescuer and updating priority
+router.put("/:id/accept", acceptRescuerAndUpdatePriority); 
 
 
 export default router;

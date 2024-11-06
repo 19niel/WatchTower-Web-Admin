@@ -3,6 +3,22 @@ import { getGfsBucket } from "../utils/gridFsUtils.js";
 import mongoose from 'mongoose';
 
 
+export const getReportById = async (req, res) => {
+  try {
+    const reportId = req.params.id; // Get the ID from the URL parameters
+    const report = await Report.findById(reportId);
+
+    if (!report) {
+      return res.status(404).json({ message: "Report not found" });
+    }
+
+    res.status(200).json(report); // Return the report data
+  } catch (error) {
+    console.error("Error fetching report:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 export const getImage = async (req, res) => {
   const { id } = req.params;
   const gfsBucket = getGfsBucket();
@@ -147,5 +163,28 @@ export const acceptRescuer = async (req, res) => {
   } catch (error) {
     console.error("Error accepting rescuer:", error);
     res.status(400).json({ message: error.message });
+  }
+};
+
+
+export const acceptRescuerAndUpdatePriority = async (req, res) => {
+  const { id } = req.params;
+  const { rescuerId, rescuedBy, priority } = req.body;
+
+  try {
+    const updatedReport = await Report.findByIdAndUpdate(
+      id,
+      { rescuerId, rescuedBy, priority }, // Update the rescuer and priority
+      { new: true, runValidators: true } // Return the updated report
+    );
+
+    if (!updatedReport) {
+      return res.status(404).json({ message: "Report not found" });
+    }
+
+    res.status(200).json(updatedReport);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error updating report" });
   }
 };
