@@ -7,6 +7,7 @@ import {
 import { Close as CloseIcon, PhotoCamera } from '@mui/icons-material';
 import SanJuanMap from './SanJuanMap'; 
 import { useCreateReportMutation } from '../state/reportApi';
+import { geocodeLatLng } from '../utils/geocode';  
 
 const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) => {
   const theme = useTheme();
@@ -15,7 +16,7 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
   const [location, setLocation] = useState('');
   const [disasterInfo, setDisasterInfo] = useState('');
   const [disasterCategory, setDisasterCategory] = useState('');
-  const [priority, setPriority] = useState('Active');
+  const [priority, setPriority] = useState('active');
   const [images, setImages] = useState([]); 
   const [createReport, { isLoading, isError, error }] = useCreateReportMutation(); 
 
@@ -25,7 +26,7 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
       setDisasterInfo(initialData.disasterInfo || '');
       setDisasterCategory(initialData.disasterCategory || '');
       setReportedBy(initialData.reportedBy || '');
-      setPriority(initialData.priority || 'Active');
+      setPriority(initialData.priority || 'active');
       setImages(initialData.disasterImages || []);
     } else {
       resetFormFields();
@@ -37,12 +38,13 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
     setDisasterInfo('');
     setDisasterCategory('');
     setReportedBy('');
-    setPriority('Active');
+    setPriority('active');
     setImages([]);
   };
 
-  const handleLocationSelect = ({ lat, lng }) => {
-    setLocation(`Latitude: ${lat}, Longitude: ${lng}`);
+  const handleLocationSelect = async ({ lat, lng }) => {
+    const address = await geocodeLatLng(lat, lng);
+    setLocation(address);  // Set the readable address instead of raw coordinates
   };
 
   const handleImages = (event) => {
