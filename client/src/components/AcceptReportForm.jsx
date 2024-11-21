@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Button, Typography, Dialog } from "@mui/material";
 import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
+import axios from "axios";
 
 const mapContainerStyle = {
   width: "100%",
@@ -9,8 +10,48 @@ const mapContainerStyle = {
 
 const AcceptReportForm = ({ open, onClose, onSubmit, report }) => {
   const { isLoaded } = useLoadScript({
-    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY, // Make sure this key is defined
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY, // Ensure this key is defined in .env.local
   });
+
+  const [coordinates, setCoordinates] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // Function to fetch coordinates from the location string
+  const fetchCoordinates = async (address) => {
+    try {
+      const response = await axios.get(
+        `https://maps.googleapis.com/maps/api/geocode/json`,
+        {
+          params: {
+            address,
+            key: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+          },
+        }
+      );
+      const location = response.data.results[0]?.geometry.location;
+      return location ? { lat: location.lat, lng: location.lng } : null;
+    } catch (error) {
+      console.error("Error fetching coordinates:", error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const loadCoordinates = async () => {
+      if (report?.coordinates) {
+        setCoordinates(report.coordinates);
+      } else if (report?.location) {
+        const fetchedCoordinates = await fetchCoordinates(report.location);
+        setCoordinates(fetchedCoordinates);
+      }
+      setLoading(false);
+    };
+
+    if (open) {
+      setLoading(true);
+      loadCoordinates();
+    }
+  }, [open, report]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -18,44 +59,42 @@ const AcceptReportForm = ({ open, onClose, onSubmit, report }) => {
     onClose();
   };
 
-  // Extract latitude and longitude from the location string
-  const locationMatch = report.location.match(/Latitude: ([\d.-]+), Longitude: ([\d.-]+)/);
-  
-  if (!locationMatch) {
-    console.error("Invalid location format:", report.location);
-    return null; // Exit if location format is invalid
+  if (loading) {
+    return (
+      <Dialog open={open} onClose={onClose}>
+        <Box sx={{ p: 4, width: 600, textAlign: "center" }}>
+          <Typography variant="h6">Loading Report...</Typography>
+        </Box>
+      </Dialog>
+    );
   }
-
-  const [latitude, longitude] = locationMatch.slice(1, 3).map(Number);
 
   return (
     <Dialog open={open} onClose={onClose}>
       <Box sx={{ p: 4, width: 600 }}>
         <Typography variant="h6">Accept Report</Typography>
         <Typography variant="body2" sx={{ mt: 1 }}>
-          Disaster Category: {report.disasterCategory}
+          <strong>Disaster Category:</strong> {report.disasterCategory}
         </Typography>
         <Typography variant="body2" sx={{ mt: 1 }}>
-          Disaster Info: {report.disasterInfo}
+          <strong>Disaster Info:</strong> {report.disasterInfo}
         </Typography>
         <Typography variant="body2" sx={{ mt: 1 }}>
-          Location: {report.location}
+          <strong>Location:</strong> {report.location}
         </Typography>
-        
         <Box sx={{ mt: 2 }}>
-          {isLoaded ? (
+          {isLoaded && coordinates ? (
             <GoogleMap
               mapContainerStyle={mapContainerStyle}
-              center={{ lat: latitude, lng: longitude }}
+              center={{ lat: coordinates.lat, lng: coordinates.lng }}
               zoom={15}
             >
-              <Marker position={{ lat: latitude, lng: longitude }} />
+              <Marker position={{ lat: coordinates.lat, lng: coordinates.lng }} />
             </GoogleMap>
           ) : (
-            <Typography>Loading Map...</Typography>
+            <Typography>Unable to load map. Please check the location details.</Typography>
           )}
         </Box>
-        
         <form onSubmit={handleSubmit}>
           <Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
             Accept
@@ -70,3 +109,4 @@ const AcceptReportForm = ({ open, onClose, onSubmit, report }) => {
 };
 
 export default AcceptReportForm;
+

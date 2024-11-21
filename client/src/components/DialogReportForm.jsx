@@ -178,9 +178,6 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
                   <MenuItem value="Flood">Flood</MenuItem>
                   <MenuItem value="Typhoon">Typhoon</MenuItem>
                   <MenuItem value="Fire">Fire</MenuItem>
-                  <MenuItem value="Animals">Animals</MenuItem>
-                  <MenuItem value="Casualties">Casualties</MenuItem>
-                  <MenuItem value="Structural_Damage">Structural Damage</MenuItem>
                   <MenuItem value="Others">Others</MenuItem>
                 </Select>
               </FormControl>
@@ -227,9 +224,9 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
                   onChange={(e) => setPriority(e.target.value)}
                   required
                 >
-                  <MenuItem value="high">High Priority</MenuItem>
-                  <MenuItem value="medium">Medium Priority</MenuItem>
-                  <MenuItem value="low">Low Priority</MenuItem>
+                  <MenuItem value="High">High Priority</MenuItem>
+                  <MenuItem value="Medium">Medium Priority</MenuItem>
+                  <MenuItem value="Low">Low Priority</MenuItem>
                   <MenuItem value="active">Active</MenuItem>
                 </Select>
               </FormControl>

@@ -54,6 +54,9 @@ const storage = new GridFsStorage({
 
 const upload = multer({ storage }); // Initialize multer with GridFS storage
 
+
+
+
 // Middleware
 app.use(express.json({ limit: '10mb' })); // Set a higher limit for JSON requests
 app.use(helmet());

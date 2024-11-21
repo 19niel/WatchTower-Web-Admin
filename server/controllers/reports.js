@@ -2,7 +2,6 @@ import Report from "../models/Report.js";
 import { getGfsBucket } from "../utils/gridFsUtils.js";
 import mongoose from 'mongoose';
 
-
 export const getReportById = async (req, res) => {
   try {
     const reportId = req.params.id; // Get the ID from the URL parameters

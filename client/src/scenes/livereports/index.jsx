@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react"; 
 import { Box, useTheme, Typography, Paper, Button, Dialog } from "@mui/material";
 import Header from "components/Header";
 import AssignRescuerForm from "components/AssignRescuerForm"; // Import the dialog form component
@@ -12,7 +12,6 @@ const LiveReports = () => {
     high: { id: "high", title: "High Priority", tasks: [] },
     medium: { id: "medium", title: "Medium Priority", tasks: [] },
     low: { id: "low", title: "Low Priority", tasks: [] },
-    active: { id: "active", title: "Active", tasks: [] },
   });
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedReport, setSelectedReport] = useState(null);
@@ -36,14 +35,15 @@ const LiveReports = () => {
       high: { id: "high", title: "High Priority", tasks: [] },
       medium: { id: "medium", title: "Medium Priority", tasks: [] },
       low: { id: "low", title: "Low Priority", tasks: [] },
-      active: { id: "active", title: "Active", tasks: [] },
     };
 
     reports.forEach((report) => {
+      // Skip reports with "active" priority
+      if (report.priority === "active") return;
+
+      // Categorize reports based on priority and status
       if (report.disasterStatus === "verified") {
-        if (report.priority === "active") {
-          newColumns.active.tasks.push(report);
-        } else if (report.priority === "high") {
+        if (report.priority === "high") {
           newColumns.high.tasks.push(report);
         } else if (report.priority === "medium") {
           newColumns.medium.tasks.push(report);
