@@ -53,10 +53,22 @@ const AcceptReportForm = ({ open, onClose, onSubmit, report }) => {
     }
   }, [open, report]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => { // Add async here
     e.preventDefault();
-    onSubmit(report._id);
-    onClose();
+  
+    // Send the report ID to the backend to update the disasterStatus and priority
+    try {
+      const response = await axios.put(
+        `http://localhost:5000/api/reports/${report._id}/activate`
+      );
+  
+      // After successful update, close the dialog
+      console.log("Report updated:", response.data);
+      onClose();
+    } catch (error) {
+      console.error("Error updating report:", error);
+      // Handle error (e.g., show a notification)
+    }
   };
 
   if (loading) {
