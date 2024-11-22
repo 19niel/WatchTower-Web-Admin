@@ -13,3 +13,5 @@ hello
 week 10 Priority and rescuer credentials on reports
 
 week 11 long and lat to location description
+
+may AI model na
