@@ -82,6 +82,9 @@ const AcceptReportForm = ({ open, onClose, onSubmit, report }) => {
         <Typography variant="body2" sx={{ mt: 1 }}>
           <strong>Location:</strong> {report.location}
         </Typography>
+        <Typography variant="body2" sx={{ mt: 1 }}>
+          <strong>Priority:</strong> {report.priority}
+        </Typography>
         <Box sx={{ mt: 2 }}>
           {isLoaded && coordinates ? (
             <GoogleMap
