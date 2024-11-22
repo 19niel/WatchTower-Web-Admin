@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\Admin\Documents\GitHub\WatchTower-Web-Admin\server\ai_model\venv
+set VIRTUAL_ENV=C:\Users\LENOVO\Documents\Capstone\WatchTower-Web-Admin\server\ai_model\venv
 
 if not defined PROMPT set PROMPT=$P$G
 
