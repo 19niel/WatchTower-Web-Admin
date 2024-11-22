@@ -19,6 +19,7 @@ WatchTower/
 │   ├── package-lock.json
 │   └── package.json
 ├── server/ 
+│   ├── ai_model/ 
 │   ├── controllers/ 
 │   ├── data/ 
 │   ├── models/ 

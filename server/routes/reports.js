@@ -1,6 +1,8 @@
 import express from "express";
 import multer from "multer"; // Import multer
 import { getReports, getReportById, createReport, updateReport, deleteReport, getImage, getUnverifiedReports, acceptRescuerAndUpdatePriority  } from "../controllers/reports.js";
+import { exec } from "child_process"; // Import exec to run Python script
+import Report from "../models/Report.js"; // Assuming Report model is imported
 
 const router = express.Router();
 
@@ -30,44 +32,14 @@ router.get("/pending", getUnverifiedReports); // Add this line
 
 
 // Activate report endpoint
+// Activate report endpoint
 router.put('/:id/activate', async (req, res) => {
   const { id } = req.params;
 
   try {
-    // Find the report by ID
-    const report = await Report.findById(id);
-    if (!report) {
-      return res.status(404).send({ message: "Report not found." });
-    }
-
-    // Extract disasterCategory and disasterInfo for AI
-    const { disasterCategory, disasterInfo } = report;
-
-    // Call the Python AI model to assign priority
-    const { spawn } = require('child_process');
-    const pythonProcess = spawn('python3', ['./ai_model/priority_assigner.py', disasterCategory, disasterInfo]);
-
-    pythonProcess.stdout.on('data', async (data) => {
-      const priority = data.toString().trim();
-
-      // Update the report with disasterStatus and priority
-      await Report.findByIdAndUpdate(id, {
-        disasterStatus: "verified",
-        priority: priority
-      });
-
-      // Send success response
-      res.status(200).send({
-        message: "Report verified and priority assigned successfully.",
-        priority: priority
-      });
-    });
-
-    pythonProcess.stderr.on('data', (data) => {
-      console.error(`AI Error: ${data}`);
-      res.status(500).send({ message: "Error processing AI priority.", error: data.toString() });
-    });
-
+    // Update the report status to "verified"
+    await Report.findByIdAndUpdate(id, { disasterStatus: "verified" });
+    res.status(200).send({ message: "Report verified successfully." });
   } catch (error) {
     res.status(500).send({ message: "Error verifying report.", error });
   }
