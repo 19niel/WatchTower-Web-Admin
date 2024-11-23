@@ -32,7 +32,6 @@ router.get("/pending", getUnverifiedReports); // Add this line
 
 
 // Activate report endpoint
-// Activate report endpoint
 router.put('/:id/activate', async (req, res) => {
   const { id } = req.params;
 
