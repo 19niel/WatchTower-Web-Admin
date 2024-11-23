@@ -24,14 +24,26 @@ const PendingReports = () => {
   // Filter reports to show only those with disasterStatus "unverified"
   const pendingReports = reports.filter(report => report.disasterStatus === "unverified");
 
-  const handleActivate = async (id) => {
+  const handleActivate = async (id, disasterCategory) => {
+    let priority = "low"; // Default priority
+  
+    // Determine priority based on disaster category
+    if (disasterCategory === "Flood" || disasterCategory === "Fire") {
+      priority = "high"; // Set high priority for Flood and Fire
+    } else if (disasterCategory === "Typhoon") {
+      priority = "mid"; // Set mid priority for Typhoon
+    } else if (disasterCategory === "Others") {
+      priority = "low"; // Set low priority for Others (already set by default)
+    }
+  
     try {
+      // Send the PATCH request with the updated disasterStatus and priority
       await fetch(`http://localhost:5001/reports/${id}`, {
-        method: "PATCH",  // Makes a PATCH request to update the report status
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          disasterStatus: "verified",  // Update the status to verified
-          priority: "low",  // Set the priority to low
+          disasterStatus: "verified", // Update the status to verified
+          priority: priority, // Set dynamic priority
         }),
       });
   
@@ -39,7 +51,7 @@ const PendingReports = () => {
       setReports((prevReports) =>
         prevReports.map((report) =>
           report._id === id
-            ? { ...report, disasterStatus: "verified", priority: "low" }
+            ? { ...report, disasterStatus: "verified", priority: priority }
             : report
         )
       );
@@ -47,6 +59,17 @@ const PendingReports = () => {
       console.error("Error updating report:", error);
     }
   };
+  
+  // const handleActivate = async (id) => {
+  //   try {
+  //     await fetch(`http://localhost:5001/reports/${id}`, {
+  //       method: "PATCH",  // Makes a PATCH request to update the report status
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({
+  //         disasterStatus: "verified",  // Update the status to verified
+  //         priority: "low",  // Set the priority to low
+  //       }),
+  //     });
 
   const handleDelete = async (id) => {
     try {
