@@ -27,13 +27,20 @@ const PendingReports = () => {
   const handleActivate = async (id) => {
     try {
       await fetch(`http://localhost:5001/reports/${id}`, {
-        method: "PATCH",
+        method: "PATCH",  // Makes a PATCH request to update the report status
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ disasterStatus: "verified" }),
+        body: JSON.stringify({
+          disasterStatus: "verified",  // Update the status to verified
+          priority: "low",  // Set the priority to low
+        }),
       });
+  
+      // Update the state of the reports with the new priority and status
       setReports((prevReports) =>
         prevReports.map((report) =>
-          report._id === id ? { ...report, disasterStatus: "verified" } : report
+          report._id === id
+            ? { ...report, disasterStatus: "verified", priority: "low" }
+            : report
         )
       );
     } catch (error) {
