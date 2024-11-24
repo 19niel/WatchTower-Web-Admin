@@ -24,52 +24,40 @@ const PendingReports = () => {
   // Filter reports to show only those with disasterStatus "unverified"
   const pendingReports = reports.filter(report => report.disasterStatus === "unverified");
 
-  const handleActivate = async (id, disasterCategory) => {
-    let priority = "low"; // Default priority
-  
-    // Determine priority based on disaster category
-    if (disasterCategory === "Flood" || disasterCategory === "Fire") {
-      priority = "high"; // Set high priority for Flood and Fire
-    } else if (disasterCategory === "Typhoon") {
-      priority = "mid"; // Set mid priority for Typhoon
-    } else if (disasterCategory === "Others") {
-      priority = "low"; // Set low priority for Others (already set by default)
-    }
-  
+  const handleActivate = async (id, disasterCategory, disasterInfo) => {
     try {
-      // Send the PATCH request with the updated disasterStatus and priority
-      await fetch(`http://localhost:5001/reports/${id}`, {
-        method: "PATCH",
+      const aiResponse = await fetch('http://localhost:5001/ai/priority', {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          disasterStatus: "verified", // Update the status to verified
-          priority: priority, // Set dynamic priority
-        }),
+        body: JSON.stringify({ disasterCategory, disasterInfo }),
       });
-  
-      // Update the state of the reports with the new priority and status
-      setReports((prevReports) =>
-        prevReports.map((report) =>
-          report._id === id
-            ? { ...report, disasterStatus: "verified", priority: priority }
-            : report
-        )
-      );
+
+      const aiData = await aiResponse.json();
+
+      if (aiResponse.ok) {
+        const { priority } = aiData;
+
+        await fetch(`http://localhost:5001/reports/${id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            disasterStatus: "verified",
+            priority,
+          }),
+        });
+
+        setReports((prevReports) =>
+          prevReports.map((report) =>
+            report._id === id ? { ...report, disasterStatus: "verified", priority } : report
+          )
+        );
+      } else {
+        console.error("AI Error:", aiData.error);
+      }
     } catch (error) {
       console.error("Error updating report:", error);
     }
   };
-  
-  // const handleActivate = async (id) => {
-  //   try {
-  //     await fetch(`http://localhost:5001/reports/${id}`, {
-  //       method: "PATCH",  // Makes a PATCH request to update the report status
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({
-  //         disasterStatus: "verified",  // Update the status to verified
-  //         priority: "low",  // Set the priority to low
-  //       }),
-  //     });
 
   const handleDelete = async (id) => {
     try {
@@ -89,20 +77,33 @@ const PendingReports = () => {
         border={`1px solid ${theme.palette.secondary[200]}`}
         borderRadius="4px"
         display="flex"
+        flexDirection="column"
         justifyContent="center"
         alignItems="center"
       >
-        <Grid container spacing={2} p={2} overflow="auto">
+        <Box
+          display="flex"
+          overflow="auto"
+          width="100%"
+          p={2}
+          sx={{
+            '&::-webkit-scrollbar': { height: '8px' },
+            '&::-webkit-scrollbar-thumb': {
+              background: theme.palette.primary.light,
+              borderRadius: '4px',
+            },
+          }}
+        >
           {pendingReports.map((report) => (
-            <Grid item key={report._id}>
+            <Box key={report._id} mr={2}>
               <PendingReportCard
                 report={report}
-                onActivate={handleActivate}
+                onActivate={() => handleActivate(report._id, report.disasterCategory, report.disasterInfo)}
                 onDelete={handleDelete}
               />
-            </Grid>
+            </Box>
           ))}
-        </Grid>
+        </Box>
       </Box>
     </Box>
   );

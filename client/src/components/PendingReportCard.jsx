@@ -1,17 +1,18 @@
 // client/src/components/PendingReportCard.jsx
 
 import React, { useState } from "react";
-import { Box, Typography, IconButton } from "@mui/material";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle"; // Use old icon import
-import CancelIcon from "@mui/icons-material/Cancel"; // Use old icon import
-import { getImageUrlById } from "../utils/imageUtils"; // Ensure this utility function is accessible here
-import ImagePreview from "./ImagePreview"; // Import your ImagePreview component
-import AcceptReportForm from "./AcceptReportForm"; // Import the AcceptReportForm component
+import { Box, Typography, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, Button } from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle"; 
+import CancelIcon from "@mui/icons-material/Cancel"; 
+import { getImageUrlById } from "../utils/imageUtils"; 
+import ImagePreview from "./ImagePreview"; 
+import AcceptReportForm from "./AcceptReportForm"; 
 
 const PendingReportCard = ({ report, onActivate, onDelete }) => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [formOpen, setFormOpen] = useState(false); // State to control the form modal
+  const [formOpen, setFormOpen] = useState(false); 
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false); // State to control the delete confirmation dialog
 
   const handleImageClick = (index) => {
     setCurrentIndex(index);
@@ -35,14 +36,22 @@ const PendingReportCard = ({ report, onActivate, onDelete }) => {
   };
 
   const handleActivate = (id, comments) => {
-    // Call the onActivate function passed as a prop with report ID and comments
     onActivate(id, comments);
+  };
+
+  const handleDelete = () => {
+    onDelete(report._id); // Call the onDelete function passed as a prop
+    setDeleteDialogOpen(false); // Close the delete dialog after deletion
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteDialogOpen(false); // Close the delete dialog without deleting
   };
 
   return (
     <Box
       sx={{
-        width: 300, // Set width for card
+        width: 300,
         p: 2,
         border: "1px solid gray",
         borderRadius: 4,
@@ -55,10 +64,10 @@ const PendingReportCard = ({ report, onActivate, onDelete }) => {
       {/* Display the first disaster image */}
       <Box sx={{ height: 200, width: "100%", overflow: "hidden", borderRadius: 4 }}>
         <img
-          src={getImageUrlById(report.disasterImages[0])} // Display first image
+          src={getImageUrlById(report.disasterImages[0])}
           alt="Disaster"
           style={{ width: "100%", height: "100%", objectFit: "cover", cursor: "pointer" }}
-          onClick={() => handleImageClick(0)} // Open preview on click
+          onClick={() => handleImageClick(0)}
         />
       </Box>
 
@@ -76,7 +85,7 @@ const PendingReportCard = ({ report, onActivate, onDelete }) => {
       <Box display="flex" justifyContent="space-between" mt={2} width="100%">
         <IconButton
           color="error"
-          onClick={() => onDelete(report._id)}
+          onClick={() => setDeleteDialogOpen(true)} // Open delete confirmation dialog
           aria-label="delete report"
         >
           <CancelIcon fontSize="large" />
@@ -103,10 +112,33 @@ const PendingReportCard = ({ report, onActivate, onDelete }) => {
       {/* Accept report form modal */}
       <AcceptReportForm
         open={formOpen}
-        onClose={() => setFormOpen(false)} // Close form
-        onSubmit={handleActivate} // Handle form submission
-        report={report} // Pass the report for any additional info
+        onClose={() => setFormOpen(false)} 
+        onSubmit={handleActivate} 
+        report={report} 
       />
+
+      {/* Delete confirmation dialog */}
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={handleCancelDelete}
+        aria-labelledby="delete-dialog-title"
+        aria-describedby="delete-dialog-description"
+      >
+        <DialogTitle id="delete-dialog-title">{"Confirm Deletion"}</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" color="textSecondary">
+            Are you sure you want to delete this report? This action cannot be undone.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelDelete} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleDelete} color="error">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
