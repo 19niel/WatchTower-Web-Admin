@@ -83,7 +83,7 @@ const Reports = () => {
       flex: 0.5,
       renderCell: (params) => new Date(params.value).toLocaleDateString(),
     },
-    { field: "rescuerId", headerName: "Rescued By", flex: 1 }, 
+    { field: "rescuedBy", headerName: "Rescued By", flex: 1 }, 
     { field: "reportedBy", headerName: "Reported By", flex: 1 },
     { field: "disasterStatus", headerName: "Status", flex: 0.7 },
     {
