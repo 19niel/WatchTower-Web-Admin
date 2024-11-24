@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Box, useTheme, Typography, Paper, Button, Dialog } from "@mui/material";
+import { Box, useTheme, Typography, Paper, Dialog } from "@mui/material";
 import Header from "components/Header";
-import AssignRescuerForm from "components/AssignRescuerForm"; // Import the dialog form component
+import AssignRescuerForm from "components/AssignRescuerForm";
 import axios from "axios";
+import LiveReportCard from "components/LiveReportCard";
 
 const LiveReports = () => {
   const theme = useTheme();
@@ -16,7 +17,6 @@ const LiveReports = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedReport, setSelectedReport] = useState(null);
 
-  // Function to fetch reports from the backend
   const fetchReports = async () => {
     try {
       const response = await axios.get("http://localhost:5001/reports");
@@ -26,17 +26,11 @@ const LiveReports = () => {
     }
   };
 
-  // Polling mechanism
   useEffect(() => {
-    // Fetch reports initially
     fetchReports();
-
-    // Set up polling (fetch every 5 seconds)
-    const interval = setInterval(fetchReports, 5000); // 5000ms = 5 seconds
-
-    // Cleanup the interval when component unmounts
+    const interval = setInterval(fetchReports, 3000);
     return () => clearInterval(interval);
-  }, []); // Empty dependency array to run only once when the component mounts
+  }, []);
 
   useEffect(() => {
     const newColumns = {
@@ -47,10 +41,8 @@ const LiveReports = () => {
     };
 
     reports.forEach((report) => {
-      // Skip reports with "active" priority
       if (report.priority === "active") return;
 
-      // Categorize reports based on priority and status
       if (report.disasterStatus === "verified") {
         if (report.priority === "high") {
           newColumns.high.tasks.push(report);
@@ -99,10 +91,34 @@ const LiveReports = () => {
             border={`1px solid ${theme.palette.secondary[200]}`}
             borderRadius="4px"
             padding="10px"
+            sx={{
+              // put your styles here
+            }}
           >
-            <Typography variant="h6" gutterBottom>
+            <Typography
+              variant="h6"
+              gutterBottom
+              align="center"
+              sx={{
+                textTransform: "uppercase",
+                fontWeight: "bold",
+                color: theme.palette.secondary[100],  // Title color
+                backgroundColor: column.id === "low"
+                  ? "#C7AE6F" // Low: #F7E3AF
+                  : column.id === "medium"
+                  ? "#FF8F3A" // Medium: #FF8F3A
+                  : column.id === "high"
+                  ? "#F12E4B" // High: #F12E4B
+                  : column.id === "pending"
+                  ? "#51A072" // Active (On Progress): #51A072
+                  : "#f5c6cb", // Default color (fallback)
+                padding: "5px",
+                borderRadius: "4px",
+              }}
+            >
               {column.title}
             </Typography>
+
             <Paper elevation={1} style={{ flexGrow: 1, overflowY: "auto" }}>
               {column.tasks.length === 0 ? (
                 <Typography variant="body2" color="textSecondary" align="center">
@@ -110,41 +126,11 @@ const LiveReports = () => {
                 </Typography>
               ) : (
                 column.tasks.map((report) => (
-                  <Box
+                  <LiveReportCard
                     key={report._id}
-                    padding="5px"
-                    borderRadius="4px"
-                    marginBottom="5px"
-                    bgcolor={theme.palette.primary.light}
-                    style={{ cursor: "default" }}
-                  >
-                    <Typography variant="body1">{report.disasterCategory}</Typography>
-                    <Typography variant="body2">{report.location}</Typography>
-                    <Typography variant="body2">{report.disasterInfo}</Typography>
-                    <Box display="flex" gap="8px" mt={1}>
-                      {report.disasterImages.map((imageId) => (
-                        <img
-                          key={imageId}
-                          src={`http://localhost:5001/reports/image/${imageId}`}
-                          alt="Disaster"
-                          style={{
-                            width: "50px",
-                            height: "50px",
-                            objectFit: "cover",
-                            borderRadius: "4px",
-                          }}
-                        />
-                      ))}
-                    </Box>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={() => handleOpenDialog(report)}
-                      style={{ marginTop: "8px" }}
-                    >
-                      Assign Rescuer
-                    </Button>
-                  </Box>
+                    report={report}
+                    onAssignClick={handleOpenDialog}
+                  />
                 ))
               )}
             </Paper>

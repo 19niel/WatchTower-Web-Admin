@@ -48,4 +48,28 @@ router.put('/:id/activate', async (req, res) => {
 router.put("/:id/accept", acceptRescuerAndUpdatePriority); 
 
 
+
+// Update a report by ID
+router.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  const { priority, disasterStatus } = req.body;
+
+  try {
+    const report = await Report.findByIdAndUpdate(
+      id,
+      { priority, disasterStatus },
+      { new: true } // Return the updated document
+    );
+
+    if (!report) {
+      return res.status(404).json({ message: "Report not found" });
+    }
+
+    res.status(200).json(report);
+  } catch (error) {
+    console.error("Error updating report:", error);
+    res.status(500).json({ message: "Error updating report" });
+  }
+});
+
 export default router;
