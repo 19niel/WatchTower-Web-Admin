@@ -26,33 +26,40 @@ const PendingReports = () => {
 
   const handleActivate = async (id, disasterCategory, disasterInfo) => {
     try {
+      // Call the AI backend to get the priority
       const aiResponse = await fetch('http://localhost:5001/ai/priority', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ disasterCategory, disasterInfo }),
       });
-
+  
+      if (!aiResponse.ok) {
+        const aiData = await aiResponse.json();
+        console.error("AI Error:", aiData.error);
+        return;
+      }
+  
       const aiData = await aiResponse.json();
-
-      if (aiResponse.ok) {
-        const { priority } = aiData;
-
-        await fetch(`http://localhost:5001/reports/${id}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            disasterStatus: "verified",
-            priority,
-          }),
-        });
-
+      const { priority } = aiData;
+  
+      // Once we have the priority, update the report status and priority
+      const updateResponse = await fetch(`http://localhost:5001/reports/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          disasterStatus: "verified",
+          priority,
+        }),
+      });
+  
+      if (updateResponse.ok) {
         setReports((prevReports) =>
           prevReports.map((report) =>
             report._id === id ? { ...report, disasterStatus: "verified", priority } : report
           )
         );
       } else {
-        console.error("AI Error:", aiData.error);
+        console.error("Error updating report:", await updateResponse.json());
       }
     } catch (error) {
       console.error("Error updating report:", error);

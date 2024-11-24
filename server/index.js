@@ -7,6 +7,7 @@ import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import { exec } from 'child_process';
 
 // Grid FS
 import multer from "multer";
@@ -54,9 +55,6 @@ const storage = new GridFsStorage({
 
 const upload = multer({ storage }); // Initialize multer with GridFS storage
 
-
-
-
 // Middleware
 app.use(express.json({ limit: '10mb' })); // Set a higher limit for JSON requests
 app.use(helmet());
@@ -87,6 +85,30 @@ app.use("/api/pending", pendingReportsRoutes); // Add new route here
 // Upload route for single file upload using GridFS
 app.post("/upload", upload.single("file"), (req, res) => {
     res.status(200).json({ file: req.file });
+});
+
+// AI Priority Route
+app.post('/ai/priority', (req, res) => {
+  const { disasterCategory, disasterInfo } = req.body;
+
+  // Specify the path to your priority_assigner.py script
+  const scriptPath = path.join(__dirname, 'ai_model', 'priority_assigner.py');
+
+  // Execute the Python script
+  exec(`python "${scriptPath}" "${disasterCategory}" "${disasterInfo}"`, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`exec error: ${error}`);
+      return res.status(500).json({ error: 'AI processing error' });
+    }
+    if (stderr) {
+      console.error(`stderr: ${stderr}`);
+      return res.status(500).json({ error: 'AI processing error' });
+    }
+
+    const predictedPriority = stdout.trim(); // Assuming the prediction is just the priority string
+
+    return res.json({ priority: predictedPriority });
+  });
 });
 
 /* MONGOOSE SETUP */
