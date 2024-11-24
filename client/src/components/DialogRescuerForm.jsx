@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import { Close as CloseIcon, PhotoCamera } from '@mui/icons-material';
 import SanJuanMap from '../components/SanJuanMap'; // Import the SanJuanMap component
+import { geocodeLatLng } from '../utils/geocode'; // Import the geocode function
 
 const DialogRescuerForm = ({ open, onClose, onSubmit, editMode, initialData }) => {
   const theme = useTheme();
@@ -65,8 +66,14 @@ const DialogRescuerForm = ({ open, onClose, onSubmit, editMode, initialData }) =
     setImagePreview(null);
   };
 
-  const handleLocationSelect = ({ lat, lng }) => {
-    setAddress(`Latitude: ${lat}, Longitude: ${lng}`); // Set the address state with the coordinates
+  // Handle location selection (e.g., from map)
+  const handleLocationSelect = async ({ lat, lng }) => {
+    // Set the address with coordinates first
+    setAddress(`Latitude: ${lat}, Longitude: ${lng}`); // Temporary address with coordinates
+
+    // Use geocode function to get a human-readable address
+    const locationDescription = await geocodeLatLng(lat, lng);
+    setAddress(locationDescription || `Latitude: ${lat}, Longitude: ${lng}`);
   };
 
   const handleSubmit = (event) => {

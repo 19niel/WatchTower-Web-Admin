@@ -13,12 +13,13 @@ import {
 } from '@mui/material';
 import { Close as CloseIcon, PhotoCamera } from '@mui/icons-material';
 import SanJuanMap from '../components/SanJuanMap';
+import { geocodeLatLng } from '../utils/geocode';
 
 const DialogCitizenForm = ({ open, onClose, onSubmit, editMode, initialData }) => {
   const theme = useTheme();
 
-  // State initialization
-  const [formData, setFormData] = useState({
+  // Initial state setup for the form fields
+  const initialFormData = {
     firstName: '',
     lastName: '',
     username: '',
@@ -27,9 +28,12 @@ const DialogCitizenForm = ({ open, onClose, onSubmit, editMode, initialData }) =
     mobileNumber: '',
     address: '',
     profileImage: null,
-  });
+  };
 
-  // Populate form fields if in edit mode
+  // Form data state
+  const [formData, setFormData] = useState(initialFormData);
+
+  // Populate form if in edit mode
   useEffect(() => {
     if (editMode && initialData) {
       setFormData({
@@ -42,20 +46,11 @@ const DialogCitizenForm = ({ open, onClose, onSubmit, editMode, initialData }) =
         profileImage: initialData.profileImage || null,
       });
     } else {
-      // Reset form fields for adding a new citizen
-      setFormData({
-        firstName: '',
-        lastName: '',
-        username: '',
-        password: '',
-        email: '',
-        mobileNumber: '',
-        address: '',
-        profileImage: null,
-      });
+      setFormData(initialFormData); // Reset form for new entry
     }
   }, [editMode, initialData]);
 
+  // Handle profile image changes
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -67,20 +62,31 @@ const DialogCitizenForm = ({ open, onClose, onSubmit, editMode, initialData }) =
     }
   };
 
+  // Clear profile image
   const clearImage = () => {
     setFormData((prevData) => ({ ...prevData, profileImage: null }));
   };
 
-  const handleLocationSelect = ({ lat, lng }) => {
+  // Handle location selection (e.g., from map)
+  const handleLocationSelect = async ({ lat, lng }) => {
+    // Set the address with coordinates first
     setFormData((prevData) => ({
       ...prevData,
-      address: `Latitude: ${lat}, Longitude: ${lng}`, // Set the address state with the coordinates
+      address: `Latitude: ${lat}, Longitude: ${lng}`, // Temporary address with coordinates
+    }));
+
+    // Use geocode function to get a human-readable address
+    const locationDescription = await geocodeLatLng(lat, lng);
+    setFormData((prevData) => ({
+      ...prevData,
+      address: locationDescription || `Latitude: ${lat}, Longitude: ${lng}`,
     }));
   };
 
+  // Handle form submission
   const handleSubmit = (event) => {
     event.preventDefault(); // Prevent default form submission
-    onSubmit(formData); // Call the onSubmit prop to notify parent
+    onSubmit(formData); // Call onSubmit with the form data
   };
 
   return (
@@ -159,7 +165,7 @@ const DialogCitizenForm = ({ open, onClose, onSubmit, editMode, initialData }) =
                     type="text"
                     fullWidth
                     value={formData.firstName}
-                    onChange={(e) => setFormData((prevData) => ({ ...prevData, firstName: e.target.value }))}
+                    onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -169,7 +175,7 @@ const DialogCitizenForm = ({ open, onClose, onSubmit, editMode, initialData }) =
                     type="text"
                     fullWidth
                     value={formData.lastName}
-                    onChange={(e) => setFormData((prevData) => ({ ...prevData, lastName: e.target.value }))}
+                    onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                   />
                 </Grid>
               </Grid>
@@ -180,7 +186,7 @@ const DialogCitizenForm = ({ open, onClose, onSubmit, editMode, initialData }) =
                 type="text"
                 fullWidth
                 value={formData.username}
-                onChange={(e) => setFormData((prevData) => ({ ...prevData, username: e.target.value }))}
+                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
               />
               <TextField
                 margin="dense"
@@ -188,7 +194,7 @@ const DialogCitizenForm = ({ open, onClose, onSubmit, editMode, initialData }) =
                 type="password"
                 fullWidth
                 value={formData.password}
-                onChange={(e) => setFormData((prevData) => ({ ...prevData, password: e.target.value }))}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               />
               <TextField
                 margin="dense"
@@ -196,7 +202,7 @@ const DialogCitizenForm = ({ open, onClose, onSubmit, editMode, initialData }) =
                 type="email"
                 fullWidth
                 value={formData.email}
-                onChange={(e) => setFormData((prevData) => ({ ...prevData, email: e.target.value }))}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               />
             </Grid>
 
@@ -212,14 +218,14 @@ const DialogCitizenForm = ({ open, onClose, onSubmit, editMode, initialData }) =
                 height="250px"
                 mb={2}
               >
-                <SanJuanMap onLocationSelect={handleLocationSelect} /> {/* Pass the function to SanJuanMap */}
+                <SanJuanMap onLocationSelect={handleLocationSelect} />
               </Box>
 
               <TextField
                 label="Location Description"
                 fullWidth
                 value={formData.address}
-                onChange={(e) => setFormData((prevData) => ({ ...prevData, address: e.target.value }))}
+                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
               />
               <TextField
                 margin="dense"
@@ -227,7 +233,7 @@ const DialogCitizenForm = ({ open, onClose, onSubmit, editMode, initialData }) =
                 type="text"
                 fullWidth
                 value={formData.mobileNumber}
-                onChange={(e) => setFormData((prevData) => ({ ...prevData, mobileNumber: e.target.value }))}
+                onChange={(e) => setFormData({ ...formData, mobileNumber: e.target.value })}
               />
             </Grid>
           </Grid>
