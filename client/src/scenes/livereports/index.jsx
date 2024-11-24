@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"; 
+import React, { useEffect, useState } from "react";
 import { Box, useTheme, Typography, Paper, Button, Dialog } from "@mui/material";
 import Header from "components/Header";
 import AssignRescuerForm from "components/AssignRescuerForm"; // Import the dialog form component
@@ -16,18 +16,27 @@ const LiveReports = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedReport, setSelectedReport] = useState(null);
 
-  useEffect(() => {
-    const fetchReports = async () => {
-      try {
-        const response = await axios.get("http://localhost:5001/reports");
-        setReports(response.data);
-      } catch (error) {
-        console.error("Error fetching reports:", error);
-      }
-    };
+  // Function to fetch reports from the backend
+  const fetchReports = async () => {
+    try {
+      const response = await axios.get("http://localhost:5001/reports");
+      setReports(response.data);
+    } catch (error) {
+      console.error("Error fetching reports:", error);
+    }
+  };
 
+  // Polling mechanism
+  useEffect(() => {
+    // Fetch reports initially
     fetchReports();
-  }, []);
+
+    // Set up polling (fetch every 5 seconds)
+    const interval = setInterval(fetchReports, 5000); // 5000ms = 5 seconds
+
+    // Cleanup the interval when component unmounts
+    return () => clearInterval(interval);
+  }, []); // Empty dependency array to run only once when the component mounts
 
   useEffect(() => {
     const newColumns = {
