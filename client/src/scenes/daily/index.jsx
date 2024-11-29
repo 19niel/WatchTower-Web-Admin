@@ -8,34 +8,32 @@ import "react-datepicker/dist/react-datepicker.css";
 
 const Daily = () => {
   const [startDate, setStartDate] = useState(new Date("2023-01-01"));
-  const [endDate, setEndDate] = useState(new Date("2024-09-11"));
-  const { data } = useGetOverallStatsQuery ();
+  const [endDate, setEndDate] = useState(new Date("2023-02-11"));
+  const { data } = useGetOverallStatsQuery();
   const theme = useTheme();
+
+  // Format date to MM-DD
+  const formatDate = (date) => {
+    const formattedDate = new Date(date);
+    const month = ("0" + (formattedDate.getMonth() + 1)).slice(-2); // Month is 0-indexed
+    const day = ("0" + formattedDate.getDate()).slice(-2); // Ensure 2 digits
+    return `${month}-${day}`;
+  };
 
   const [formattedData] = useMemo(() => {
     if (!data) return [];
 
     const { dailyData } = data;
-    const totalReportsLine = {
-      id: "totalReports",
-      color: theme.palette.secondary.main,
-      data: [],
-    };
     const totalReportsSolvedLine = {
       id: "totalReportsSolved",
-      color: theme.palette.secondary[600],
+      color: "#51A072",  // Keep the color as per your theme
       data: [],
     };
 
-    Object.values(dailyData).forEach(({ date, totalReports, totalReportsSolved }) => {
+    Object.values(dailyData).forEach(({ date, totalReportsSolved }) => {
       const dateFormatted = new Date(date);
       if (dateFormatted >= startDate && dateFormatted <= endDate) {
-        const splitDate = date.substring(date.indexOf("-") + 1);
-
-        totalReportsLine.data = [
-          ...totalReportsLine.data,
-          { x: splitDate, y: totalReports },
-        ];
+        const splitDate = formatDate(date);
         totalReportsSolvedLine.data = [
           ...totalReportsSolvedLine.data,
           { x: splitDate, y: totalReportsSolved },
@@ -43,9 +41,8 @@ const Daily = () => {
       }
     });
 
-    const formattedData = [totalReportsLine, totalReportsSolvedLine];
-    return [formattedData];
-  }, [data, startDate, endDate]); // eslint-disable-line react-hooks/exhaustive-deps
+    return [[totalReportsSolvedLine]];  // Only return the solved line data
+  }, [data, startDate, endDate]);
 
   return (
     <Box m="1.5rem 2.5rem">
@@ -131,6 +128,7 @@ const Daily = () => {
               legend: "Month",
               legendOffset: 60,
               legendPosition: "middle",
+              tickValues: formattedData[0]?.[0]?.data.map((d) => d.x), // Ensure ticks are aligned with the data
             }}
             axisLeft={{
               orient: "left",
@@ -175,6 +173,23 @@ const Daily = () => {
                 ],
               },
             ]}
+            tooltip={({ point }) => {
+              const { x, y } = point;
+              return (
+                <div
+                  style={{
+                    backgroundColor: "white",
+                    color: theme.palette.primary.main,
+                    padding: "5px 10px",
+                    borderRadius: "5px",
+                    boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
+                  }}
+                >
+                  <strong>Date:</strong> {x} <br />
+                  <strong>Total Reports Solved:</strong> {y}
+                </div>
+              );
+            }}
           />
         ) : (
           <>Loading...</>

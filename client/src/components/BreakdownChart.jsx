@@ -9,19 +9,21 @@ const BreakdownChart = ({ isDashboard = false }) => {
 
   if (!data || isLoading) return "Loading...";
 
-  const colors = [
-    theme.palette.secondary[500],
-    theme.palette.secondary[300],
-    theme.palette.secondary[300],
-    theme.palette.secondary[500],
-  ];
+  // Updated colors for each category
+  const colors = {
+    Fire: "#FF8F3A",
+    Flood: "#8FB8ED",
+    Typhoon: "#C2BBF0",
+    Others: "#A3C4BC",
+  };
 
+  // Format the data, mapping categories to their respective colors
   const formattedData = Object.entries(data.reportsByCategory).map(
-    ([category, reports], i) => ({
+    ([category, reports]) => ({
       id: category,
       label: category,
       value: reports,
-      color: colors[i],
+      color: colors[category] || theme.palette.secondary[500], // Default to secondary[500] if no color is found
     })
   );
 
@@ -68,7 +70,7 @@ const BreakdownChart = ({ isDashboard = false }) => {
             },
           },
         }}
-        colors={{ datum: "data.color" }}
+        colors={{ datum: "data.color" }} // Using the color from the formatted data
         margin={
           isDashboard
             ? { top: 40, right: 80, bottom: 100, left: 50 }
@@ -131,11 +133,11 @@ const BreakdownChart = ({ isDashboard = false }) => {
         }}
       >
         <Typography variant="h6">
-          {!isDashboard && "Total:"} ${data.yearlyReportsTotal}
+          {!isDashboard && "Total:"} {data.yearlyReportsTotal}
         </Typography>
       </Box>
     </Box>
   );
 };
 
-export default BreakdownChart;
+export default BreakdownChart;  

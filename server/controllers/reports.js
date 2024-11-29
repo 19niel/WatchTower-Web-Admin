@@ -97,18 +97,37 @@ export const createReport = async (req, res) => {
 export const deleteReport = async (req, res) => {
   try {
     const { id } = req.params;
-    const deletedReport = await Report.findByIdAndDelete(id);
+    const gfsBucket = getGfsBucket(); // Get the GridFS bucket
 
-    if (!deletedReport) {
+    // Find the report to delete
+    const reportToDelete = await Report.findById(id);
+
+    if (!reportToDelete) {
       return res.status(404).json({ message: 'Report not found' });
     }
 
-    res.status(200).json({ message: 'Report deleted successfully' });
+    // Delete all images associated with the report
+    const imageDeletionPromises = reportToDelete.disasterImages.map((imageId) =>
+      new Promise((resolve, reject) => {
+        gfsBucket.delete(new mongoose.Types.ObjectId(imageId), (err) => {
+          if (err) reject(err);
+          else resolve();
+        });
+      })
+    );
+
+    await Promise.all(imageDeletionPromises); // Wait for all images to be deleted
+
+    // Delete the report itself
+    await Report.findByIdAndDelete(id);
+
+    res.status(200).json({ message: 'Report and associated images deleted successfully' });
   } catch (error) {
     console.error("Error deleting report:", error);
     res.status(500).json({ message: 'Failed to delete report' });
   }
 };
+
 
 // Update a report
 export const updateReport = async (req, res) => {
