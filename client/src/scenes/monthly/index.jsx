@@ -19,7 +19,7 @@ const Monthly = () => {
     };
     const totalReportsSolvedLine = {
       id: "totalReportsSolved",
-      color: theme.palette.secondary[600],
+      color: "#51A072",
       data: [],
     };
 
