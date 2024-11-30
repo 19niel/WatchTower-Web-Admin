@@ -28,7 +28,7 @@ const LiveReports = () => {
 
   useEffect(() => {
     fetchReports();
-    const interval = setInterval(fetchReports, 3000);
+    const interval = setInterval(fetchReports, 5000); // 5 seconds
     return () => clearInterval(interval);
   }, []);
 

@@ -16,7 +16,8 @@ import Grid from "gridfs-stream";
 
 // Data imports
 import Rescuer from "./models/Rescuer.js";
-import { dataRescuer } from "./data/watchtowerdata.js";
+import OverallStat from "./models/OverallStat.js";
+import { dataOverallReportStatss, dataRescuer } from "./data/watchtowerdata.js";
 
 // Import your routes
 import clientRoutes from "./routes/client.js";
@@ -133,5 +134,8 @@ mongoose
         // Rescuer.insertMany(dataRescuer);
         // Admin.insertMany(dataAdmin);
         // OverallStat.insertMany(dataOverallReportStat);
+        //OverallStat.insertMany(dataOverallReportStatss);
     })
     .catch((error) => console.log(`${error} did not connect`));
+
+
