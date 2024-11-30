@@ -89,6 +89,11 @@ const DialogCitizenForm = ({ open, onClose, onSubmit, editMode, initialData }) =
     onSubmit(formData); // Call onSubmit with the form data
   };
 
+  // Handle clear form data
+  const handleClear = () => {
+    setFormData(initialFormData); // Reset form data to initial state
+  };
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>
@@ -244,6 +249,10 @@ const DialogCitizenForm = ({ open, onClose, onSubmit, editMode, initialData }) =
             </Button>
             <Button type="submit" color="primary" variant="contained" sx={{ ml: 1 }}>
               {editMode ? 'Update' : 'Add'}
+            </Button>
+            {/* Clear button */}
+            <Button onClick={handleClear} color="secondary" variant="outlined" sx={{ ml: 1 }}>
+              Clear
             </Button>
           </Box>
         </form>
