@@ -1,4 +1,5 @@
 import Report from "../models/Report.js";
+import Citizen from '../models/Citizen.js'; 
 import { getGfsBucket } from "../utils/gridFsUtils.js";
 import mongoose from 'mongoose';
 
@@ -121,12 +122,19 @@ export const deleteReport = async (req, res) => {
     // Delete the report itself
     await Report.findByIdAndDelete(id);
 
+    // Remove the report _id from the Citizen's reports array
+    await Citizen.updateMany(
+      { reports: id },  // Find Citizen documents that have this report _id
+      { $pull: { reports: id } } // Remove the report _id from the reports array
+    );
+
     res.status(200).json({ message: 'Report and associated images deleted successfully' });
   } catch (error) {
     console.error("Error deleting report:", error);
     res.status(500).json({ message: 'Failed to delete report' });
   }
 };
+
 
 
 // Update a report
