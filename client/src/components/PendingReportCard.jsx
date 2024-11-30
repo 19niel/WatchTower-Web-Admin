@@ -1,51 +1,77 @@
 // client/src/components/PendingReportCard.jsx
 
 import React, { useState } from "react";
-import { Box, Typography, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, Button } from "@mui/material";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle"; 
-import CancelIcon from "@mui/icons-material/Cancel"; 
-import { getImageUrlById } from "../utils/imageUtils"; 
-import ImagePreview from "./ImagePreview"; 
-import AcceptReportForm from "./AcceptReportForm"; 
+import {
+  Box,
+  Typography,
+  IconButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Button,
+} from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle"; // For activating reports
+import CancelIcon from "@mui/icons-material/Cancel"; // For deleting reports
+import { getImageUrlById } from "../utils/imageUtils"; // Utility function for image URLs
+import ImagePreview from "./ImagePreview"; // Component for previewing images
+import AcceptReportForm from "./AcceptReportForm"; // Component for accepting a report
+import axios from "axios"; // For making API requests
+import { useDeleteReportMutation } from "state/reportApi";
 
-const PendingReportCard = ({ report, onActivate, onDelete }) => {
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [formOpen, setFormOpen] = useState(false); 
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false); // State to control the delete confirmation dialog
+const PendingReportCard = ({ report, onActivate }) => {
+  const [previewOpen, setPreviewOpen] = useState(false); // State for image preview
+  const [currentIndex, setCurrentIndex] = useState(0); // Current image index
+  const [formOpen, setFormOpen] = useState(false); // State for the AcceptReportForm modal
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false); // State for the delete confirmation dialog
 
+  // Handles image preview open
   const handleImageClick = (index) => {
     setCurrentIndex(index);
     setPreviewOpen(true);
   };
 
+  // Handles closing the image preview modal
   const handleClosePreview = () => {
     setPreviewOpen(false);
   };
 
+  // Handles navigation to the next image
   const handleNext = () => {
     if (currentIndex < report.disasterImages.length - 1) {
       setCurrentIndex((prevIndex) => prevIndex + 1);
     }
   };
 
+  // Handles navigation to the previous image
   const handlePrev = () => {
     if (currentIndex > 0) {
       setCurrentIndex((prevIndex) => prevIndex - 1);
     }
   };
 
+  // Handles activating a report
   const handleActivate = (id, comments) => {
-    onActivate(id, comments);
+    onActivate(id, comments); // Call the parent-provided function
   };
 
-  const handleDelete = () => {
-    onDelete(report._id); // Call the onDelete function passed as a prop
-    setDeleteDialogOpen(false); // Close the delete dialog after deletion
+  // Handles deleting a report
+  const [deleteReport] = useDeleteReportMutation();
+
+  const handleDelete = async () => {
+    if (window.confirm("Are you sure you want to delete this report?")) {
+      try {
+        await deleteReport(report._id).unwrap();
+        window.location.reload(); // Force the page to reload and fetch the latest reports
+      } catch (error) {
+        console.error("Error deleting report:", error.response?.data || error.message);
+      }
+    }
   };
 
+  // Handles canceling the delete action
   const handleCancelDelete = () => {
-    setDeleteDialogOpen(false); // Close the delete dialog without deleting
+    setDeleteDialogOpen(false);
   };
 
   return (
@@ -112,9 +138,9 @@ const PendingReportCard = ({ report, onActivate, onDelete }) => {
       {/* Accept report form modal */}
       <AcceptReportForm
         open={formOpen}
-        onClose={() => setFormOpen(false)} 
-        onSubmit={handleActivate} 
-        report={report} 
+        onClose={() => setFormOpen(false)} // Close form modal
+        onSubmit={handleActivate} // Call the activate handler
+        report={report} // Pass report data
       />
 
       {/* Delete confirmation dialog */}
