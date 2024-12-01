@@ -137,7 +137,7 @@ const Daily = () => {
               {
                 anchor: "top-right",
                 direction: "column",
-                translateX: 50,
+                translateX: 10,
                 translateY: 0,
                 itemsSpacing: 0,
                 itemWidth: 80,

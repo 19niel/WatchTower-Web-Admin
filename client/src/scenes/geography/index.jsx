@@ -8,7 +8,7 @@ const Geography = () => {
 
   return (
     <Box m="1.5rem 2.5rem">
-      <Header title="Map of Reports" subtitle="Find all the history of reports" />
+      <Header title="San Juan City Map" subtitle="" />
       <Box
         mt="40px"
         height="75vh"

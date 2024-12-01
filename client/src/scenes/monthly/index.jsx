@@ -123,7 +123,7 @@ const Monthly = () => {
                 anchor: "top-right",
                 direction: "column",
                 justify: false,
-                translateX: 50,
+                translateX: 10,
                 translateY: 0,
                 itemsSpacing: 0,
                 itemDirection: "left-to-right",
