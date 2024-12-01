@@ -94,11 +94,22 @@ app.post("/upload", upload.single("file"), (req, res) => {
 app.post('/ai/priority', (req, res) => {
   const { disasterCategory, disasterInfo } = req.body;
 
+  // Ensure disasterCategory and disasterInfo are provided
+  if (!disasterCategory || !disasterInfo) {
+    return res.status(400).json({ error: 'Missing disasterCategory or disasterInfo' });
+  }
+
+  // Log the incoming request to verify the data
+  console.log("Received data:", disasterCategory, disasterInfo);
+
   // Specify the path to your priority_assigner.py script
   const scriptPath = path.join(__dirname, 'ai_model', 'priority_assigner.py');
 
+  // Log the script path for debugging
+  console.log("Using script path:", scriptPath);
+
   // Execute the Python script
-  exec(`python "${scriptPath}" "${disasterCategory}" "${disasterInfo}"`, (error, stdout, stderr) => {
+  exec(`python3 "${scriptPath}" "${disasterCategory}" "${disasterInfo}"`, (error, stdout, stderr) => {
     if (error) {
       console.error(`exec error: ${error}`);
       return res.status(500).json({ error: 'AI processing error' });
@@ -109,6 +120,7 @@ app.post('/ai/priority', (req, res) => {
     }
 
     const predictedPriority = stdout.trim(); // Assuming the prediction is just the priority string
+    console.log("Predicted priority:", predictedPriority); // Log the predicted priority
 
     return res.json({ priority: predictedPriority });
   });
@@ -118,26 +130,11 @@ app.post('/ai/priority', (req, res) => {
 const PORT = process.env.PORT || 9000;
 
 // Set the strictQuery option to suppress the deprecation warning
-mongoose.set('strictQuery', false); // or true based on your needs
+mongoose.set('strictQuery', false);
 
 mongoose
     .connect(mongoURI)
     .then(() => {
         app.listen(PORT, () => console.log(`Server Port: ${PORT}`));
-        /* ONLY ADD DATA ONE TIME */
-        // AffiliateStat.insertMany(dataAffiliateStat);
-        // Product.insertMany(dataProduct);
-        // ProductStat.insertMany(dataProductStat);
-        // Transaction.insertMany(dataTransaction);
-        
-        // WatchTower Files
-        // User.insertMany(dataUser);
-        // Citizen.insertMany(dataCitizen);
-        // Rescuer.insertMany(dataRescuer);
-        // Admin.insertMany(dataAdmin);
-        // OverallStat.insertMany(dataOverallReportStat);
-        //OverallStat.insertMany(dataOverallReportStatss);
     })
     .catch((error) => console.log(`${error} did not connect`));
-
-
