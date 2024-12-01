@@ -18,44 +18,50 @@ import {
 import { DataGrid } from "@mui/x-data-grid";
 import BreakdownChart from "components/BreakdownChart";
 import OverviewChart from "components/OverviewChart";
-import { useGetDashboardQuery } from "state/api";
+import { useFetchReportsQuery } from "state/reportApi";
 import StatBox from "components/StatBox";
+import { getImageUrlById } from "utils/imageUtils";
 
 const Dashboard = () => {
   const theme = useTheme();
   const isNonMediumScreens = useMediaQuery("(min-width: 1200px)");
-  const { data, isLoading } = useGetDashboardQuery();
+  const { data: reportsData, isLoading } = useFetchReportsQuery();
 
-  // change this for report
   const columns = [
+    { field: "location", headerName: "Location", flex: 1 },
+    { field: "disasterCategory", headerName: "Disaster Category", flex: 1 },
     {
-      field: "_id",
-      headerName: "ID",
+      field: "disasterImages",
+      headerName: "Images",
       flex: 1,
+      renderCell: (params) => {
+        const images = params.value;
+        if (!Array.isArray(images) || images.length === 0) {
+          return <span>No Images</span>;
+        }
+        return (
+          <Box display="flex" gap="5px">
+            {images.slice(0, 3).map((imageId, index) => (
+              <img
+                key={index}
+                src={getImageUrlById(imageId)} // Use getImageUrlById to get the full image URL
+                alt={`Disaster ${index + 1}`}
+                width="80"
+                style={{ borderRadius: "5px", cursor: "pointer" }}
+              />
+            ))}
+          </Box>
+        );
+      },
     },
-    {
-      field: "userId",
-      headerName: "User ID",
-      flex: 1,
-    },
+    { field: "disasterInfo", headerName: "Description", flex: 1 },
     {
       field: "createdAt",
-      headerName: "CreatedAt",
-      flex: 1,
-    },
-    {
-      field: "products",
-      headerName: "# of Products",
+      headerName: "Date",
       flex: 0.5,
-      sortable: false,
-      renderCell: (params) => params.value.length,
+      renderCell: (params) => new Date(params.value).toLocaleDateString(),
     },
-    {
-      field: "cost",
-      headerName: "Cost",
-      flex: 1,
-      renderCell: (params) => `$${Number(params.value).toFixed(2)}`,
-    },
+    { field: "disasterStatus", headerName: "Status", flex: 0.7 },
   ];
 
   return (
@@ -92,8 +98,8 @@ const Dashboard = () => {
         {/* ROW 1 */}
         <StatBox
           title="Total Citizens"
-          value={data && data.totalCitizens}  // Correct field
-          increase="10%" // put the percentage increase here
+          value={reportsData && reportsData.totalCitizens}
+          increase="10%"
           description="Since last month"
           icon={
             <Email
@@ -101,10 +107,9 @@ const Dashboard = () => {
             />
           }
         />
-        
         <StatBox
           title="Reports Today"
-          value={data && data.todayStats.totalReports}
+          value={reportsData && reportsData.reportsToday}
           increase="+21%"
           description="Since last month"
           icon={
@@ -124,7 +129,7 @@ const Dashboard = () => {
         </Box>
         <StatBox
           title="Monthly Reports"
-          value={data && data.thisMonthStats.totalReports}
+          value={reportsData && reportsData.monthlyReports}
           increase="+5%"
           description="Since last month"
           icon={
@@ -135,7 +140,7 @@ const Dashboard = () => {
         />
         <StatBox
           title="Yearly Reports"
-          value={data && data.yearlyReportsTotal}
+          value={reportsData && reportsData.yearlyReports}
           increase="+43%"
           description="Since last month"
           icon={
@@ -170,15 +175,12 @@ const Dashboard = () => {
               color: theme.palette.secondary[100],
               borderTop: "none",
             },
-            "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
-              color: `${theme.palette.secondary[200]} !important`,
-            },
           }}
         >
           <DataGrid
-            loading={isLoading || !data}
+            loading={isLoading || !reportsData}
             getRowId={(row) => row._id}
-            rows={(data && data.transactions) || []}
+            rows={reportsData || []}
             columns={columns}
           />
         </Box>
