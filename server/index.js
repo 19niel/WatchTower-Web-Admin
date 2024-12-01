@@ -64,7 +64,9 @@ app.use(morgan("common"));
 
 // CORS configuration
 app.use(cors({
-    origin: 'http://localhost:3000', // Allow your React app's origin
+    origin:'https://watch-tower-web-admin.vercel.app',
+    // 'http://localhost:3000', 
+     // Allow your React app's origin
     credentials: true // Allow credentials if needed
 }));
 
