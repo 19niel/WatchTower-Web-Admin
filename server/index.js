@@ -64,10 +64,10 @@ app.use(morgan("common"));
 
 // CORS configuration
 app.use(cors({
-    origin:'https://watch-tower-web-admin.vercel.app',
-    // 'http://localhost:3000', 
-     // Allow your React app's origin
-    credentials: true // Allow credentials if needed
+  origin: 'https://watch-tower-web-admin.vercel.app', // Vercel client URL
+  methods: 'GET,POST,PUT,DELETE', // Allow methods as needed
+  allowedHeaders: 'Content-Type, Authorization', // Allow specific headers
+  credentials: true, // Allow cookies if necessary
 }));
 
 // Getting __dirname equivalent in ES module
