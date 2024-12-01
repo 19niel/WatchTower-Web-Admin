@@ -10,7 +10,7 @@ const PendingReports = () => {
   useEffect(() => {
     const fetchPendingReports = async () => {
       try {
-        const response = await fetch('http://localhost:5001/reports');
+        const response = await fetch('https://watchtower-web-admin.onrender.com/reports');
         const data = await response.json();
         setReports(data);
       } catch (error) {
@@ -27,7 +27,7 @@ const PendingReports = () => {
   const handleActivate = async (id, disasterCategory, disasterInfo) => {
     try {
       // Call the AI backend to get the priority
-      const aiResponse = await fetch('http://localhost:5001/ai/priority', {
+      const aiResponse = await fetch('https://watchtower-web-admin.onrender.com/ai/priority', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ disasterCategory, disasterInfo }),
@@ -43,7 +43,7 @@ const PendingReports = () => {
       const { priority } = aiData;
   
       // Once we have the priority, update the report status and priority
-      const updateResponse = await fetch(`http://localhost:5001/reports/${id}`, {
+      const updateResponse = await fetch(`https://watchtower-web-admin.onrender.com/reports/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -68,7 +68,7 @@ const PendingReports = () => {
 
   const handleDelete = async (id) => {
     try {
-      await fetch(`http://localhost:5001/reports/${id}`, { method: "DELETE" });
+      await fetch(`https://watchtower-web-admin.onrender.com/reports/${id}`, { method: "DELETE" });
       setReports((prevReports) => prevReports.filter((report) => report._id !== id));
     } catch (error) {
       console.error("Error deleting report:", error);
