@@ -1,4 +1,3 @@
 export const getImageUrlById = (id) => {
-    return `https://watchtower-web-admin.onrender.com/reports/image/${id}`; // Adjust for the correct server port if needed
-  };
-  
+  return `${process.env.REACT_APP_BASE_URL}/reports/image/${id}`;
+};

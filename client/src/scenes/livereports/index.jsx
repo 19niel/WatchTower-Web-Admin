@@ -19,7 +19,7 @@ const LiveReports = () => {
 
   const fetchReports = async () => {
     try {
-      const response = await axios.get("https://watchtower-web-admin.onrender.com/reports");
+      const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/reports`);
       setReports(response.data);
     } catch (error) {
       console.error("Error fetching reports:", error);
