@@ -10,7 +10,7 @@ const AssignRescuerForm = ({ onClose, report }) => {
   useEffect(() => {
     const fetchRescuers = async () => {
       try {
-        const response = await axios.get("${process.env.REACT_APP_BASE_URL}/client/rescuers"); // Adjust the URL to match your backend endpoint
+        const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/client/rescuers`); // Adjust the URL to match your backend endpoint
         setRescuers(response.data); // Assuming response is an array of rescuers
       } catch (error) {
         console.error("Error fetching rescuers:", error);
