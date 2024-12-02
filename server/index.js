@@ -100,7 +100,7 @@ app.post('/ai/priority', (req, res) => {
   }
 
   // Specify the path to your priority_assigner.py script and virtual environment Python
-  const pythonPath = path.join(__dirname, 'ai_model', 'venv', 'bin', 'python'); // Corrected for Linux environment
+  const pythonPath = "/usr/bin/python3"; // Corrected for Linux environment
   const scriptPath = path.join(__dirname, 'ai_model', 'priority_assigner.py');
 
   console.log(`Executing Python script: ${scriptPath}`);
