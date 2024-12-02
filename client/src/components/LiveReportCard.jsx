@@ -6,7 +6,6 @@ import axios from "axios"; // Import Axios for API requests
 const LiveReportCard = ({ report, onAssignClick }) => {
   const theme = useTheme();
   const [openUpdateDialog, setOpenUpdateDialog] = useState(false); // State to manage the new dialog
-
   const [loading, setLoading] = useState(false);
 
   const handleOpenUpdateDialog = () => {
@@ -20,7 +19,7 @@ const LiveReportCard = ({ report, onAssignClick }) => {
   const handleUpdateReport = async (status) => {
     setLoading(true);
     try {
-      await axios.put(`http://localhost:5001/reports/${report._id}`, {
+      await axios.put(`${process.env.REACT_APP_BASE_URL}/reports/${report._id}`, {
         priority: "completed",
         disasterStatus: status,
       });
@@ -32,7 +31,6 @@ const LiveReportCard = ({ report, onAssignClick }) => {
       setLoading(false);
     }
   };
-  
 
   return (
     <Paper
@@ -64,7 +62,7 @@ const LiveReportCard = ({ report, onAssignClick }) => {
         {report.disasterImages.map((imageId) => (
           <img
             key={imageId}
-            src={`http://localhost:5001/reports/image/${imageId}`}
+            src={`${process.env.REACT_APP_BASE_URL}/reports/image/${imageId}`}
             alt="Disaster"
             style={{
               width: "80px",
@@ -118,27 +116,27 @@ const LiveReportCard = ({ report, onAssignClick }) => {
           </Typography>
         </DialogContent>
         <DialogActions>
-        <Button
+          <Button
             variant="contained"
             color="success"
             onClick={() => handleUpdateReport("success")}
             disabled={loading}
             sx={{ marginRight: "10px" }}
-            >
+          >
             {loading ? "Loading..." : "Success"}
-            </Button>
-            <Button
+          </Button>
+          <Button
             variant="contained"
             color="error"
             onClick={() => handleUpdateReport("failed")}
             disabled={loading}
-            >
+          >
             {loading ? "Loading..." : "Failed"}
-        </Button>
+          </Button>
         </DialogActions>
       </Dialog>
     </Paper>
   );
-};  
+};
 
 export default LiveReportCard;
