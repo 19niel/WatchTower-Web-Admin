@@ -24,4 +24,3 @@ yarn-debug.log*
 yarn-error.log*
 
 # AI model virtual environment
-server/ai_model/venv/
