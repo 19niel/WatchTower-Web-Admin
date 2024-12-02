@@ -64,7 +64,7 @@ app.use(morgan("common"));
 
 // CORS configuration
 app.use(cors({
-  origin: 'https://watch-tower-web-admin.vercel.app', // Vercel client URL
+  origin: 'https://watch-tower-web-admin-hero.vercel.app', // Vercel client URL
   methods: 'GET,POST,PUT,DELETE', // Allow methods as needed
   allowedHeaders: 'Content-Type, Authorization', // Allow specific headers
   credentials: true, // Allow cookies if necessary
