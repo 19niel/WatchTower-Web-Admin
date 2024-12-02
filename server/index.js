@@ -91,23 +91,15 @@ app.post("/upload", upload.single("file"), (req, res) => {
 });
 
 // AI Priority Route
+// AI Priority Route
 app.post('/ai/priority', (req, res) => {
   const { disasterCategory, disasterInfo } = req.body;
 
-  // Ensure disasterCategory and disasterInfo are provided
-  if (!disasterCategory || !disasterInfo) {
-    return res.status(400).json({ error: 'Missing disasterCategory or disasterInfo' });
-  }
+  // Specify the path to your priority_assigner.py script
+  const scriptPath = path.join(__dirname, 'ai_model', 'priority_assigner.py');
 
-  // Specify the path to your priority_assigner.py script and virtual environment Python
-  const pythonPath = "/opt/render/project/src/server/ai_model/venv/bin/python"; // Render's virtual environment path
-  const scriptPath = "/opt/render/project/src/server/ai_model/priority_assigner.py";
-
-  console.log(`Executing Python script: ${scriptPath}`);
-  console.log(`Using Python executable: ${pythonPath}`);
-  
   // Execute the Python script
-  exec(`"${pythonPath}" "${scriptPath}" "${disasterCategory}" "${disasterInfo}"`, (error, stdout, stderr) => {
+  exec(`python "${scriptPath}" "${disasterCategory}" "${disasterInfo}"`, (error, stdout, stderr) => {
     if (error) {
       console.error(`exec error: ${error}`);
       return res.status(500).json({ error: 'AI processing error' });
@@ -118,7 +110,6 @@ app.post('/ai/priority', (req, res) => {
     }
 
     const predictedPriority = stdout.trim(); // Assuming the prediction is just the priority string
-    console.log(`Predicted priority: ${predictedPriority}`); // Log the prediction
 
     return res.json({ priority: predictedPriority });
   });
