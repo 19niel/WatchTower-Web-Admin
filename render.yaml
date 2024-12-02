@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: ai-service
+    env: python
+    buildCommand: |
+      python -m venv venv
+      source venv/bin/activate  # or venv\Scripts\activate for Windows
+      pip install -r requirements.txt
+    startCommand: python /opt/render/project/src/server/ai_model/priority_assigner.py
+    envVars:
+      - key: SOME_ENV_VAR
+        value: some_value
+    branches: 
+      - main
+    region: oregon
