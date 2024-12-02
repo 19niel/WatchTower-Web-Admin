@@ -20,6 +20,13 @@ WatchTower/
 │   └── package.json
 ├── server/ 
 │   ├── ai_model/ 
+│   │   ├── venv
+│   │   ├── priority_assigner.py
+│   │   ├── priority_model.pkl
+│   │   ├── reports.csv
+│   │   ├── textExec.js
+│   │   ├── tfidf_vectorizer.pkl
+│   │   ├── train_priority_model.py
 │   ├── controllers/ 
 │   ├── data/ 
 │   ├── models/ 
