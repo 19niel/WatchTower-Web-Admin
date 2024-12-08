@@ -1,27 +1,32 @@
 disasterCategory,disasterInfo,priority
-Flood, Above human level flood need boat to rescue,high
-Flood, above human level flood in the P.Guevarra Street 3 dead, high
-Typhoon,Strong winds destroyed buildings,high
 Fire,Small kitchen fire outburst in the streets,low
-Others,Multiple injuries after vehicle crash in the streets,medium
-Flood,Dogs are in leash need to be evacuated right now, medium
-Others, multiple cars accident, medium
-Fire, backyard barn burning, low
-Others, people trapped in the building, low
-Flood, in the Kabayanan Street some residents need an evacuation, medium
-Typhoon, severe situation and people starting evacuating and need some help, high
-Others, A Person attempting to suicide on the 56th floor building, medium
-Others, One person is dead due to accident, low
+Fire,backyard barn burning,low
+Fire,2 people stuck in the burning house,high
+Fire,3 people dead need backup,high
+Fire,5 houses are affected by the faulty transformer,high
+Fire,a garbage bin caught on fire because some kids are playing with fireworks,low
+Fire, a fire breakout at the lugawan store is still spreading, high
+Flood,Above human level flood need boat to rescue,high
+Flood,above human level flood in the P.Guevarra Street 3 dead,high
+Flood,Dogs are in leash need to be evacuated right now,medium
+Flood,in the Kabayanan Street some residents need an evacuation,medium
 Flood,3 people drowned in the first floor,high
-Fire, 2 people stuck in the burning house, high
-Fire, 3 people dead need backup, high
-Others, 3 dogs went wild at the Argonne street, medium  
-Flood, 3 dead people, high
-Flood, 4 dead people in the side of the road, high
-Others, 1 people passed out on the Valenzuela street, medium
-Fire, 5 houses are affected by the faulty transformer, high
-Typhoon, a family can't get out because the door is stuck, high
-Typhoon, 2 dogs trapped because of chains, medium
-Typhoon, The roof of the house has been teared because of strong winds, medium
-Typhoon, The Air Conditioning unit has fallen because of corosion, low
-Fire, a garbage bin caught on fire because some kids are playing with fireworks, low
+Flood,3 dead people drowning,high
+Flood,4 dead people in the side of the road,high
+Flood,A car has been completely submerged and needed to be towed as soon as possible,low
+Others,Multiple injuries after vehicle crash in the streets,medium
+Others,multiple cars accident,medium
+Others,people trapped in the building,low
+Others,A Person attempting to suicide on the 56th floor building,medium
+Others,One person is dead due to accident,low
+Others,3 dogs went wild at the Argonne street,medium
+Others,1 people passed out on the Valenzuela street,medium
+Others,1 man stuck in the betweem the fallen tree,high
+Others,a person riding a motorcycle was hit by another motorcycle and the rider fell and was dragged,medium
+Typhoon,Strong winds destroyed buildings,high
+Typhoon,severe situation and people starting evacuating and need some help,high
+Typhoon,a family can't get out because the door is stuck,high
+Typhoon,2 dogs trapped because of chains,medium
+Typhoon,The roof of the house has been teared because of strong winds,medium
+Typhoon,The Air Conditioning unit has fallen because of corosion,low
+

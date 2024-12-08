@@ -6,17 +6,23 @@ import { configureStore } from "@reduxjs/toolkit";
 import globalReducer from "state";
 import { Provider } from "react-redux";
 import { setupListeners } from "@reduxjs/toolkit/query";
-import { api } from "state/api"; // Make sure this is your main API
-import reportApi from "state/reportApi"; // Default import for reportApi
+import { api } from "state/api";
+import reportApi from "state/reportApi";
+import dashboardApi from "state/dashboardApi"; // Import dashboardApi
 
 const store = configureStore({
   reducer: {
     global: globalReducer,
     [api.reducerPath]: api.reducer,
-    [reportApi.reducerPath]: reportApi.reducer, // Add reportApi reducer
+    [reportApi.reducerPath]: reportApi.reducer,
+    [dashboardApi.reducerPath]: dashboardApi.reducer, // Add dashboardApi reducer
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(api.middleware, reportApi.middleware), // Add reportApi middleware
+    getDefaultMiddleware().concat(
+      api.middleware,
+      reportApi.middleware,
+      dashboardApi.middleware // Add dashboardApi middleware
+    ),
 });
 
 setupListeners(store.dispatch);

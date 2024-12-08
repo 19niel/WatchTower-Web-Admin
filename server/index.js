@@ -26,6 +26,7 @@ import managementRoutes from "./routes/management.js";
 import reportsRoutes from "./routes/reports.js";
 import overallstatsRoutes from "./routes/overallstats.js";
 import pendingReportsRoutes from "./routes/pendingReports.js"; // Import new pending reports route
+import reportsTodayRoute from "./routes/reportsToday.js"; // Adjust path as necessary
 
 // Load environment variables
 dotenv.config();
@@ -63,11 +64,18 @@ app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(morgan("common"));
 
 // CORS configuration
+// app.use(cors({
+//   origin: 'https://watch-tower-web-admin-hero.vercel.app', // Vercel client URL
+//   methods: 'GET,POST,PUT,DELETE', // Allow methods as needed
+//   allowedHeaders: 'Content-Type, Authorization', // Allow specific headers
+//   credentials: true, // Allow cookies if necessary
+// }));
+
+
+// CORS configuration
 app.use(cors({
-  origin: 'https://watch-tower-web-admin-hero.vercel.app', // Vercel client URL
-  methods: 'GET,POST,PUT,DELETE', // Allow methods as needed
-  allowedHeaders: 'Content-Type, Authorization', // Allow specific headers
-  credentials: true, // Allow cookies if necessary
+  origin: 'http://localhost:3000', // Allow your React app's origin
+  credentials: true // Allow credentials if needed
 }));
 
 // Getting __dirname equivalent in ES module
@@ -84,7 +92,7 @@ app.use("/management", managementRoutes);
 app.use("/overallstats", overallstatsRoutes);
 app.use("/reports", reportsRoutes);
 app.use("/api/pending", pendingReportsRoutes); // Add new route here
-
+app.use("/api", reportsTodayRoute);
 // Upload route for single file upload using GridFS
 app.post("/upload", upload.single("file"), (req, res) => {
     res.status(200).json({ file: req.file });

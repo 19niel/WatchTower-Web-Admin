@@ -21,11 +21,16 @@ import OverviewChart from "components/OverviewChart";
 import { useFetchReportsQuery } from "state/reportApi";
 import StatBox from "components/StatBox";
 import { getImageUrlById } from "utils/imageUtils";
+import { useGetDashboardQuery } from "state/api";
+import { useGetReportsTodayQuery } from "state/dashboardApi"; // Import the new query
 
 const Dashboard = () => {
   const theme = useTheme();
   const isNonMediumScreens = useMediaQuery("(min-width: 1200px)");
   const { data: reportsData, isLoading } = useFetchReportsQuery();
+  const { data: totalCitizens } = useGetDashboardQuery();
+  const { data: reportsTodayData, isLoading: isTodayLoading } = useGetReportsTodayQuery();
+
 
   const columns = [
     { field: "location", headerName: "Location", flex: 1 },
@@ -98,7 +103,7 @@ const Dashboard = () => {
         {/* ROW 1 */}
         <StatBox
           title="Total Citizens"
-          value={reportsData && reportsData.totalCitizens}
+          value={totalCitizens && totalCitizens.totalCitizens}
           increase="10%"
           description="Since last month"
           icon={
@@ -107,17 +112,17 @@ const Dashboard = () => {
             />
           }
         />
-        <StatBox
-          title="Reports Today"
-          value={reportsData && reportsData.reportsToday}
-          increase="+21%"
-          description="Since last month"
-          icon={
-            <PointOfSale
-              sx={{ color: theme.palette.secondary[300], fontSize: "26px" }}
-            />
-          }
-        />
+      <StatBox
+        title="Reports Today"
+        value={reportsTodayData && reportsTodayData.reportsTodayData}
+        increase="+21%"
+        description="Since last month"
+        icon={
+          <PointOfSale
+            sx={{ color: theme.palette.secondary[300], fontSize: "26px" }}
+          />
+        }
+      />
         <Box
           gridColumn="span 8"
           gridRow="span 2"
