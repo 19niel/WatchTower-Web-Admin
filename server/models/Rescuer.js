@@ -55,8 +55,8 @@ const RescuerSchema = new mongoose.Schema(
         },
         status: {
             type: String,
-            enum: ["active", "offline", "on a mission"],
-            default: "offline",
+            enum: ["active", "offline", "occupied"],
+            default: "active",
         }
     },
     { timestamps: true }
