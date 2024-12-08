@@ -173,9 +173,9 @@
             borderRadius="0.55rem"
           >
             <Typography variant="h6" sx={{ color: theme.palette.secondary[100] }}>
-              Reports By Category
+             Most Reports in an Area
             </Typography>
-            <BreakdownChart isDashboard={true} />
+      
             <Typography
               p="0 0.6rem"
               fontSize="0.8rem"

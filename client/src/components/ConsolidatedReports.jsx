@@ -4,6 +4,7 @@ import FlexBetween from "./FlexBetween";
 import { useGetReportsTodayQuery } from "../state/dashboardApi";
 import SummarizeIcon from "@mui/icons-material/Summarize";
 import axios from "axios";
+import ImagePreview from "./ImagePreview";
 
 const ConsolidatedReports = () => {
   const theme = useTheme();
@@ -21,6 +22,10 @@ const ConsolidatedReports = () => {
     reportsByTyphoonToday: [],
     reportsByOthersToday: [],
   });
+
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [currentImages, setCurrentImages] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const { data: reportsTodayData, isLoading, error } = useGetReportsTodayQuery();
 
@@ -62,6 +67,24 @@ const ConsolidatedReports = () => {
       fetchImages();
     }
   }, [reportsTodayData]);
+
+  const handleImageClick = (images, index) => {
+    setCurrentImages(images);
+    setCurrentIndex(index);
+    setPreviewOpen(true);
+  };
+
+  const handleNext = () => {
+    if (currentIndex < currentImages.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+    }
+  };
+
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
+    }
+  };
 
   if (isLoading) return <CircularProgress />;
   if (error) return <Typography>Error fetching reports data.</Typography>;
@@ -127,7 +150,9 @@ const ConsolidatedReports = () => {
                         height: "60px",
                         objectFit: "cover",
                         borderRadius: "0.25rem",
+                        cursor: "pointer",
                       }}
+                      onClick={() => handleImageClick(images, index)}
                     />
                   ))}
                 </Box>
@@ -137,6 +162,16 @@ const ConsolidatedReports = () => {
           return null;
         })}
       </Box>
+
+      {/* Image Preview Modal */}
+      <ImagePreview
+        open={previewOpen}
+        images={currentImages}
+        currentIndex={currentIndex}
+        onClose={() => setPreviewOpen(false)}
+        onNext={handleNext}
+        onPrev={handlePrev}
+      />
     </Box>
   );
 };
