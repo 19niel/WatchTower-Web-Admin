@@ -7,7 +7,7 @@ const api = createApi({
   endpoints: (builder) => ({
     getReportsToday: builder.query({
       query: () => "api/reports/today",
-      transformResponse: (response) => response.reportsTodayCount, // Extract the count from the response
+      transformResponse: (response) => response, // Return the whole response
       providesTags: ["Reports"],
     }),
   }),
