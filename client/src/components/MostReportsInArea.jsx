@@ -1,179 +1,94 @@
-import React, { useEffect, useState } from "react";
-import { Box, Typography, useTheme, CircularProgress } from "@mui/material";
-import FlexBetween from "./FlexBetween";
-import { useGetReportsTodayQuery } from "../state/dashboardApi";
-import SummarizeIcon from "@mui/icons-material/Summarize";
-import axios from "axios";
-import ImagePreview from "./ImagePreview";
+import React, { useState } from "react";
+import { Box, Typography, useTheme, Button } from "@mui/material";
+import { useGetReportsTodayQuery } from "state/dashboardApi";
+import { useGetReportsQuery } from "state/api";
 
-const MostReportsInArea = () => {
+const MostReportInArea = ({ isDashboard = false }) => {
+  const { data: reportsTodayData, isLoading: isLoadingToday } = useGetReportsTodayQuery();
+  const { data: allReportsData, isLoading: isLoadingReports } = useGetReportsQuery();
+
   const theme = useTheme();
-  const [reportsToday, setReportsToday] = useState({
-    reportsByFloodToday: { count: 0, reportIds: [] },
-    reportsByFireToday: { count: 0, reportIds: [] },
-    reportsByTyphoonToday: { count: 0, reportIds: [] },
-    reportsByOthersToday: { count: 0, reportIds: [] },
-    totalReportsToday: 0,
+
+  // Flatten all report IDs from today into a single array
+  const allReportIdsToday = [
+    ...(reportsTodayData?.reportsByFloodToday?.reportIds || []),
+    ...(reportsTodayData?.reportsByFireToday?.reportIds || []),
+    ...(reportsTodayData?.reportsByTyphoonToday?.reportIds || []),
+    ...(reportsTodayData?.reportsByOthersToday?.reportIds || []),
+  ];
+
+  // Map report IDs to their disasterInfo
+  const disasterInfoList = allReportIdsToday.map((id) => {
+    const report = allReportsData?.find((r) => r._id === id);
+    return report ? report.disasterInfo : "Unknown disaster info";
   });
 
-  const [imagesByCategory, setImagesByCategory] = useState({
-    reportsByFloodToday: [],
-    reportsByFireToday: [],
-    reportsByTyphoonToday: [],
-    reportsByOthersToday: [],
-  });
-
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const [currentImages, setCurrentImages] = useState([]);
+  // State for the current report index
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const { data: reportsTodayData, isLoading, error } = useGetReportsTodayQuery();
+  if (isLoadingToday || isLoadingReports) return <Typography>Loading...</Typography>;
 
-  useEffect(() => {
-    if (reportsTodayData) {
-      setReportsToday(reportsTodayData);
-
-      const fetchImages = async () => {
-        const newImagesByCategory = {};
-
-        for (const category of Object.keys(reportsTodayData)) {
-          if (category !== "totalReportsToday") {
-            const imagePromises = reportsTodayData[category].reportIds.map(async (reportId) => {
-              try {
-                // Fetch the full report data by ID
-                const response = await axios.get(`http://localhost:5001/reports/${reportId}`);
-                const report = response.data;
-
-                // Extract image URLs from the report's disasterImages field
-                const imageUrls = (report.disasterImages || []).map(
-                  (imageId) => `http://localhost:5001/reports/image/${imageId}`
-                );
-
-                return imageUrls;
-              } catch (err) {
-                console.error(`Error fetching report ${reportId}:`, err);
-                return [];
-              }
-            });
-
-            const images = (await Promise.all(imagePromises)).flat();
-            newImagesByCategory[category] = images;
-          }
-        }
-
-        setImagesByCategory(newImagesByCategory);
-      };
-
-      fetchImages();
-    }
-  }, [reportsTodayData]);
-
-  const handleImageClick = (images, index) => {
-    setCurrentImages(images);
-    setCurrentIndex(index);
-    setPreviewOpen(true);
+  // Navigate to the previous report
+  const handlePrevious = () => {
+    setCurrentIndex((prevIndex) => (prevIndex === 0 ? disasterInfoList.length - 1 : prevIndex - 1));
   };
 
+  // Navigate to the next report
   const handleNext = () => {
-    if (currentIndex < currentImages.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-    }
+    setCurrentIndex((prevIndex) => (prevIndex === disasterInfoList.length - 1 ? 0 : prevIndex + 1));
   };
-
-  const handlePrev = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-    }
-  };
-
-  if (isLoading) return <CircularProgress />;
-  if (error) return <Typography>Error fetching reports data.</Typography>;
 
   return (
     <Box
-      gridColumn="span 2"
-      gridRow="span 1"
+      height={isDashboard ? "400px" : "100%"}
+      width={undefined}
+      minHeight={isDashboard ? "325px" : undefined}
+      minWidth={isDashboard ? "325px" : undefined}
+      position="relative"
       display="flex"
       flexDirection="column"
-      justifyContent="space-between"
-      p="0.25rem 1rem"
-      flex="1 1 100%"
-      backgroundColor={theme.palette.background.alt}
-      borderRadius="0.55rem"
+      gap="10px"
+      alignItems="center"
+      justifyContent="center"
     >
-      <FlexBetween>
-        <Typography variant="h6" sx={{ color: theme.palette.secondary[100] }}>
-          Reports Happening Today
-        </Typography>
-        <SummarizeIcon sx={{ color: theme.palette.secondary[300], fontSize: "26px" }} />
-      </FlexBetween>
+      <Typography variant="h6" sx={{ color: theme.palette.primary.main, marginBottom: "1rem" }}>
+        Reports Today:
+      </Typography>
 
-      {/* Grid Layout for 4 Columns */}
-      <Box mt={2} display="grid" gridTemplateColumns="repeat(4, 1fr)" gap={2}>
-        {Object.keys(reportsToday).map((category) => {
-          if (category !== "totalReportsToday") {
-            const categoryData = reportsToday[category];
-            const images = imagesByCategory[category] || [];
-            return (
-              <Box
-                key={category}
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                padding="1rem"
-                borderRadius="0.55rem"
-                boxShadow={2}
-                height="250px"
-                sx={{ border: `2px solid white` }}
-              >
-                <Typography variant="h6" sx={{ color: theme.palette.secondary[300], mb: 1 }}>
-                  {category.replace("reportsBy", "").replace("Today", "")}
-                </Typography>
-                <Typography variant="body1" sx={{ color: theme.palette.primary.main }}>
-                  {categoryData.count} reports
-                </Typography>
-                <Box
-                  mt={2}
-                  display="flex"
-                  flexWrap="wrap"
-                  justifyContent="center"
-                  gap={1}
-                  sx={{ overflowY: "auto", maxHeight: "150px" }}
-                >
-                  {images.map((image, index) => (
-                    <img
-                      key={index}
-                      src={image}
-                      alt={`Report ${category} ${index}`}
-                      style={{
-                        width: "60px",
-                        height: "60px",
-                        objectFit: "cover",
-                        borderRadius: "0.25rem",
-                        cursor: "pointer",
-                      }}
-                      onClick={() => handleImageClick(images, index)}
-                    />
-                  ))}
-                </Box>
-              </Box>
-            );
-          }
-          return null;
-        })}
-      </Box>
+      {disasterInfoList.length > 0 ? (
+        <Box
+          p="10px"
+          borderRadius="5px"
+          sx={{ backgroundColor: theme.palette.background.alt, textAlign: "center" }}
+        >
+          <Typography>{disasterInfoList[currentIndex]}</Typography>
+        </Box>
+      ) : (
+        <Typography>No reports available.</Typography>
+      )}
 
-      {/* Image Preview Modal */}
-      <ImagePreview
-        open={previewOpen}
-        images={currentImages}
-        currentIndex={currentIndex}
-        onClose={() => setPreviewOpen(false)}
-        onNext={handleNext}
-        onPrev={handlePrev}
-      />
+      {disasterInfoList.length > 1 && (
+        <Box display="flex" gap="10px" mt="1rem">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handlePrevious}
+            sx={{ textTransform: "none" }}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleNext}
+            sx={{ textTransform: "none" }}
+          >
+            Next
+          </Button>
+        </Box>
+      )}
     </Box>
   );
 };
 
-export default  MostReportsInArea;
+export default MostReportInArea;

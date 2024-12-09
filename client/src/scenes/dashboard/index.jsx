@@ -14,6 +14,7 @@
   import { useFetchReportsQuery } from "state/reportApi";
   import StatBox from "components/StatBox";
   import ActiveRescuers from "components/ActiveRescuers"; // Make sure to import it
+  import MostReportsInArea from "components/MostReportsInArea";
   import ConsolidatedReports from "components/ConsolidatedReports";
   import { getImageUrlById } from "utils/imageUtils";
   import { useGetDashboardQuery } from "state/api";
@@ -181,8 +182,9 @@
               fontSize="0.8rem"
               sx={{ color: theme.palette.secondary[200] }}
             >
-              Breakdown of reports based on their category.
+              There Are 5 Reports in the Bonifacio Area Right Now
             </Typography>
+            <MostReportsInArea/>
           </Box>
         </Box>
       </Box>
