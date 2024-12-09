@@ -176,14 +176,7 @@
             <Typography variant="h6" sx={{ color: theme.palette.secondary[100] }}>
              Most Reports in an Area
             </Typography>
-      
-            <Typography
-              p="0 0.6rem"
-              fontSize="0.8rem"
-              sx={{ color: theme.palette.secondary[200] }}
-            >
-              There Are 5 Reports in the Bonifacio Area Right Now
-            </Typography>
+
             <MostReportsInArea/>
           </Box>
         </Box>

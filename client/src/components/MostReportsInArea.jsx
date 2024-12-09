@@ -51,8 +51,8 @@ const MostReportInArea = ({ isDashboard = false }) => {
       alignItems="center"
       justifyContent="center"
     >
-      <Typography variant="h6" sx={{ color: theme.palette.primary.main, marginBottom: "1rem" }}>
-        Reports Today:
+      <Typography variant="h6" sx={{ color: theme.palette.secondary[300], marginBottom: "1rem" }}>
+        There are 5 reports in the Bonifacio Area
       </Typography>
 
       {disasterInfoList.length > 0 ? (
