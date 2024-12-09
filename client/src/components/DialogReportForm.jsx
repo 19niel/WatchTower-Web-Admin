@@ -224,10 +224,9 @@ const DialogReportForm = ({ open, onClose, onSubmit, editMode, initialData }) =>
                   onChange={(e) => setPriority(e.target.value)}
                   required
                 >
-                  <MenuItem value="High">High Priority</MenuItem>
-                  <MenuItem value="Medium">Medium Priority</MenuItem>
-                  <MenuItem value="Low">Low Priority</MenuItem>
-                  <MenuItem value="active">Active</MenuItem>
+                  <MenuItem value="high">High Priority</MenuItem>
+                  <MenuItem value="medium">Medium Priority</MenuItem>
+                  <MenuItem value="low">Low Priority</MenuItem>
                 </Select>
               </FormControl>
             </Grid>

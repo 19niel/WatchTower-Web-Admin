@@ -129,7 +129,7 @@ const ConsolidatedReports = () => {
                 <Typography variant="h6" sx={{ color: theme.palette.secondary[300], mb: 1 }}>
                   {category.replace("reportsBy", "").replace("Today", "")}
                 </Typography>
-                <Typography variant="body1" sx={{ color: theme.palette.primary.main }}>
+                <Typography variant="body1" sx={{ color: theme.palette.secondary[100]  }}>
                   {categoryData.count} reports
                 </Typography>
                 <Box

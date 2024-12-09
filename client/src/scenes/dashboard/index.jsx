@@ -97,9 +97,9 @@
         >
           {/* ROW 1 */}
           <StatBox
-            title="Total Registered Citizens"
+            title="Active Citizens Now"
             value={totalCitizens && totalCitizens.totalCitizens}
-            increase="10%"
+            increase="+2%"
             description="Since last month"
             icon={<Email sx={{ color: theme.palette.secondary[300], fontSize: "26px" }} />}
           />
@@ -172,12 +172,11 @@
             backgroundColor={theme.palette.background.alt}
             p="1.5rem"
             borderRadius="0.55rem"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
           >
-            <Typography variant="h6" sx={{ color: theme.palette.secondary[100] }}>
-             Most Reports in an Area
-            </Typography>
-
-            <MostReportsInArea/>
+            <MostReportsInArea />
           </Box>
         </Box>
       </Box>
